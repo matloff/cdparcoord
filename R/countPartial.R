@@ -33,9 +33,11 @@ partialNA = function (dataset){
       }
     }
   }
-  
-  return(count)
+
+  # remove na rows from table
+  return(count[complete.cases(count),])
 }
 
-data = read.csv('dataset.csv')
-partialNA(data)
+data = read.csv('../data/dataset.csv')
+partial = partialNA(data)
+partial

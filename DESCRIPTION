@@ -1,0 +1,18 @@
+Package: freqparcoord.cd
+Version: 1.0.0
+Author: Norm Matloff <normmatloff@gmail.com> and 
+    Harrison Nguyen <hhnguy@ucdavis.edu> and Vincent Yang <vinyang@ucdavis.edu>
+Maintainer: Norm Matloff <normmatloff@gmail.com>
+Date: 2017-02-13
+Title: 
+Description: Parallel coordinate plotting with resolutions for extremely large data sets 
+    and missing values.
+Depends: ggplot2, GGally
+Imports:
+Suggests:
+LazyLoad: no
+License:
+Repository: CRAN
+NeedsCompilation: no
+Packaged:
+Date/Publication:
