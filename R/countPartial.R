@@ -38,6 +38,8 @@ partialNA = function (dataset){
   return(count[complete.cases(count),])
 }
 
-data = read.csv('../data/dataset.csv')
-partial = partialNA(data)
-partial
+testpna <- function() {
+   data(dataset)
+   partial = partialNA(dataset)
+   partial
+}
