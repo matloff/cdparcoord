@@ -38,8 +38,35 @@ partialNA = function (dataset){
   return(count[complete.cases(count),])
 }
 
+# output parallel coordinates plot as Rplots.pdf
+draw = function(partial) {
+  max_y <- max(partial)
+  width <- ncol(partial)-1
+
+  for(i in 1:1){
+      row <- partial[i,1:width]
+      row <- as.numeric(row)
+      fr <- partial[i, width+1]
+      # create initial plot
+      plot(row, type="o", col="blue", axes=FALSE, ann=FALSE, lwd=fr)
+  }
+
+  for(i in 2:nrow(partial)){
+      row <- partial[i,1:width]
+      row <- as.numeric(row)
+      fr <- partial[i, width+1] # determine thickness via frequency
+      lines(row, col="green", lwd=fr) # add plot lines
+  }
+
+  # Create a title with a red, bold/italic font
+  title(main="Parallel Coordinates", col.main="red", font.main=4)
+  axis(1, at=1:width, lab=head(colnames(partial), -1))
+  axis(2, at=1:max_y)
+}
+
 testpna <- function() {
-   data(dataset)
-   partial = partialNA(dataset)
-   partial
+  data(dataset)
+  partial = partialNA(dataset)
+  partial
+  draw(partial)
 }
