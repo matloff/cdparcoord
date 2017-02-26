@@ -4,7 +4,7 @@ library(plyr)
 
 #currently counts all partials and adds them properly
 
-partialNA = function (dataset){
+partialNA = function (dataset, n){
   count = count(dataset, vars = NULL, wt_var = NULL)
   dimensions = dim(count)
   rows = dimensions[1]
@@ -35,7 +35,13 @@ partialNA = function (dataset){
   }
 
   # remove na rows from table
-  return(count[complete.cases(count),])
+  count <- count[complete.cases(count),]
+
+  # get n highest rows
+  if (!missing(n)){
+    count <- head(count[order(-count$freq),], n)
+  }
+  return(count)
 }
 
 # output parallel coordinates plot as Rplots.pdf
@@ -64,9 +70,14 @@ draw = function(partial) {
   axis(2, at=1:max_y)
 }
 
-testpna <- function() {
+testpna <- function(n) {
   data(dataset)
-  partial = partialNA(dataset)
+  if (missing(n)){
+    partial <- partialNA(dataset)  
+  }
+  else {
+    partial <- partialNA(dataset, n)
+  }
   partial
-  draw(partial)
+  draw(partial) 
 }
