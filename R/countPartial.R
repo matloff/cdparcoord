@@ -1,9 +1,11 @@
 library(plyr)
 
-#possible optimization -> add in R code to find the # of columsn first
+# possible optimization -> add in R code to find the # of columns first
 
-#currently counts all partials and adds them properly
-
+# currently counts all partials and adds them properly
+# parameters:
+#   dataset (table): dataset to calculate partials for
+#   n (int): how many top rows to return (DEFAULT = 5)
 partialNA = function (dataset, n){
   count = count(dataset, vars = NULL, wt_var = NULL)
   dimensions = dim(count)
@@ -37,40 +39,44 @@ partialNA = function (dataset, n){
   # remove na rows from table
   count <- count[complete.cases(count),]
 
-  # get n highest rows
+  # get n highest rows, if no n inputted, default to top five
   if (!missing(n)){
     count <- head(count[order(-count$freq),], n)
+  } else {
+    count <- head(count[order(-count$freq),], 5)
   }
+  
+  count
   return(count)
 }
 
 # output parallel coordinates plot as Rplots.pdf
 draw = function(partial) {
-  max_y <- max(partial)
   width <- ncol(partial)-1
+  max_y <- max(partial[1:nrow(partial),width])
 
-  for(i in 1:1){
-      row <- partial[i,1:width]
-      row <- as.numeric(row)
-      fr <- partial[i, width+1]
-      # create initial plot
-      plot(row, type="o", col="blue", axes=FALSE, ann=FALSE, lwd=fr)
-  }
-
-  for(i in 2:nrow(partial)){
+  # creation of initial plot
+  cats = rep(max_y, width-1)
+  baserow = c(1, cats) 
+  plot(baserow,type="n", xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
+  
+  # Add aesthetic
+  title(main="Parallel Coordinates", col.main="red", font.main=4)
+  axis(1, at=1:width, lab=head(colnames(partial), -1))
+  axis(2, at=seq(1,max_y,1))
+  
+  # adds on lines
+  for(i in 1:nrow(partial)){
       row <- partial[i,1:width]
       row <- as.numeric(row)
       fr <- partial[i, width+1] # determine thickness via frequency
-      lines(row, col="green", lwd=fr) # add plot lines
+      lines(row, type='o', col="green", lwd=fr) # add plot lines
   }
-
-  # Create a title with a red, bold/italic font
-  title(main="Parallel Coordinates", col.main="red", font.main=4)
-  axis(1, at=1:width, lab=head(colnames(partial), -1))
-  axis(2, at=1:max_y)
 }
 
+# n (int) - how many top tuples to plot
 testpna <- function(n) {
+  
   data(dataset)
   if (missing(n)){
     partial <- partialNA(dataset)  
