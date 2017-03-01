@@ -53,29 +53,21 @@ partialNA = function (dataset, n){
 # output parallel coordinates plot as Rplots.pdf
 draw = function(partial) {
   width <- ncol(partial)-1
-  #max_y <- max(partial[1:nrow(partial),width])
+  # max_y <- max(partial[1:nrow(partial),width]) # option 1
   # get only numbers
   nums <- Filter(is.numeric, partial)
   max_y <- max(nums)
 
   categ <- list()
 
-  # create data frames for categorical variables
+  # create labels for categorical variables
+  # if there is a greater max_y, replace
   for(i in 1:ncol(partial)){
       categ[[i]] <- c(levels(partial[, i]))
       if (max_y < nlevels(partial[, i])){
           max_y <- nlevels(partial[, i])
       }
-      # store these per colName; map to number
-      # key: varName 
-      # val: index 
   }
-
-  # when we plot, for each row, find the corresponding dictionary. 
-  # look up key, plot at val for each point. 
-
-  # at the end of the plotting, label each point via key value pair
-
 
   # creation of initial plot
   cats = rep(max_y, width-1)
@@ -87,7 +79,7 @@ draw = function(partial) {
   axis(1, at=1:width, lab=head(colnames(partial), -1))
   axis(2, at=seq(1,max_y,1))
   
-  # adds on lines
+  # add on lines
   for(i in 1:nrow(partial)){
       row <- partial[i,1:width]
       row <- as.numeric(row)
@@ -95,7 +87,9 @@ draw = function(partial) {
       lines(row, type='o', col="green", lwd=fr) # add plot lines
   }
 
+  # add on labels
   for(i in 1:(ncol(partial)-1)){
+      # if this column is full of categorical variables
       if (!is.null(categ[[i]])){
         for(j in 1:length(categ[[i]])){
             text(i, j, categ[[i]][j])
