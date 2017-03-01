@@ -62,7 +62,7 @@ draw = function(partial) {
 
   # create labels for categorical variables
   # if there is a greater max_y, replace
-  for(i in 1:ncol(partial)){
+  for(i in 1:(ncol(partial))){
       categ[[i]] <- c(levels(partial[, i]))
       if (max_y < nlevels(partial[, i])){
           max_y <- nlevels(partial[, i])
@@ -89,18 +89,17 @@ draw = function(partial) {
 
   # add on labels
   for(i in 1:(ncol(partial)-1)){
-      # if this column is full of categorical variables
-      if (!is.null(categ[[i]])){
-        for(j in 1:length(categ[[i]])){
-            text(i, j, categ[[i]][j])
-        }
+    # if this column is full of categorical variables
+    if (i <= length(categ) && !is.null(categ[[i]])){
+      for(j in 1:length(categ[[i]])){
+          text(i, j, categ[[i]][j])
       }
+    }
   }
 }
 
 # n (int) - how many top tuples to plot
 testpna <- function(n) {
-  
   data(dataset)
   if (missing(n)){
     partial <- partialNA(dataset)  
@@ -108,6 +107,6 @@ testpna <- function(n) {
   else {
     partial <- partialNA(dataset, n)
   }
-  partial
   draw(partial) 
 }
+testpna()
