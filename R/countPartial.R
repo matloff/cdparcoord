@@ -53,7 +53,29 @@ partialNA = function (dataset, n){
 # output parallel coordinates plot as Rplots.pdf
 draw = function(partial) {
   width <- ncol(partial)-1
-  max_y <- max(partial[1:nrow(partial),width])
+  #max_y <- max(partial[1:nrow(partial),width])
+  # get only numbers
+  nums <- Filter(is.numeric, partial)
+  max_y <- max(nums)
+
+  categ <- list()
+
+  # create data frames for categorical variables
+  for(i in 1:ncol(partial)){
+      categ[[i]] <- c(levels(partial[, i]))
+      if (max_y < nlevels(partial[, i])){
+          max_y <- nlevels(partial[, i])
+      }
+      # store these per colName; map to number
+      # key: varName 
+      # val: index 
+  }
+
+  # when we plot, for each row, find the corresponding dictionary. 
+  # look up key, plot at val for each point. 
+
+  # at the end of the plotting, label each point via key value pair
+
 
   # creation of initial plot
   cats = rep(max_y, width-1)
@@ -71,6 +93,14 @@ draw = function(partial) {
       row <- as.numeric(row)
       fr <- partial[i, width+1] # determine thickness via frequency
       lines(row, type='o', col="green", lwd=fr) # add plot lines
+  }
+
+  for(i in 1:(ncol(partial)-1)){
+      if (!is.null(categ[[i]])){
+        for(j in 1:length(categ[[i]])){
+            text(i, j, categ[[i]][j])
+        }
+      }
   }
 }
 
