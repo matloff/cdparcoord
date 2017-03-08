@@ -51,7 +51,10 @@ partialNA = function (dataset, n){
 }
 
 # output parallel coordinates plot as Rplots.pdf
-draw = function(partial) {
+# name: name for plot
+draw = function(partial, name) {
+
+
   width <- ncol(partial)-1
   # max_y <- max(partial[1:nrow(partial),width]) # option 1
   # get only numbers
@@ -69,9 +72,16 @@ draw = function(partial) {
       }
   }
 
+  # draw one graph
   # creation of initial plot
   cats = rep(max_y, width-1)
   baserow = c(1, cats) 
+  if (missing(name)){
+    pdf("plot1.pdf")
+  }
+  else {
+    pdf(name)
+  }
   plot(baserow,type="n", xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
   
   # Add aesthetic
@@ -85,28 +95,47 @@ draw = function(partial) {
       row <- as.numeric(row)
       fr <- partial[i, width+1] # determine thickness via frequency
       lines(row, type='o', col="green", lwd=fr) # add plot lines
-  }
 
-  # add on labels
-  for(i in 1:(ncol(partial)-1)){
-    # if this column is full of categorical variables
-    if (i <= length(categ) && !is.null(categ[[i]])){
-      for(j in 1:length(categ[[i]])){
-          text(i, j, categ[[i]][j])
+    # add on labels
+    for(i in 1:(ncol(partial)-1)){
+      # if this column is full of categorical variables
+      if (i <= length(categ) && !is.null(categ[[i]])){
+        for(j in 1:length(categ[[i]])){
+            text(i, j, categ[[i]][j])
+        }
       }
     }
   }
+
 }
 
 # n (int) - how many top tuples to plot
-testpna <- function(n) {
+# categ (int) - plot separately the categ'th col
+testpna <- function(n, categ) {
   data(dataset)
+
+  # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
   }
   else {
     partial <- partialNA(dataset, n)
   }
+
+  # create separate plots
+  if (!missing(categ)){
+    # make sure categ is < numCols
+    if (n < ncol(partial)){
+      print(unique(partial[,n]))
+      options <- unique(partial[,n])
+      for(element in options){
+        subset <- partial[ which(partial[,n] == element),]
+        draw(subset, paste(element, ".pdf", sep="")) 
+      }
+    }
+  }
+
+  # create one plot with everything
   draw(partial) 
 }
 testpna()
