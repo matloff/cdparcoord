@@ -2,6 +2,41 @@ library(plyr)
 
 # possible optimization -> add in R code to find the # of columns first
 
+
+# Converts continuos numeric data to discrete categorical (1st run)
+# POSSIBLE IMPROVEMENTS:
+#   FIND A WAY TO MAKE LOWER AND UPPER INTO ONE
+# parameters:
+#   dataset - table with column that needs to be converted
+#   col - column number to be converted
+#   cats - labels for discretized variables (MUST BE EQUAL TO length(lower))
+#   lower - lower bounds in a vector (LENGTH MUST BE EQUAL TO UPPER)
+#   upper - upper bounds in a vector (LENGTH MUST BE EQUAL TO LOWER)
+cats = c('one', 'two', 'three')
+lower = c(0.5, 1.5, 2.5)
+upper = c(1.5,2.5,3.5)
+
+discreteCol = function(dataset, col, cats, lower, upper){
+  # need to add in error checking to make sure parameters follow rules
+  oldCol = dataset[, col]
+  
+  newColumn = sapply(oldCol, function(x){
+    print(x)
+    for(i in 1:length(cats)){
+      if((x >= lower[i]) & (x < upper[i]) & !is.na(x)){
+        return(cats[i])
+      }
+    }
+    
+    return(NA)
+  })
+    
+  dataset[,col] = newColumn
+  
+  return(dataset)
+}
+
+
 # currently counts all partials and adds them properly
 # parameters:
 #   dataset (table): dataset to calculate partials for
@@ -122,7 +157,7 @@ draw = function(partial, name) {
 testpna <- function(n, categ) {
   #data(dataset)
 
-  dataset <- read.csv("data/categoricalexample.csv")
+  dataset <- read.csv("data/dataset2.csv")
   
   # select top n frequencies
   if (missing(n)){
