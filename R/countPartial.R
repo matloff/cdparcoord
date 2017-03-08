@@ -60,6 +60,7 @@ draw = function(partial, name) {
   # get only numbers
   nums <- Filter(is.numeric, partial)
   max_y <- max(nums)
+  max_freq <- max(partial[,width+1])
 
   categ <- list()
 
@@ -74,7 +75,7 @@ draw = function(partial, name) {
 
   # draw one graph
   # creation of initial plot
-  cats = rep(max_y, width-1)
+  cats = rep(max_y, width)
   baserow = c(1, cats) 
   if (missing(name)){
     pdf("plot1.pdf")
@@ -89,11 +90,18 @@ draw = function(partial, name) {
   axis(1, at=1:width, lab=head(colnames(partial), -1))
   axis(2, at=seq(1,max_y,1))
   
+  # Get scale for lines if large dataset
+  if(max_freq > 500){
+    scale <- 0.10 * max_freq
+  } else {
+    scale <- 1
+  }
+  
   # add on lines
   for(i in 1:nrow(partial)){
       row <- partial[i,1:width]
       row <- as.numeric(row)
-      fr <- partial[i, width+1] # determine thickness via frequency
+      fr <- partial[i, width+1] / scale # determine thickness via frequency
       lines(row, type='o', col="green", lwd=fr) # add plot lines
 
     # add on labels
@@ -112,8 +120,10 @@ draw = function(partial, name) {
 # n (int) - how many top tuples to plot
 # categ (int) - plot separately the categ'th col
 testpna <- function(n, categ) {
-  data(dataset)
+  #data(dataset)
 
+  dataset <- read.csv("data/categoricalexample.csv")
+  
   # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
