@@ -157,7 +157,6 @@ draw = function(partial, name, labelsOff) {
       }
     }
   }
-
 }
 
 # n (int) - how many top tuples to plot

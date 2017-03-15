@@ -6,6 +6,7 @@
 }
 
 \description{
+}
 
 \usage{
 
@@ -29,5 +30,4 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 
 \examples{
 data(mlb)
-}
 }
