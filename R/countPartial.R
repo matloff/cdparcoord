@@ -3,39 +3,46 @@ library(plyr)
 # possible optimization -> add in R code to find the # of columns first
 
 
-# Converts continuos numeric data to discrete categorical (1st run)
-# POSSIBLE IMPROVEMENTS:
-#   FIND A WAY TO MAKE LOWER AND UPPER INTO ONE
-# parameters:
-#   dataset - table with column that needs to be converted
-#   col - column number to be converted
-#   cats - labels for discretized variables (MUST BE EQUAL TO length(lower))
-#   lower - lower bounds in a vector (LENGTH MUST BE EQUAL TO UPPER)
-#   upper - upper bounds in a vector (LENGTH MUST BE EQUAL TO LOWER)
-cats = c('one', 'two', 'three')
-lower = c(0.5, 1.5, 2.5)
-upper = c(1.5,2.5,3.5)
+# Used to select a column and discretize
+# parameters
+#   dataset - dataframe that holds the data
+#   list of lists where each list within is used to represent a column -
+#       the inner list should contain the following vars:
+#         1. partitions (int) - number of partitions to make
+#         2. labels (vector of strs) - OPTIONAL -what to label the partitions. if none, 
+#                                     default is just to have ints as labels
+#         3. lower bounds (vector) - OPTIONAL - lower cutoffs for each label
+#         4. upper bounds (vector) - Optional - upper cutoffs for each label
+# example:  
+# cat1 = list('name' = 'cat1', 'partitions' = 3, 'labels' = c('low', 'med', 'high'))
+# cat2 = list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
+# input = list(cat1, cat2)
 
-discreteCol = function(dataset, col, cats, lower, upper){
-  # need to add in error checking to make sure parameters follow rules
-  oldCol = dataset[, col]
-  
-  newColumn = sapply(oldCol, function(x){
-    print(x)
-    for(i in 1:length(cats)){
-      if((x >= lower[i]) & (x < upper[i]) & !is.na(x)){
-        return(cats[i])
-      }
+discretize = function (dataset, input){
+  for(col in input){
+    name = col[['name']]
+    partitions = col[['partitions']]
+    labels = col[['labels']]
+    colMax = max(dataset[name])
+    colMin = min(dataset[name])
+    range = colMax - colMin
+    increments = range/partitions
+    
+    tempLower = colMin
+    tempUpper = 0
+    for(i in range(1:partitions - 1)){
+      tempUpper = tempLower + increments
+      dataset$name = ifelse(dataset$name >= tempLower & dataset$name < tempUpper, labels[i], dataset[name])
+      tempLower = tempUpper
     }
     
-    return(NA)
-  })
+    dataset$name = ifelse(dataset$name >= tempLower & dataset$name < colMax, labels[partitions], dataset$name)
     
-  dataset[,col] = newColumn
+  }
   
   return(dataset)
+  
 }
-
 
 # currently counts all partials and adds them properly
 # parameters:
