@@ -94,8 +94,7 @@ partialNA = function (dataset, n){
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw = function(partial, name) {
-
+draw = function(partial, name, labelsOff) {
 
   width <- ncol(partial)-1
   # max_y <- max(partial[1:nrow(partial),width]) # option 1
@@ -146,12 +145,14 @@ draw = function(partial, name) {
       fr <- partial[i, width+1] / scale # determine thickness via frequency
       lines(row, type='o', col="green", lwd=fr) # add plot lines
 
-    # add on labels
-    for(i in 1:(ncol(partial)-1)){
-      # if this column is full of categorical variables
-      if (i <= length(categ) && !is.null(categ[[i]])){
-        for(j in 1:length(categ[[i]])){
-            text(i, j, categ[[i]][j])
+    if(missing(labelsOff) || labelsOff == FALSE){
+      # add on labels
+      for(i in 1:(ncol(partial)-1)){
+        # if this column is full of categorical variables
+        if (i <= length(categ) && !is.null(categ[[i]])){
+          for(j in 1:length(categ[[i]])){
+              text(i, j, categ[[i]][j])
+          }
         }
       }
     }
@@ -162,9 +163,8 @@ draw = function(partial, name) {
 # n (int) - how many top tuples to plot
 # categ (int) - plot separately the categ'th col
 testpna <- function(n, categ) {
-  #data(dataset)
+  data(dataset)
 
-  dataset <- read.csv("data/dataset2.csv")
   
   # select top n frequencies
   if (missing(n)){
@@ -182,7 +182,7 @@ testpna <- function(n, categ) {
       options <- unique(partial[,n])
       for(element in options){
         subset <- partial[ which(partial[,n] == element),]
-        draw(subset, paste(element, ".pdf", sep="")) 
+        draw(subset, paste(element, ".pdf", sep=""))
       }
     }
   }
