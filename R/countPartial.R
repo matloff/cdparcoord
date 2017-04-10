@@ -162,7 +162,8 @@ draw = function(partial, name, labelsOff) {
 # n (int) - how many top tuples to plot
 # categ (int) - plot separately the categ'th col
 testpna <- function(n, categ) {
-  data(dataset)
+  #data(dataset)
+  dataset = read.csv("../data/smallexample.csv")
 
   
   # select top n frequencies
@@ -172,6 +173,7 @@ testpna <- function(n, categ) {
   else {
     partial <- partialNA(dataset, n)
   }
+  print(partial)
 
   # create separate plots
   if (!missing(categ)){
