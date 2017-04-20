@@ -118,10 +118,7 @@ draw = function(partial, name, labelsOff) {
   # creation of initial plot
   cats = rep(max_y, width)
   baserow = c(1, cats) 
-  if (missing(name)){
-    pdf("plot1.pdf")
-  }
-  else {
+  if (!missing(name)){
     pdf(name)
   }
   plot(baserow,type="n", xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
@@ -145,7 +142,8 @@ draw = function(partial, name, labelsOff) {
       fr <- partial[i, width+1] / scale # determine thickness via frequency
       lines(row, type='o', col="green", lwd=fr) # add plot lines
 
-    if(missing(labelsOff) || labelsOff == FALSE){
+    #if(missing(labelsOff) || labelsOff == FALSE){
+    if(!missing(labelsOff) && labelsOff == FALSE){
       # add on labels
       for(i in 1:(ncol(partial)-1)){
         # if this column is full of categorical variables
@@ -162,8 +160,15 @@ draw = function(partial, name, labelsOff) {
 # n (int) - how many top tuples to plot
 # categ (int) - plot separately the categ'th col
 testpna <- function(n, categ) {
-  data(dataset)
+  #data(dataset)
   #dataset = read.csv("../data/smallexample.csv")
+  #data(dataset)
+  #dataset = read.csv("../data/USDA_Plants_Database.csv")
+  #dataset = read.csv("../data/New_York_Subway_Entrances_.csv")
+  #dataset = read.csv("../data/Death_Probability_of_Males_Since_1900.csv")
+  #dataset = read.csv("../data/Food_Recalls_by_Brand.txt")
+  dataset = read.csv("../data/YearPredictionMSD.txt")
+
 
   
   # select top n frequencies
@@ -192,3 +197,29 @@ testpna <- function(n, categ) {
   draw(partial) 
 }
 #testpna()
+
+smallexample <- function(n, categ) {
+  dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
+  # select top n frequencies
+  if (missing(n)){
+    partial <- partialNA(dataset)  
+  }
+  else {
+    partial <- partialNA(dataset, n)
+  }
+  #print(partial)
+
+  ## create separate plots
+  #if (!missing(categ)){
+  #  # make sure categ is < numCols
+  #  if (n < ncol(partial)){
+  #    print(unique(partial[,n]))
+  #    options <- unique(partial[,n])
+  #    for(element in options){
+  #      subset <- partial[ which(partial[,n] == element),]
+  #      draw(subset, paste(element, ".pdf", sep=""))
+  #    }
+  #  }
+  #}
+}
+
