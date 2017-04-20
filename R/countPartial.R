@@ -160,17 +160,8 @@ draw = function(partial, name, labelsOff) {
 # n (int) - how many top tuples to plot
 # categ (int) - plot separately the categ'th col
 testpna <- function(n, categ) {
-  #data(dataset)
-  #dataset = read.csv("../data/smallexample.csv")
-  #data(dataset)
-  #dataset = read.csv("../data/USDA_Plants_Database.csv")
-  #dataset = read.csv("../data/New_York_Subway_Entrances_.csv")
-  #dataset = read.csv("../data/Death_Probability_of_Males_Since_1900.csv")
-  #dataset = read.csv("../data/Food_Recalls_by_Brand.txt")
-  dataset = read.csv("../data/YearPredictionMSD.txt")
+  data(dataset)
 
-
-  
   # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
@@ -196,7 +187,6 @@ testpna <- function(n, categ) {
   # create one plot with everything
   draw(partial) 
 }
-#testpna()
 
 smallexample <- function(n, categ) {
   dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
@@ -207,19 +197,5 @@ smallexample <- function(n, categ) {
   else {
     partial <- partialNA(dataset, n)
   }
-  #print(partial)
-
-  ## create separate plots
-  #if (!missing(categ)){
-  #  # make sure categ is < numCols
-  #  if (n < ncol(partial)){
-  #    print(unique(partial[,n]))
-  #    options <- unique(partial[,n])
-  #    for(element in options){
-  #      subset <- partial[ which(partial[,n] == element),]
-  #      draw(subset, paste(element, ".pdf", sep=""))
-  #    }
-  #  }
-  #}
 }
 
