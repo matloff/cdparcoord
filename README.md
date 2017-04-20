@@ -9,7 +9,7 @@ The black screen problem occurs when there are too many data points to plot. Thi
 black screen from which no useful information may be gleaned. We solve this by allowing the user to 
 take the n most significant relations.  
 
-![Black Screen Problem](blackscreen.pdf)
+![Black Screen Problem](blackscreen.png)
 
 ### Instructions
 We provide 3 key functions - `partialNA()`, `draw()` and `discretize()`.
