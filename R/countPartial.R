@@ -30,13 +30,19 @@ discretize = function (dataset, input){
     
     tempLower = colMin
     tempUpper = 0
-    for(i in range(1:partitions - 1)){
+    for(i in range(1:partitions)){
       tempUpper = tempLower + increments
-      dataset$name = ifelse(dataset$name >= tempLower & dataset$name < tempUpper, labels[i], dataset[name])
+      #dataset$name = ifelse(dataset$name >= tempLower & dataset$name < tempUpper, labels[i], dataset[name])
+      dataset[[name]][dataset$name <= tempUpper] <- labels[i]
+      print("Tempupper is ")
+      print(tempUpper)
+      print("current label is ")
+      print(labels[i])
       tempLower = tempUpper
     }
     
-    dataset$name = ifelse(dataset$name >= tempLower & dataset$name < colMax, labels[partitions], dataset$name)
+    
+    #dataset$name = ifelse(dataset$name >= tempLower & dataset$name < colMax, labels[partitions], dataset$name)
     
   }
   
