@@ -92,6 +92,11 @@ partialNA = function (dataset, n){
   return(count)
 }
 
+# randomly permute the result of partialNA (won't move rightmost column)
+permute = function(data) {
+  data[,c(sample(ncol(data)-1), ncol(data))]
+}
+
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
 draw = function(partial, name, labelsOff) {
