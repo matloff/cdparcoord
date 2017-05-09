@@ -27,7 +27,7 @@ lesser extents.
 
 ### Instructions
 
-We provide 3 key functions -- **partialNA()** **draw()** and
+We provide 4 key functions -- **partialNA()** **draw()** **permute()** and
 **discretize()**  The call **partialNA(dataset,n)** inputs a dataset and
 returns a new dataset consisting of the **n** most frequent patterns
 
@@ -44,6 +44,8 @@ to have labels on.
 categorical variables.
 The inner list should contain the following variables: `int partitions`, `string vector labels`, `vector lower bounds`, 
 `vector upper bounds`. The last three are optional.
+
+`permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
 
 ### Implementation
 
@@ -77,6 +79,10 @@ draw(smallexp, "smallexample.pdf")
 for a saved file output instead.
 
 ##### 2. Categorical Variable Example
+
+##### 3. Permute Example
+![Before Permute](permute_1.png)
+![After Permute](permute_2.png)
 
 ### Authors
 Norm Matloff, Harrison Nguyen, Vincent Yang
