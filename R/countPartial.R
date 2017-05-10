@@ -192,7 +192,7 @@ disparcoord <- function(data, k = NULL, grpcategory = FALSE, permute = FALSE){
   }
 
   if(permute){
-    data[,c(sample(ncol(data)-1), ncol(data))]
+    partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
   }
   
   # plot and group according to column, output different graphs based on column value
