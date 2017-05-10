@@ -108,7 +108,7 @@ draw = function(partial, name, labelsOff) {
   width <- ncol(partial)-1
   # get only numbers
   nums <- Filter(is.numeric, partial)
-  max_y <- max(nums[1:nrow(partial),(ncol(nums) - 1)]) # option 1
+  max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
   max_freq <- max(partial[,width+1])
 
   categ <- list()
@@ -188,11 +188,9 @@ disparcoord <- function(data, k = NULL, grpcategory = FALSE, permute = FALSE){
   if(is.null(k)){
     partial <- partialNA(data, 5)
   } else {
-    print("one")
     partial <- partialNA(data, k)
   }
-  print("two")
-  
+
   if(permute){
     data[,c(sample(ncol(data)-1), ncol(data))]
   }
@@ -212,8 +210,6 @@ disparcoord <- function(data, k = NULL, grpcategory = FALSE, permute = FALSE){
   } else {
     draw(partial)
   }
-  print("three")
-  
 }
 
 
