@@ -89,14 +89,17 @@ partialNA = function (dataset, n){
     count <- head(count[order(-count$freq),], 5)
   }
   
-  count
+  for(i in 1:columns){
+    if(is.numeric(count[, i])){
+      next
+    } else {
+      count[[i]] <- factor(count[[i]])
+    }
+  }
+  
   return(count)
 }
 
-# randomly permute the result of partialNA (won't move rightmost column)
-permute = function(data) {
-  data[,c(sample(ncol(data)-1), ncol(data))]
-}
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
@@ -109,7 +112,7 @@ draw = function(partial, name, labelsOff) {
   max_freq <- max(partial[,width+1])
 
   categ <- list()
-
+  
   # create labels for categorical variables
   # if there is a greater max_y, replace
   for(i in 1:(ncol(partial))){
@@ -161,37 +164,6 @@ draw = function(partial, name, labelsOff) {
   }
 }
 
-# n (int) - how many top tuples to plot
-# categ (int) - plot separately the categ'th col
-testpna <- function(n, categ) {
-  data(dataset)
-
-  # select top n frequencies
-  if (missing(n)){
-    partial <- partialNA(dataset)  
-  }
-  else {
-    partial <- partialNA(dataset, n)
-  }
-  print(partial)
-  
-  # create separate plots
-  if (!missing(categ)){
-    # make sure categ is < numCols
-    if (n < ncol(partial)){
-      print(unique(partial[,n]))
-      options <- unique(partial[,n])
-      for(element in options){
-        subset <- partial[ which(partial[,n] == element),]
-        draw(subset, paste(element, ".pdf", sep=""))
-      }
-    }
-  }
-
-  # create one plot with everything
-  draw(partial) 
-}
-
 smallexample <- function(n, categ) {
   dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
   # select top n frequencies
@@ -203,5 +175,45 @@ smallexample <- function(n, categ) {
   }
 }
 
+# this is the main graphing function - use this
+# data should be input as a dataframe
+# need to figure out how to DISCRETIZE COLUMNS 
+# 1. permute columns
+# 2. interactive columns
+# 3. figure out labeling program
+# 4. Need to add in a way to choose which names to label pdfs with
+disparcoord <- function(data, k = NULL, grpcategory = FALSE, permute = FALSE){
+  
+  # if a value is given - get the top k tuples, otherwise default is top five
+  if(is.null(k)){
+    partial <- partialNA(data, 5)
+  } else {
+    print("one")
+    partial <- partialNA(data, k)
+  }
+  print("two")
+  
+  if(permute){
+    data[,c(sample(ncol(data)-1), ncol(data))]
+  }
+  
+  # plot and group according to column, output different graphs based on column value
+  if (grpcategory){
+    n = grpcategory
+    # make sure categ is < numCols
+    if (n < ncol(partial)){
+      print(unique(partial[,n]))
+      options <- unique(partial[,n])
+      for(element in options){
+        subset <- partial[ which(partial[,n] == element),]
+        draw(subset, paste(element, ".pdf", sep=""))
+      }
+    }
+  } else {
+    draw(partial)
+  }
+  print("three")
+  
+}
 
 
