@@ -20,6 +20,7 @@ library(plyr)
 
 discretize = function (dataset, input){
   for(col in input){
+    # read all the input into local variables
     name = col[['name']]
     partitions = col[['partitions']]
     labels = col[['labels']]
@@ -30,19 +31,12 @@ discretize = function (dataset, input){
     
     tempLower = colMin
     tempUpper = 0
-    for(i in range(1:partitions)){
+    # go through each and replace values according to partitions
+    for(i in 1:partitions){
       tempUpper = tempLower + increments
-      #dataset$name = ifelse(dataset$name >= tempLower & dataset$name < tempUpper, labels[i], dataset[name])
-      dataset[[name]][dataset$name <= tempUpper] <- labels[i]
-      print("Tempupper is ")
-      print(tempUpper)
-      print("current label is ")
-      print(labels[i])
+      dataset[[name]][dataset[[name]] <= tempUpper] <- labels[i]
       tempLower = tempUpper
     }
-    
-    
-    #dataset$name = ifelse(dataset$name >= tempLower & dataset$name < colMax, labels[partitions], dataset$name)
     
   }
   
@@ -55,15 +49,15 @@ discretize = function (dataset, input){
 #   dataset (table): dataset to calculate partials for
 #   n (int): how many top rows to return (DEFAULT = 5)
 partialNA = function (dataset, n){
+  # using plyr library to get a table 
   count = count(dataset, vars = NULL, wt_var = NULL)
   dimensions = dim(count)
   rows = dimensions[1]
   columns = dimensions[2]
-  #NAValues = rep(NA, sum(is.na(count)))
-  #CompleteTuple = rep(NA, rows - sum(is.na(count)))
   NAValues = c()
   CompleteTuple = c()
   
+  # count up and get the partial values of the NA rows
   for(i in 1:rows){
     if(sum(is.na(count[i, ])) > 0 ) {
       count[i, columns] = count[i, columns] * (((columns - 1) - sum(is.na(count[i, ]))) / as.numeric(columns - 1))
@@ -71,6 +65,7 @@ partialNA = function (dataset, n){
     }
   }
   
+  # go through every NA row and if they match, add partials to complete frequencies
   for(a in NAValues){
     for(i in 1:rows){
       if(i %in% NAValues){
@@ -108,10 +103,9 @@ permute = function(data) {
 draw = function(partial, name, labelsOff) {
 
   width <- ncol(partial)-1
-  # max_y <- max(partial[1:nrow(partial),width]) # option 1
   # get only numbers
   nums <- Filter(is.numeric, partial)
-  max_y <- max(nums)
+  max_y <- max(nums[1:nrow(partial),(ncol(nums) - 1)]) # option 1
   max_freq <- max(partial[,width+1])
 
   categ <- list()
@@ -124,7 +118,6 @@ draw = function(partial, name, labelsOff) {
           max_y <- nlevels(partial[, i])
       }
   }
-
   # draw one graph
   # creation of initial plot
   cats = rep(max_y, width)
@@ -132,12 +125,12 @@ draw = function(partial, name, labelsOff) {
   if (!missing(name)){
     pdf(name)
   }
-  plot(baserow,type="n", xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
+  plot(baserow,type="n", ylim = range(0,max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
   
   # Add aesthetic
   title(main="Parallel Coordinates", col.main="red", font.main=4)
   axis(1, at=1:width, lab=head(colnames(partial), -1))
-  axis(2, at=seq(1,max_y,1))
+  axis(2, at=seq(0,max_y,1))
   
   # Get scale for lines if large dataset
   if(max_freq > 500){
@@ -181,7 +174,7 @@ testpna <- function(n, categ) {
     partial <- partialNA(dataset, n)
   }
   print(partial)
-
+  
   # create separate plots
   if (!missing(categ)){
     # make sure categ is < numCols
@@ -209,4 +202,6 @@ smallexample <- function(n, categ) {
     partial <- partialNA(dataset, n)
   }
 }
+
+
 
