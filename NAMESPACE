@@ -1,3 +1,3 @@
 
-export(partialNA,testpna,draw,smallexample,discretize,permute)
+export(partialNA,draw,smallexample,discretize,permute)
 
