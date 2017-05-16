@@ -143,7 +143,7 @@ draw = function(partial, name, labelsOff) {
   }
 
   colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
-  legend("bottomright", legend=seq(1, 20), pch=19, col=colfunc(20))
+  legend("bottomright", legend=seq(1, min(20, round(max_freq, digits=0))), pch=19, col=colfunc(min(20, round(max_freq, digits=0))))
 
   maxfreq <- max(partial[,-1])
   
@@ -170,9 +170,8 @@ draw = function(partial, name, labelsOff) {
 }
 
 smallexample <- function(n, categ) {
-  #dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
-  # dataset = read.csv("../data/smallexample.csv")
   dataset = data(smallexample)
+
   # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
@@ -180,7 +179,7 @@ smallexample <- function(n, categ) {
   else {
     partial <- partialNA(dataset, n)
   }
-  draw(partial)
+  #draw(partial)
 }
 
 # this is the main graphing function - use this
@@ -232,5 +231,3 @@ disparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
     }
   }
 }
-
-smallexample()
