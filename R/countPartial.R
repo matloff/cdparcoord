@@ -171,7 +171,8 @@ draw = function(partial, name, labelsOff) {
 
 smallexample <- function(n, categ) {
   #dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
-  dataset = read.csv("../data/smallexample.csv")
+  # dataset = read.csv("../data/smallexample.csv")
+  dataset = data(smallexample)
   # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
