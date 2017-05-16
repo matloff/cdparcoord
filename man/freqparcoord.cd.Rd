@@ -6,22 +6,64 @@
 }
 
 \description{
+    A novel approach to the parallel coordinates method for visualization multiple
+    variables at once, focused on discrete variables. 
+
+    (a) Addresses the screen-clutter problem in parallel coordinates, by
+    only plotting the "most typical" cases. These are the tuples with the highest
+    occurance and representation with potentially occuring NA values.
+
+    (b) Provides a novel approach to NA values by allowing tuples with NA values
+    to partially contribute to complete tuples rather than eliminating or 
+    predicting missing values.
+
+    (c) Allows for randomization such that the user may rearrange columns to
+    find hidden relationships between variables.
 }
 
 \usage{
-
+    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE)
 }
 
 \arguments{
-
+    \item{data}{
+        The data, in data frame or matrix form. 
+    }
+    \item{k}{
+        The number of lines to display in the parallel coordinates plot. 
+    }
+    \item{grpcategory}{
+        The name of the column and variable that you want to partition graphs into.
+    }
+    \item{permute}{
+        Whether or not you want to permute the columns before drawing.
+    }
 }
 
 \details{
+    Parallel coordinates allow the user to see the relationships between
+    many different variables on the same graph. It can be thought of as a scatter graph that 
+    extends behond just two variables. For example, if we had three variables Height, Weight
+    and Age, each variable would have its own vertical axis. Each point then "connects the dots"
+    on the vertical axes. in this case, (70, 160, 28) would be a segmented line that has 70 on the
+    Height axis, 160 on the Weight axis, and 28 on the Age axis. An example of this is parcoord, 
+    found in the MASS package.
 
+    One of hte issues with parallel coordinates is that if there are too many lines, the screen will
+    be cluttered, hence "black screen problem". The package this extends, freqparcoord, addresses this
+    for continuous variables; discparcoord fixes this problem when dealing with discrete variables by 
+    plotting only the most occuring tuples (user specified amount).
+
+    The other problem that discparcoord addresses is the occurrence of NA values in dataset.
+    Usually, there are two solutions to this problem: either ignore the entire tuple,
+    or use various models to predict what the values would be based on all the other data (imputation). Instead
+    of using either of these, we take partial values of incomplete tuples and then add those values to complete
+    matching tuples. For example, given a tuple (1, 2, NA) and (1, 2, 3), the final count of tuples
+    would be (1, 2, 3), occurring 1.66 times. The incomplete tuple is only counted for 2/3. 
 }
 
 \value{
-
+    Object of type "graph".
 }
 
 \author{
@@ -29,5 +71,5 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 }
 
 \examples{
-data(mlb)
+    data(hrdata)
 }

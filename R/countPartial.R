@@ -19,29 +19,30 @@ library(plyr)
 # input = list(cat1, cat2)
 
 discretize = function (dataset, input){
-  for(col in input){
-    # read all the input into local variables
-    name = col[['name']]
-    partitions = col[['partitions']]
-    labels = col[['labels']]
-    colMax = max(dataset[name])
-    colMin = min(dataset[name])
-    range = colMax - colMin
-    increments = range/partitions
-    
-    tempLower = colMin
-    tempUpper = 0
-    # go through each and replace values according to partitions
-    for(i in 1:partitions){
-      tempUpper = tempLower + increments
-      dataset[[name]][dataset[[name]] <= tempUpper] <- labels[i]
-      tempLower = tempUpper
+    for(col in input){
+        # read all the input into local variables
+        name = col[['name']]
+        partitions = col[['partitions']]
+        labels = col[['labels']]
+        colMax = max(dataset[name])
+        colMin = min(dataset[name])
+        range = colMax - colMin
+        increments = range/partitions
+
+        tempLower = colMin
+        tempUpper = 0
+
+        # go through each and replace values according to partitions
+        for(i in 1:partitions){
+            tempUpper = tempLower + increments
+            dataset[[name]][dataset[[name]] <= tempUpper] <- labels[i]
+            tempLower = tempUpper
+        }
+
     }
-    
-  }
-  
-  return(dataset)
-  
+
+    return(dataset)
+
 }
 
 # currently counts all partials and adds them properly
@@ -49,55 +50,55 @@ discretize = function (dataset, input){
 #   dataset (table): dataset to calculate partials for
 #   n (int): how many top rows to return (DEFAULT = 5)
 partialNA = function (dataset, n){
-  # using plyr library to get a table 
-  count = count(dataset, vars = NULL, wt_var = NULL)
-  dimensions = dim(count)
-  rows = dimensions[1]
-  columns = dimensions[2]
-  NAValues = c()
-  CompleteTuple = c()
-  
-  # count up and get the partial values of the NA rows
-  for(i in 1:rows){
-    if(sum(is.na(count[i, ])) > 0 ) {
-      count[i, columns] = count[i, columns] * (((columns - 1) - sum(is.na(count[i, ]))) / as.numeric(columns - 1))
-      NAValues = c(NAValues, i)
-    }
-  }
-  
-  # go through every NA row and if they match, add partials to complete frequencies
-  for(a in NAValues){
+    # using plyr library to get a table 
+    count = count(dataset, vars = NULL, wt_var = NULL)
+    dimensions = dim(count)
+    rows = dimensions[1]
+    columns = dimensions[2]
+    NAValues = c()
+    CompleteTuple = c()
+
+    # count up and get the partial values of the NA rows
     for(i in 1:rows){
-      if(i %in% NAValues){
-        next
-      } else {
-        check = count[a,1:columns - 1] == count[i, 1:columns - 1]
-        if(!any(check == FALSE, na.rm = TRUE)){
-          count[i, columns] = count[i, columns] + count[a, columns]
+        if(sum(is.na(count[i, ])) > 0 ) {
+            count[i, columns] = count[i, columns] * (((columns - 1) - sum(is.na(count[i, ]))) / as.numeric(columns - 1))
+            NAValues = c(NAValues, i)
         }
-      }
     }
-  }
 
-  # remove na rows from table
-  count <- count[complete.cases(count),]
+    # go through every NA row and if they match, add partials to complete frequencies
+    for(a in NAValues){
+        for(i in 1:rows){
+            if(i %in% NAValues){
+                next
+            } else {
+                check = count[a,1:columns - 1] == count[i, 1:columns - 1]
+                if(!any(check == FALSE, na.rm = TRUE)){
+                    count[i, columns] = count[i, columns] + count[a, columns]
+                }
+            }
+        }
+    }
 
-  # get n highest rows, if no n inputted, default to top five
-  if (!missing(n)){
-    count <- head(count[order(-count$freq),], n)
-  } else {
-    count <- head(count[order(-count$freq),], 5)
-  }
-  
-  for(i in 1:columns){
-    if(is.numeric(count[, i])){
-      next
+    # remove na rows from table
+    count <- count[complete.cases(count),]
+
+    # get n highest rows, if no n inputted, default to top five
+    if (!missing(n)){
+        count <- head(count[order(-count$freq),], n)
     } else {
-      count[[i]] <- factor(count[[i]])
+        count <- head(count[order(-count$freq),], 5)
     }
-  }
-  
-  return(count)
+
+    for(i in 1:columns){
+        if(is.numeric(count[, i])){
+            next
+        } else {
+            count[[i]] <- factor(count[[i]])
+        }
+    }
+
+    return(count)
 }
 
 
@@ -105,83 +106,85 @@ partialNA = function (dataset, n){
 # name: name for plot
 draw = function(partial, name, labelsOff) {
 
-  width <- ncol(partial)-1
-  # get only numbers
-  nums <- Filter(is.numeric, partial)
-  max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
-  max_freq <- max(partial[,width+1])
+    width <- ncol(partial)-1
+    # get only numbers
+    nums <- Filter(is.numeric, partial)
+    max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
+    max_freq <- max(partial[,width+1])
 
-  categ <- list()
-  
-  # create labels for categorical variables
-  # if there is a greater max_y, replace
-  for(i in 1:(ncol(partial))){
-      categ[[i]] <- c(levels(partial[, i]))
-      if (max_y < nlevels(partial[, i])){
-          max_y <- nlevels(partial[, i])
-      }
-  }
-  # draw one graph
-  # creation of initial plot
-  cats = rep(max_y, width)
-  baserow = c(1, cats) 
-  if (!missing(name)){
-    png(name)
-  }
-  plot(baserow,type="n", ylim = range(0,max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
-  
-  # Add aesthetic
-  title(main="Parallel Coordinates", col.main="black", font.main=4)
-  axis(1, at=1:width, lab=head(colnames(partial), -1))
-  axis(2, at=seq(0,max_y,1))
-  
-  # Get scale for lines if large dataset
-  if(max_freq > 500){
-    scale <- 0.10 * max_freq
-  } else {
-    scale <- 1
-  }
+    categ <- list()
 
-  colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
-  legend("bottomright", legend=seq(1, min(20, round(max_freq, digits=0))), pch=19, col=colfunc(min(20, round(max_freq, digits=0))))
-
-  maxfreq <- max(partial[,-1])
-  
-  # add on lines
-  for(i in 1:nrow(partial)){
-      row <- partial[i,1:width]
-      row <- as.numeric(row)
-      fr <- partial[i, width+1] / scale # determine thickness via frequency
-
-      lines(row, type='o', col=colfunc(maxfreq)[round(partial[i, width+1]/scale, digits=0)], lwd=fr) # add plot lines
-
-    if(!missing(labelsOff) && labelsOff == FALSE){
-      # add on labels
-      for(i in 1:(ncol(partial)-1)){
-        # if this column is full of categorical variables
-        if (i <= length(categ) && !is.null(categ[[i]])){
-          for(j in 1:length(categ[[i]])){
-              text(i, j, categ[[i]][j])
-          }
+    # create labels for categorical variables
+    # if there is a greater max_y, replace
+    for(i in 1:(ncol(partial))){
+        categ[[i]] <- c(levels(partial[, i]))
+        if (max_y < nlevels(partial[, i])){
+            max_y <- nlevels(partial[, i])
         }
-      }
     }
-  }
+    # draw one graph
+    # creation of initial plot
+    cats = rep(max_y, width)
+    baserow = c(1, cats) 
+    if (!missing(name)){
+        png(name)
+    }
+    layout(matrix(1:2,ncol=2), width = c(2,1),height = c(1,1))
+    plot(baserow,type="n", ylim = range(0, max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
+
+    # Add aesthetic
+    title(main="Parallel Coordinates", col.main="black", font.main=4)
+    axis(1, at=1:width, lab=head(colnames(partial), -1))
+    axis(2, at=seq(0,max_y,1))
+
+    # Get scale for lines if large dataset
+    if(max_freq > 500){
+        scale <- 0.10 * max_freq
+    } else {
+        scale <- 1
+    }
+
+    colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
+
+    maxfreq <- max(partial[,-1])
+
+    # add on lines
+    for(i in 1:nrow(partial)){
+        row <- partial[i,1:width]
+        row <- as.numeric(row)
+        fr <- partial[i, width+1] / scale # determine thickness via frequency
+
+        lines(row, type='o', col=colfunc(maxfreq)[round(partial[i, width+1]/scale, digits=0)], lwd=fr) # add plot lines
+
+        if(!missing(labelsOff) && labelsOff == FALSE){
+            # add on labels
+            for(i in 1:(ncol(partial)-1)){
+                # if this column is full of categorical variables
+                if (i <= length(categ) && !is.null(categ[[i]])){
+                    for(j in 1:length(categ[[i]])){
+                        text(i, j, categ[[i]][j])
+                    }
+                }
+            }
+        }
+    }
+    legend_image <- as.raster(matrix(colfunc(20), ncol=1))
+    plot(c(0,2),c(0,1),type = 'n', axes = F,xlab = '', ylab = '', main = 'Frequency %')
+    text(x=1.5, y = seq(0, 1, l=5), labels = seq(1,0,l=5))
+    rasterImage(legend_image, 0, 0, 1, 1)
 }
 
 smallexample <- function(n, categ) {
-  #dataset = data(smallexample)
-  file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-  dataset = read.table(file, header=TRUE, sep=";", na.strings="")
+    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+    dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
-  # select top n frequencies
-  if (missing(n)){
-    partial <- partialNA(dataset)  
-  }
-  else {
-    partial <- partialNA(dataset, n)
-  }
-  #draw(partial)
+    # select top n frequencies
+    if (missing(n)){
+        partial <- partialNA(dataset)  
+    }
+    else {
+        partial <- partialNA(dataset, n)
+    }
 }
 
 # this is the main graphing function - use this
@@ -192,44 +195,44 @@ smallexample <- function(n, categ) {
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
 disparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
-  
-  # check to see if column name is valid
-  if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
-    stop("Invalid column names")
-  # check to see if grpcategory given
-  } else if (is.null(grpcategory)){
-    # get top k or default to five
-    par(mfrow=c(1,1))
-    if(is.null(k)){
-      partial <- partialNA(data, 5)
+
+    # check to see if column name is valid
+    if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
+        stop("Invalid column names")
+        # check to see if grpcategory given
+    } else if (is.null(grpcategory)){
+        # get top k or default to five
+        par(mfrow=c(1,1))
+        if(is.null(k)){
+            partial <- partialNA(data, 5)
+        } else {
+            partial <- partialNA(data, k)
+        }
+
+        # to permute or not to permute
+        if(permute){
+            partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
+        }
+
+        draw(partial)
+        # grpcategory is given and is valid
     } else {
-      partial <- partialNA(data, k)
+        lvls = levels(data[[grpcategory]])
+        par(mfrow=c(2,1)) 
+        for(i in 1:length(lvls)){
+            cat = lvls[i]
+            graph = data[which(data[[grpcategory]] == cat), ]
+            data = data[, !(colnames(data) %in% c(grpcategory))]
+            if(is.null(k)){
+                partial <- partialNA(data, 5)
+            } else {
+                partial <- partialNA(data, k)
+            }
+
+            if(permute){
+                partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
+            }
+            draw(partial)
+        }
     }
-    
-    # to permute or not to permute
-    if(permute){
-      partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
-    }
-    
-    draw(partial)
-  # grpcategory is given and is valid
-  } else {
-    lvls = levels(data[[grpcategory]])
-    par(mfrow=c(2,1)) 
-    for(i in 1:length(lvls)){
-      cat = lvls[i]
-      graph = data[which(data[[grpcategory]] == cat), ]
-      data = data[, !(colnames(data) %in% c(grpcategory))]
-      if(is.null(k)){
-        partial <- partialNA(data, 5)
-      } else {
-        partial <- partialNA(data, k)
-      }
-      
-      if(permute){
-        partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
-      }
-      draw(partial)
-    }
-  }
 }
