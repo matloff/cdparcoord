@@ -126,12 +126,12 @@ draw = function(partial, name, labelsOff) {
   cats = rep(max_y, width)
   baserow = c(1, cats) 
   if (!missing(name)){
-    pdf(name)
+    png(name)
   }
   plot(baserow,type="n", ylim = range(0,max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
   
   # Add aesthetic
-  title(main="Parallel Coordinates", col.main="red", font.main=4)
+  title(main="Parallel Coordinates", col.main="black", font.main=4)
   axis(1, at=1:width, lab=head(colnames(partial), -1))
   axis(2, at=seq(0,max_y,1))
   
@@ -141,15 +141,20 @@ draw = function(partial, name, labelsOff) {
   } else {
     scale <- 1
   }
+
+  colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
+  legend("bottomright", legend=seq(1, 20), pch=19, col=colfunc(20))
+
+  maxfreq <- max(partial[,-1])
   
   # add on lines
   for(i in 1:nrow(partial)){
       row <- partial[i,1:width]
       row <- as.numeric(row)
       fr <- partial[i, width+1] / scale # determine thickness via frequency
-      lines(row, type='o', col="green", lwd=fr) # add plot lines
 
-    #if(missing(labelsOff) || labelsOff == FALSE){
+      lines(row, type='o', col=colfunc(maxfreq)[round(partial[i, width+1]/scale, digits=0)], lwd=fr) # add plot lines
+
     if(!missing(labelsOff) && labelsOff == FALSE){
       # add on labels
       for(i in 1:(ncol(partial)-1)){
@@ -165,7 +170,8 @@ draw = function(partial, name, labelsOff) {
 }
 
 smallexample <- function(n, categ) {
-  dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
+  #dataset = read.csv("freqparcoord.cd/data/smallexample.csv")
+  dataset = read.csv("../data/smallexample.csv")
   # select top n frequencies
   if (missing(n)){
     partial <- partialNA(dataset)  
@@ -173,6 +179,7 @@ smallexample <- function(n, categ) {
   else {
     partial <- partialNA(dataset, n)
   }
+  draw(partial)
 }
 
 # this is the main graphing function - use this
@@ -225,4 +232,4 @@ disparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
   }
 }
 
-
+smallexample()
