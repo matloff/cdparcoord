@@ -182,33 +182,46 @@ smallexample <- function(n, categ) {
 # 2. interactive columns
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
-disparcoord <- function(data, k = NULL, grpcategory = FALSE, permute = FALSE){
+disparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
   
-  # if a value is given - get the top k tuples, otherwise default is top five
-  if(is.null(k)){
-    partial <- partialNA(data, 5)
-  } else {
-    partial <- partialNA(data, k)
-  }
-
-  if(permute){
-    partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
-  }
-  
-  # plot and group according to column, output different graphs based on column value
-  if (grpcategory){
-    n = grpcategory
-    # make sure categ is < numCols
-    if (n < ncol(partial)){
-      print(unique(partial[,n]))
-      options <- unique(partial[,n])
-      for(element in options){
-        subset <- partial[ which(partial[,n] == element),]
-        draw(subset, paste(element, ".pdf", sep=""))
-      }
+  # check to see if column name is valid
+  if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
+    stop("Invalid column names")
+  # check to see if grpcategory given
+  } else if (is.null(grpcategory)){
+    # get top k or default to five
+    par(mfrow=c(1,1))
+    if(is.null(k)){
+      partial <- partialNA(data, 5)
+    } else {
+      partial <- partialNA(data, k)
     }
-  } else {
+    
+    # to permute or not to permute
+    if(permute){
+      partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
+    }
+    
     draw(partial)
+  # grpcategory is given and is valid
+  } else {
+    lvls = levels(data[[grpcategory]])
+    par(mfrow=c(2,1)) 
+    for(i in 1:length(lvls)){
+      cat = lvls[i]
+      graph = data[which(data[[grpcategory]] == cat), ]
+      data = data[, !(colnames(data) %in% c(grpcategory))]
+      if(is.null(k)){
+        partial <- partialNA(data, 5)
+      } else {
+        partial <- partialNA(data, k)
+      }
+      
+      if(permute){
+        partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
+      }
+      draw(partial)
+    }
   }
 }
 
