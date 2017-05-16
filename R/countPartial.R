@@ -170,7 +170,9 @@ draw = function(partial, name, labelsOff) {
 }
 
 smallexample <- function(n, categ) {
-  dataset = data(smallexample)
+  #dataset = data(smallexample)
+  file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+  dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
   # select top n frequencies
   if (missing(n)){
