@@ -110,7 +110,7 @@ draw = function(partial, name, labelsOff) {
     # get only numbers
     nums <- Filter(is.numeric, partial)
     max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
-    max_freq <- max(partial[,width+1])
+    max_freq <- max(partial[,ncol(partial)])
 
     categ <- list()
 
@@ -154,7 +154,7 @@ draw = function(partial, name, labelsOff) {
         row <- as.numeric(row)
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
-        lines(row, type='o', col=colfunc(maxfreq)[round(partial[i, width+1]/scale, digits=0)], lwd=fr) # add plot lines
+        lines(row, type='o', col=colfunc(maxfreq)[round(fr/scale, digits=0)], lwd=fr) # add plot lines
 
         if(!missing(labelsOff) && labelsOff == FALSE){
             # add on labels
