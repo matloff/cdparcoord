@@ -184,6 +184,8 @@ smallexample <- function(n, categ) {
     else {
         partial <- partialNA(dataset, n)
     }
+    print(partial)
+    draw(partial)
 }
 
 # this is the main graphing function - use this
