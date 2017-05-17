@@ -146,7 +146,6 @@ draw = function(partial, name, labelsOff) {
 
     colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
 
-    maxfreq <- max(partial[,-1])
 
     # add on lines
     for(i in 1:nrow(partial)){
@@ -154,7 +153,7 @@ draw = function(partial, name, labelsOff) {
         row <- as.numeric(row)
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
-        lines(row, type='o', col=colfunc(maxfreq)[round(fr/scale, digits=0)], lwd=fr) # add plot lines
+        lines(row, type='o', col=colfunc(max_freq)[round(fr/scale, digits=0)], lwd=fr) # add plot lines
 
         if(!missing(labelsOff) && labelsOff == FALSE){
             # add on labels
@@ -194,7 +193,7 @@ smallexample <- function(n, categ) {
 # 2. interactive columns
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
-disparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
+discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
