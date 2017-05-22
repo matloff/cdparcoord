@@ -207,7 +207,6 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
             partial[[col]] = as.numeric(partial[[col]])
         }
     }
-    print(partial)
 
     # find the max value and the max frequency
     nums <- Filter(is.numeric, partial)
@@ -222,12 +221,26 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
         }
 
         # Create list of lists for graphing
-        interactiveList[[i]] <-
-            list(range = c(1,max_y), 
-            constraintrange = c(1,max_y),
-            label = colnames(partial)[i],
-            values = unlist(partial[,i]))
-        print(unlist(partial[,i]))
+        
+        # If it is a categorical variable, add ticks and labels
+        if (i <= length(categ) && !is.null(categ[[i]])){
+            interactiveList[[i]] <-
+                list(range = c(1,max_y), 
+                constraintrange = c(1,max_y),
+                label = colnames(partial)[i],
+                values = unlist(partial[,i]),
+                tickvals = 1:length(categ[[i]]),
+                ticktext = categ[[i]]
+                )
+        }
+        else {
+            interactiveList[[i]] <-
+                list(range = c(1,max_y), 
+                constraintrange = c(1,max_y),
+                label = colnames(partial)[i],
+                values = unlist(partial[,i]))
+        }
+
     }
 
     # Convert partial to plot
@@ -241,14 +254,6 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
                             cmin = min_freq,
                             cmax = max_freq),
                 dimensions = interactiveList
-                #dimensions = list(
-                #         list(range=c(1,5),
-                #              constraintrange = c(1,2),
-                #              label='cat1', values=partial$cat1),
-                #         list(range=c(1,5),
-                #              constraintrange = c(1,2),
-                #              label='cat2', values=partial$cat2)
-                #         )
                 )
 
     p
@@ -310,8 +315,8 @@ interactexample <- function() {
 }
 
 smallexample <- function(n, categ) {
-    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-    #file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
+    #file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+    file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
     dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
     # select top n frequencies
