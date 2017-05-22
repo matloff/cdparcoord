@@ -116,12 +116,13 @@ draw = function(partial, name, labelsOff) {
 
     # create labels for categorical variables
     # if there is a greater max_y, replace
-    for(i in 1:(ncol(partial))){
+    for(i in 1:(ncol(partial)-1)){
         categ[[i]] <- c(levels(partial[, i]))
         if (max_y < nlevels(partial[, i])){
             max_y <- nlevels(partial[, i])
         }
     }
+
     # draw one graph
     # creation of initial plot
     cats = rep(max_y, width)
@@ -145,7 +146,6 @@ draw = function(partial, name, labelsOff) {
     }
 
     colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
-
 
     # add on lines
     for(i in 1:nrow(partial)){
@@ -173,8 +173,145 @@ draw = function(partial, name, labelsOff) {
     rasterImage(legend_image, 0, 0, 1, 1)
 }
 
+# requires GGally
+interactivedraw <- function(partial, name="Parallel", labelsOff) {
+
+    library(plotly)
+    # Initialize API keys for plotly
+    Sys.setenv("plotly_username"="aeonneo")
+    ***REMOVED***
+
+    # create list of lists of lines
+    interactiveList <- list()
+    categ <- list()
+
+    # Map unique categorical variables to numbers
+    for(col in 1:(ncol(partial)-1)){
+        # Store the columns that have categorical variables
+        categ[[col]] <- c(levels(partial[, col]))
+
+        # if this column has categorical variables, change its values
+        # to the corresponding numbers accordingly.
+        if (col <= length(categ) && !is.null(categ[[col]])){
+            for(j in 1:(nrow(partial))){
+                tempval <- which(categ[[col]] == partial[j,col])
+
+                # Stop factorizing while we set the value
+                partial[[col]] = as.character(partial[[col]])
+                partial[j, col] <- tempval
+
+                # After setting the value, reset factors
+                partial[[col]] = as.factor(partial[[col]])
+            }
+            # Stop factorizing now that all values are numbers
+            partial[[col]] = as.numeric(partial[[col]])
+        }
+    }
+    print(partial)
+
+    # find the max value and the max frequency
+    nums <- Filter(is.numeric, partial)
+    max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
+    max_freq <- max(partial[,ncol(partial)])
+    min_freq <- min(partial[,ncol(partial)])
+
+    # update max value for categorical variables, not including freq
+    for(i in 1:(ncol(partial)-1)){
+        if (max_y < nlevels(partial[, i])){
+            max_y <- nlevels(partial[, i])
+        }
+
+        # Create list of lists for graphing
+        interactiveList[[i]] <-
+            list(range = c(1,max_y), 
+            constraintrange = c(1,max_y),
+            label = colnames(partial)[i],
+            values = unlist(partial[,i]))
+        print(unlist(partial[,i]))
+    }
+
+    # Convert partial to plot
+    colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
+    p <- partial %>%
+        plot_ly(type = 'parcoords', 
+                line = list(color = ~freq,
+                            colorscale = 'Jet',
+                            showscale = TRUE,
+                            reversescale = TRUE,
+                            cmin = min_freq,
+                            cmax = max_freq),
+                dimensions = interactiveList
+                #dimensions = list(
+                #         list(range=c(1,5),
+                #              constraintrange = c(1,2),
+                #              label='cat1', values=partial$cat1),
+                #         list(range=c(1,5),
+                #              constraintrange = c(1,2),
+                #              label='cat2', values=partial$cat2)
+                #         )
+                )
+
+    p
+    # Create plot
+    #chart_link = api_create(p, filename=name)
+    #chart_link
+}
+
+interactexample <- function() {
+    df <- read.csv("freqparcoord.cd/data/parcoords_data.csv")
+    df
+    library(plotly)
+
+    #df <- read.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/parcoords_data.csv")
+
+    p <- df %>%
+        plot_ly(width = 1000, height = 600) %>%
+        add_trace(type = 'parcoords',
+                  line = list(color = ~colorVal,
+                              colorscale = 'Jet',
+                              showscale = TRUE,
+                              reversescale = TRUE,
+                              cmin = -4000,
+                              cmax = -100),
+                  dimensions = list(
+                                    list(range = c(~min(blockHeight),~max(blockHeight)),
+                                         constraintrange = c(100000,150000),
+                                         label = 'Block Height', values = ~blockHeight),
+                                    list(range = c(~min(blockWidth),~max(blockWidth)),
+                                         label = 'Block Width', values = ~blockWidth),
+                                    list(tickvals = c(0,0.5,1,2,3),
+                                         ticktext = c('A','AB','B','Y','Z'),
+                                         label = 'Cyclinder Material', values = ~cycMaterial),
+                                    list(range = c(-1,4),
+                                         tickvals = c(0,1,2,3),
+                                         label = 'Block Material', values = ~blockMaterial),
+                                    list(range = c(~min(totalWeight),~max(totalWeight)),
+                                         visible = TRUE,
+                                         label = 'Total Weight', values = ~totalWeight),
+                                    list(range = c(~min(assemblyPW),~max(assemblyPW)),
+                                         label = 'Assembly Penalty Weight', values = ~assemblyPW),
+                                    list(range = c(~min(HstW),~max(HstW)),
+                                         label = 'Height st Width', values = ~HstW),
+                                    list(range = c(~min(minHW),~max(minHW)),
+                                         label = 'Min Height Width', values = ~minHW),
+                                    list(range = c(~min(minWD),~max(minWD)),
+                                         label = 'Min Width Diameter', values = ~minWD),
+                                    list(range = c(~min(rfBlock),~max(rfBlock)),
+                                         label = 'RF Block', values = ~rfBlock)
+                                    )
+                  )
+
+
+        # Create a shareable link to your chart
+        # Set up API credentials: https://plot.ly/r/getting-started
+        #chart_link = api_create(p)
+        #chart_link
+        p
+}
+
 smallexample <- function(n, categ) {
     file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+    #file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
     dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
     # select top n frequencies
@@ -185,7 +322,8 @@ smallexample <- function(n, categ) {
         partial <- partialNA(dataset, n)
     }
     print(partial)
-    draw(partial)
+    #draw(partial)
+    interactivedraw(partial)
 }
 
 # this is the main graphing function - use this
