@@ -173,17 +173,30 @@ draw = function(partial, name, labelsOff) {
     rasterImage(legend_image, 0, 0, 1, 1)
 }
 
-# requires GGally
+# Accepts a result from partialNA and draws interactively using plotly
+# Plots will open in browser and be saveable from there
+# requires GGally and plotly
 interactivedraw <- function(partial, name="Parallel", labelsOff) {
+    # How it works:
+    # Plotly requires input by columns of values. For example,
+    # we would take col1, col2, col3, each of which has 3 values.
+    # Then, col1.val1, col2.val1, col3.val1 would make one line. 
+    # For categorical variables, we map each unique variable, found
+    # with factors, down to a corresponding number. We then substitute
+    # this number in the original dataset, then plot it. Finally,
+    # we use our mapping from labels to numbers to actually demonstrate
+    # which categorical variable represents what. 
+
+
 
     library(plotly)
-    # Initialize API keys for plotly
-    Sys.setenv("plotly_username"="aeonneo")
-    ***REMOVED***
 
-    # create list of lists of lines
+    # create list of lists of lines to be inputted for Plotly
     interactiveList <- list()
-    categ <- list()
+
+    # Store categorical variables - categ[[i]] holds the ith column's unique
+    # variables. If categ[[i]] is null, that means it is not categorical.
+    categ <- list() 
 
     # Map unique categorical variables to numbers
     for(col in 1:(ncol(partial)-1)){
@@ -208,7 +221,7 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
         }
     }
 
-    # find the max value and the max frequency
+    # find the max value and the max frequency to set max/min for our plot
     nums <- Filter(is.numeric, partial)
     max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
     max_freq <- max(partial[,ncol(partial)])
@@ -233,6 +246,7 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
                 ticktext = categ[[i]]
                 )
         }
+        # Otherwise, you don't need special ticks/labels
         else {
             interactiveList[[i]] <-
                 list(range = c(1,max_y), 
@@ -240,11 +254,9 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
                 label = colnames(partial)[i],
                 values = unlist(partial[,i]))
         }
-
     }
 
     # Convert partial to plot
-    colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
     p <- partial %>%
         plot_ly(type = 'parcoords', 
                 line = list(color = ~freq,
@@ -257,65 +269,9 @@ interactivedraw <- function(partial, name="Parallel", labelsOff) {
                 )
 
     p
-    # Create plot
-    #chart_link = api_create(p, filename=name)
-    #chart_link
 }
 
-interactexample <- function() {
-    df <- read.csv("freqparcoord.cd/data/parcoords_data.csv")
-    df
-    library(plotly)
-
-    #df <- read.csv("https://raw.githubusercontent.com/bcdunbar/datasets/master/parcoords_data.csv")
-
-    p <- df %>%
-        plot_ly(width = 1000, height = 600) %>%
-        add_trace(type = 'parcoords',
-                  line = list(color = ~colorVal,
-                              colorscale = 'Jet',
-                              showscale = TRUE,
-                              reversescale = TRUE,
-                              cmin = -4000,
-                              cmax = -100),
-                  dimensions = list(
-                                    list(range = c(~min(blockHeight),~max(blockHeight)),
-                                         constraintrange = c(100000,150000),
-                                         label = 'Block Height', values = ~blockHeight),
-                                    list(range = c(~min(blockWidth),~max(blockWidth)),
-                                         label = 'Block Width', values = ~blockWidth),
-                                    list(tickvals = c(0,0.5,1,2,3),
-                                         ticktext = c('A','AB','B','Y','Z'),
-                                         label = 'Cyclinder Material', values = ~cycMaterial),
-                                    list(range = c(-1,4),
-                                         tickvals = c(0,1,2,3),
-                                         label = 'Block Material', values = ~blockMaterial),
-                                    list(range = c(~min(totalWeight),~max(totalWeight)),
-                                         visible = TRUE,
-                                         label = 'Total Weight', values = ~totalWeight),
-                                    list(range = c(~min(assemblyPW),~max(assemblyPW)),
-                                         label = 'Assembly Penalty Weight', values = ~assemblyPW),
-                                    list(range = c(~min(HstW),~max(HstW)),
-                                         label = 'Height st Width', values = ~HstW),
-                                    list(range = c(~min(minHW),~max(minHW)),
-                                         label = 'Min Height Width', values = ~minHW),
-                                    list(range = c(~min(minWD),~max(minWD)),
-                                         label = 'Min Width Diameter', values = ~minWD),
-                                    list(range = c(~min(rfBlock),~max(rfBlock)),
-                                         label = 'RF Block', values = ~rfBlock)
-                                    )
-                  )
-
-
-        # Create a shareable link to your chart
-        # Set up API credentials: https://plot.ly/r/getting-started
-        #chart_link = api_create(p)
-        #chart_link
-        p
-}
-
-smallexample <- function(n, categ) {
-    #file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+interactcategoricalexample <- function(n, categ) {
     file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
     dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
@@ -327,8 +283,22 @@ smallexample <- function(n, categ) {
         partial <- partialNA(dataset, n)
     }
     print(partial)
-    #draw(partial)
     interactivedraw(partial)
+}
+
+smallexample <- function(n, categ) {
+    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
+    dataset = read.table(file, header=TRUE, sep=";", na.strings="")
+
+    # select top n frequencies
+    if (missing(n)){
+        partial <- partialNA(dataset)  
+    }
+    else {
+        partial <- partialNA(dataset, n)
+    }
+    print(partial)
+    draw(partial)
 }
 
 # this is the main graphing function - use this
