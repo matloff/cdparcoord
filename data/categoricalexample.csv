@@ -1,6 +1,6 @@
-col1,col2,col3,col4
-red,1,alice,red
-black,1,alice,red
-orange,1,bob,black
-orange,1,bob,black
-orange,2,bob,black
+col1;col2;col3;col4
+red;1;alice;red
+black;1;alice;red
+orange;1;bob;black
+orange;1;bob;black
+orange;2;bob;black
