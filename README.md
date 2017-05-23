@@ -12,8 +12,6 @@ The black screen problem occurs when there are too many data points to
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 
-![Black Screen Problem](blackscreen.png)
-
 This is solved in *freqparcoord* by
 displaying on the most frequent relations.  However, this is not
 suitable for categorical variables (though one can make them grouping
@@ -28,24 +26,25 @@ lesser extents.
 ### Instructions
 
 We provide 4 key functions -- **partialNA()** **draw()** **permute()** and
-**discretize()**  The call **partialNA(dataset,n)** inputs a dataset and
-returns a new dataset consisting of the **n** most frequent patterns
+**discretize()**  
 
+1. The call **partialNA(dataset,n)** inputs a dataset and
+returns a new dataset consisting of the **n** most frequent patterns
 with an added column -
 the frequency of each column.  This dataset contains no NA values, as
 all of the columns previously with NA values have now been eliminated. 
 
-`draw` takes a dataset and draws a parallel coordinates plot in the same directory. It
+2. `draw` takes a dataset and draws a parallel coordinates plot in the same directory. It
 also takes a name for the name of the plot, and a choice for whether or not to have labels. When there are 
 many data points, the labels are unreadable and for these times it is better to leave labels off. The default is 
 to have labels on. 
 
-`discretize` takes a dataset and a list of lists. It discretizes the dataset's values such that `plot()` may chart 
+3. `discretize` takes a dataset and a list of lists. It discretizes the dataset's values such that `plot()` may chart 
 categorical variables.
 The inner list should contain the following variables: `int partitions`, `string vector labels`, `vector lower bounds`, 
 `vector upper bounds`. The last three are optional.
 
-`permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
+4. `permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
 
 ### Implementation
 
