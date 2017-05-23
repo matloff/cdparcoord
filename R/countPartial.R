@@ -176,7 +176,7 @@ draw = function(partial, name, labelsOff) {
 # Accepts a result from partialNA and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
-interactivedraw <- function(partial, name="Parallel", labelsOff) {
+interactivedraw <- function(partial) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -286,7 +286,7 @@ interactcategoricalexample <- function(n, categ) {
     interactivedraw(partial)
 }
 
-smallexample <- function(n, categ) {
+smallexample <- function(n) {
     file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
     dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
