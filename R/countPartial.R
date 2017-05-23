@@ -350,7 +350,9 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         # grpcategory is given and is valid
     } else {
         lvls = levels(data[[grpcategory]])
-        par(mfrow=c(2,1)) 
+        if (!interactive){
+            par(mfrow=c(2,1)) 
+        }
         for(i in 1:length(lvls)){
             cat = lvls[i]
             graph = data[which(data[[grpcategory]] == cat), ]
