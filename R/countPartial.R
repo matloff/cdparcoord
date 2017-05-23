@@ -237,20 +237,33 @@ interactivedraw <- function(partial) {
         
         # If it is a categorical variable, add ticks and labels
         if (i <= length(categ) && !is.null(categ[[i]])){
+
+            if (length(categ[[i]]) == 1){
+                interactiveList[[i]] <-
+                    list(range = c(0, 2),
+                    label = colnames(partial)[i],
+                    values = unlist(partial[,i]),
+                    tickvals = 0:2,
+                    ticktext = c(" ", categ[[i]][[1]], " ")
+                    )
+            }
+            else {
             interactiveList[[i]] <-
-                list(range = c(1,max_y), 
-                constraintrange = c(1,max_y),
+                list(range = c(min(partial[[i]]), max(partial[[i]])),
+                constraintrange = c(min(partial[[i]]), max(partial[[i]])),
                 label = colnames(partial)[i],
                 values = unlist(partial[,i]),
                 tickvals = 1:length(categ[[i]]),
                 ticktext = categ[[i]]
                 )
+            }
         }
         # Otherwise, you don't need special ticks/labels
         else {
             interactiveList[[i]] <-
-                list(range = c(1,max_y), 
-                constraintrange = c(1,max_y),
+                list(range = c(min(partial[[i]]), max(partial[[i]])),
+                     tickformat = '.2f',
+                constraintrange = c(min(partial[[i]]), max(partial[[i]])),
                 label = colnames(partial)[i],
                 values = unlist(partial[,i]))
         }
@@ -308,7 +321,8 @@ smallexample <- function(n) {
 # 2. interactive columns
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
-discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
+discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
+                         interactive = FALSE){
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -316,7 +330,6 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
         # check to see if grpcategory given
     } else if (is.null(grpcategory)){
         # get top k or default to five
-        par(mfrow=c(1,1))
         if(is.null(k)){
             partial <- partialNA(data, 5)
         } else {
@@ -328,7 +341,12 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
             partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
         }
 
-        draw(partial)
+        if (!interactive){
+            draw(partial)
+        }
+        else {
+            interactivedraw(partial)
+        }
         # grpcategory is given and is valid
     } else {
         lvls = levels(data[[grpcategory]])
@@ -346,7 +364,12 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE){
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }
-            draw(partial)
+            if (!interactive){
+                draw(partial)
+            }
+            else {
+                interactivedraw(partial)
+            }
         }
     }
 }

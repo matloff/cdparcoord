@@ -22,7 +22,7 @@
 }
 
 \usage{
-    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE)
+    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE)
 }
 
 \arguments{
@@ -38,6 +38,9 @@
     \item{permute}{
         Whether or not you want to permute the columns before drawing.
     }
+    \item{interactive}{
+        Whether or not you want to use interactive plotting. 
+    }
 }
 
 \details{
@@ -49,7 +52,7 @@
     Height axis, 160 on the Weight axis, and 28 on the Age axis. An example of this is parcoord, 
     found in the MASS package.
 
-    One of hte issues with parallel coordinates is that if there are too many lines, the screen will
+    One of the issues with parallel coordinates is that if there are too many lines, the screen will
     be cluttered, hence "black screen problem". The package this extends, freqparcoord, addresses this
     for continuous variables; discparcoord fixes this problem when dealing with discrete variables by 
     plotting only the most occuring tuples (user specified amount).
@@ -89,4 +92,7 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 
     # same as above, but group according to profession
     discparcoord(hrdata, grpcategory="sales")
+
+    # same as above, but with an interactive plot
+    discparcoord(hrdata, interactive=TRUE)
 }
