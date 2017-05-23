@@ -104,7 +104,7 @@ partialNA = function (dataset, n){
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw = function(partial, name, labelsOff) {
+draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
 
     width <- ncol(partial)-1
     # get only numbers
@@ -127,14 +127,15 @@ draw = function(partial, name, labelsOff) {
     # creation of initial plot
     cats = rep(max_y, width)
     baserow = c(1, cats) 
-    if (!missing(name)){
-        png(name)
+    if (save) {
+        png(paste(name, "csv", sep=".")) # Save the file instead of displaying
     }
+
     layout(matrix(1:2,ncol=2), width = c(2,1),height = c(1,1))
     plot(baserow,type="n", ylim = range(0, max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
 
     # Add aesthetic
-    title(main="Parallel Coordinates", col.main="black", font.main=4)
+    title(main=name, col.main="black", font.main=4)
     axis(1, at=1:width, lab=head(colnames(partial), -1))
     axis(2, at=seq(0,max_y,1))
 
@@ -176,7 +177,7 @@ draw = function(partial, name, labelsOff) {
 # Accepts a result from partialNA and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
-interactivedraw <- function(partial) {
+interactivedraw <- function(partial, name="Interactive Parcoords") {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -262,26 +263,26 @@ interactivedraw <- function(partial) {
         else {
             interactiveList[[i]] <-
                 list(range = c(min(partial[[i]]), max(partial[[i]])),
-                     tickformat = '.2f',
-                constraintrange = c(min(partial[[i]]), max(partial[[i]])),
-                label = colnames(partial)[i],
-                values = unlist(partial[,i]))
+                    tickformat = '.2f',
+                    constraintrange = c(min(partial[[i]]), max(partial[[i]])),
+                    label = colnames(partial)[i],
+                    values = unlist(partial[,i]))
         }
     }
 
     # Convert partial to plot
-    p <- partial %>%
+    partial %>%
         plot_ly(type = 'parcoords', 
-                line = list(color = ~freq,
+                line = list(color = partial$freq,
                             colorscale = 'Jet',
                             showscale = TRUE,
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
                 dimensions = interactiveList
-                )
+                ) %>%
+                layout(title=name)
 
-    p
 }
 
 interactcategoricalexample <- function(n, categ) {
@@ -322,7 +323,7 @@ smallexample <- function(n) {
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
-                         interactive = FALSE){
+                         interactive = FALSE, save=FALSE, name="Parcoords"){
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -342,17 +343,14 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         }
 
         if (!interactive){
-            draw(partial)
+            draw(partial, name=name, save=save)
         }
         else {
-            interactivedraw(partial)
+            interactivedraw(partial, name=name)
         }
         # grpcategory is given and is valid
     } else {
         lvls = levels(data[[grpcategory]])
-        if (!interactive){
-            par(mfrow=c(2,1)) 
-        }
         for(i in 1:length(lvls)){
             cat = lvls[i]
             graph = data[which(data[[grpcategory]] == cat), ]
@@ -367,10 +365,16 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }
             if (!interactive){
-                draw(partial)
+                if (save) {
+                    draw(partial, name=paste(name, cat), save=save)
+                }
+                else {
+                    quartz()
+                    draw(partial, name=paste(name, cat))
+                }
             }
             else {
-                interactivedraw(partial)
+                interactivedraw(partial, name=paste(name, cat))
             }
         }
     }
