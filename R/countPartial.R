@@ -369,7 +369,7 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
                     draw(partial, name=paste(name, cat), save=save)
                 }
                 else {
-                    quartz()
+                    generateScreen()
                     draw(partial, name=paste(name, cat))
                 }
             }
@@ -377,5 +377,21 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
                 interactivedraw(partial, name=paste(name, cat))
             }
         }
+    }
+}
+
+# Create a new screen for grpcategory
+generateScreen <- function() {
+    # MacOS
+    if (grepl("darwin", R.version$os)){
+        quartz()
+    }
+    # Linux
+    else if (grepl("linux", R.version$os) || grepl("gnu", R.version$os)) {
+        X11()
+    }
+    # Windows
+    else {
+        windows()
     }
 }
