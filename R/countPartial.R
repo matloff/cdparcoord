@@ -19,7 +19,7 @@ library(plotly)
 # cat2 = list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize = function (dataset, input){
+discretize <- function (dataset, input){
     for(col in input){
         # read all the input into local variables
         name = col[['name']]
@@ -48,7 +48,7 @@ discretize = function (dataset, input){
 # parameters:
 #   dataset (table): dataset to calculate partials for
 #   n (int): how many top rows to return (DEFAULT = 5)
-partialNA = function (dataset, n){
+partialNA = function (dataset, k){
     # using plyr library to get a table 
     count = count(dataset, vars = NULL, wt_var = NULL)
     dimensions = dim(count)
@@ -85,8 +85,8 @@ partialNA = function (dataset, n){
     count <- count[complete.cases(count),]
 
     # get n highest rows, if no n inputted, default to top five
-    if (!missing(n)){
-        count <- head(count[order(-count$freq),], n)
+    if (!missing(k)){
+        count <- head(count[order(-count$freq),], k)
     } else {
         count <- head(count[order(-count$freq),], 5)
     }
@@ -350,7 +350,7 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         if(is.null(k)){
             partial <- partialNA(data, 5)
         } else {
-            partial <- partialNA(data, k)
+            partial <- partialNA(data, k=k)
         }
 
         # to permute or not to permute
@@ -379,10 +379,10 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             ctgdata = data[, !(colnames(data) %in% c(grpcategory))]
 
             if (is.null(k)){
-                partial <- partialNA(ctgdata, 5)
+                partial <- partialNA(ctgdata, k=5)
             }
             else {
-                partial <- partialNA(ctgdata, k)
+                partial <- partialNA(ctgdata, k=k)
             }
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]

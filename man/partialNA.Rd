@@ -17,14 +17,14 @@ the (6, NA, 2) will count toward nothing.
 }
 
 \usage{
-partialNA(dataset, n)
+partialNA(dataset, k=5)
 }
 
 \arguments{
     \item{dataset}{
         The dataset to process. There may be NA values in this dataset.
     }
-    \item{n}{
+    \item{k}{
         The number of significant rows to return. By default, this returns the top 5.
     }
 }
