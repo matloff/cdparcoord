@@ -13,6 +13,8 @@ relationships and also select a segment on a vertical axis to selectively
 view patterns.
 
 You can save the graph from the window.
+
+Each axis is independent, and has its max/min based off of its own data.
 }
 
 \usage{

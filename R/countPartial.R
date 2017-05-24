@@ -1,4 +1,5 @@
 library(plyr)
+library(plotly)
 
 # possible optimization -> add in R code to find the # of columns first
 
@@ -40,9 +41,7 @@ discretize = function (dataset, input){
         }
 
     }
-
     return(dataset)
-
 }
 
 # currently counts all partials and adds them properly
@@ -61,12 +60,14 @@ partialNA = function (dataset, n){
     # count up and get the partial values of the NA rows
     for(i in 1:rows){
         if(sum(is.na(count[i, ])) > 0 ) {
-            count[i, columns] = count[i, columns] * (((columns - 1) - sum(is.na(count[i, ]))) / as.numeric(columns - 1))
+            count[i, columns] = count[i, columns] * (((columns - 1) - 
+                        sum(is.na(count[i, ]))) / as.numeric(columns - 1))
             NAValues = c(NAValues, i)
         }
     }
 
-    # go through every NA row and if they match, add partials to complete frequencies
+    # go through every NA row and if they match, 
+    # add partials to complete frequencies
     for(a in NAValues){
         for(i in 1:rows){
             if(i %in% NAValues){
@@ -104,7 +105,7 @@ partialNA = function (dataset, n){
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
+draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     width <- ncol(partial)-1
     # get only numbers
@@ -128,11 +129,13 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
     cats = rep(max_y, width)
     baserow = c(1, cats) 
     if (save) {
-        png(paste(name, "csv", sep=".")) # Save the file instead of displaying
+        png(paste(name, "png", sep=".")) # Save the file instead of displaying
     }
 
-    layout(matrix(1:2,ncol=2), width = c(2,1),height = c(1,1))
-    plot(baserow,type="n", ylim = range(0, max_y), xaxt="n",yaxt="n", xlab="",ylab="", frame.plot=FALSE)
+    # Layout left and right sides for the legend
+    layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
+    plot(baserow,type="n", ylim = range(0, max_y), 
+         xaxt="n", yaxt="n", xlab="", ylab="", frame.plot=FALSE)
 
     # Add aesthetic
     title(main=name, col.main="black", font.main=4)
@@ -154,7 +157,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
         row <- as.numeric(row)
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
-        lines(row, type='o', col=colfunc(max_freq)[round(fr/scale, digits=0)], lwd=fr) # add plot lines
+        lines(row, type='o', col=colfunc(max_freq)[round(fr/scale, digits=0)], 
+              lwd=fr) # add plot lines
 
         if(!missing(labelsOff) && labelsOff == FALSE){
             # add on labels
@@ -169,7 +173,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
         }
     }
     legend_image <- as.raster(matrix(colfunc(20), ncol=1))
-    plot(c(0,2),c(0,1),type = 'n', axes = F,xlab = '', ylab = '', main = 'Frequency %')
+    plot(c(0,2),c(0,1),type = 'n', axes = F, 
+         xlab = '', ylab = '', main = 'Frequency %')
     text(x=1.5, y = seq(0, 1, l=5), labels = seq(1,0,l=5))
     rasterImage(legend_image, 0, 0, 1, 1)
 }
@@ -187,8 +192,6 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
     # this number in the original dataset, then plot it. Finally,
     # we use our mapping from labels to numbers to actually demonstrate
     # which categorical variable represents what. 
-
-    library(plotly)
 
     # create list of lists of lines to be inputted for Plotly
     interactiveList <- list()
@@ -282,22 +285,22 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
                     dimensions = interactiveList)
     }
     else {
-        #partial %>%
-            plot_ly(partial, type = 'parcoords', 
-                    line = list(color = partial$freq,
-                                colorscale = 'Jet',
-                                showscale = TRUE,
-                                reversescale = TRUE,
-                                cmin = min_freq,
-                                cmax = max_freq),
-                    dimensions = interactiveList
-                    ) %>%
-                    layout(title=name)
+        plot_ly(partial, type = 'parcoords', 
+                line = list(color = partial$freq,
+                            colorscale = 'Jet',
+                            showscale = TRUE,
+                            reversescale = TRUE,
+                            cmin = min_freq,
+                            cmax = max_freq),
+                dimensions = interactiveList
+                ) %>%
+                layout(title=name)
     }
 }
 
 interactcategoricalexample <- function(n, categ) {
-    file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
+    file <- system.file("data", "categoricalexample.csv", 
+                        package="freqparcoord.cd")
     dataset = read.table(file, header=TRUE, sep=";", na.strings="")
 
     # select top n frequencies
@@ -339,8 +342,10 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
         stop("Invalid column names")
-        # check to see if grpcategory given
-    } else if (is.null(grpcategory)){
+    } 
+
+    # check to see if grpcategory given
+    else if (is.null(grpcategory)){
         # get top k or default to five
         if(is.null(k)){
             partial <- partialNA(data, 5)
@@ -359,11 +364,10 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         else {
             interactivedraw(partial, name=name)
         }
-        # grpcategory is given and is valid
     } 
+    # grpcategory is given and is valid
     else {
         lvls = levels(data[[grpcategory]])
-        partial <- partialNA(data)
 
         # generate a list of plots for grpcategory
         plots = list()
@@ -383,7 +387,9 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }
+
             if (!interactive){
+                # Saving is only an option on noninteractive plotting
                 if (save) {
                     draw(partial, name=paste(name, cat), save=save)
                 }
