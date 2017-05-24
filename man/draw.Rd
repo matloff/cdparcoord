@@ -11,7 +11,7 @@ frequency of each tuple, and draws a parallel coordinates plot.
 }
 
 \usage{
-draw(partial, name, labelsOff)
+draw(partial, name, labelsOff, save=FALSE)
 }
 
 \arguments{
@@ -23,6 +23,9 @@ draw(partial, name, labelsOff)
     }
     \item{labelsOff}{
         Whether or not you'd like to have labels. By default, labels are disabled.
+    }
+    \item{save}{
+        Whether or not you'd like to save to a file instead of immediately displaying.
     }
 }
 

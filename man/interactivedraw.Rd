@@ -11,15 +11,20 @@ frequency of each tuple, and draws an interactive parallel coordinates plot.
 These plots are useful in that you can drag columns to investigate further
 relationships and also select a segment on a vertical axis to selectively
 view patterns.
+
+You can save the graph from the window.
 }
 
 \usage{
-interactivedraw(partial)
+interactivedraw(partial, name)
 }
 
 \arguments{
     \item{partial}{
         The dataset after processing from partialNA().
+    }
+    \item{name}{
+        The name for the plot.
     }
 }
 

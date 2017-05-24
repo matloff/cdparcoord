@@ -22,7 +22,7 @@
 }
 
 \usage{
-    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE)
+    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE, save=FALSE, name="Parcoords")
 }
 
 \arguments{
@@ -40,6 +40,13 @@
     }
     \item{interactive}{
         Whether or not you want to use interactive plotting. 
+    }
+    \item{save}{
+        Whether or not you want to save the plot. If interactive mode is on, save
+        will be available from the browser.
+    }
+    \item{name}{
+        The name for the plot (default is Parcoords).
     }
 }
 
