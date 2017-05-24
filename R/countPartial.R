@@ -270,7 +270,6 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
 
 
     # Convert partial to plot
-
     if (name == ""){
         partial %>%
             plot_ly(type = 'parcoords', 
@@ -336,6 +335,7 @@ smallexample <- function(n) {
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
                          interactive = FALSE, save=FALSE, name="Parcoords"){
+
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
         stop("Invalid column names")
@@ -362,18 +362,14 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         # grpcategory is given and is valid
     } 
     else {
-        # get top k or default to five
         lvls = levels(data[[grpcategory]])
         partial <- partialNA(data)
 
-        print(length(lvls))
-        print(lvls[1])
-        i = 1
+        # generate a list of plots for grpcategory
+        plots = list()
 
-        #for(i in 1:length(lvls)){
-        #for(i in 1:2){
-            print(length(lvls))
-            print(lvls[i])
+        # iterate through each different value in the selected category
+        for(i in 1:length(lvls)){
             cat = lvls[i]
             graph = data[which(data[[grpcategory]] == cat), ]
             ctgdata = data[, !(colnames(data) %in% c(grpcategory))]
@@ -387,7 +383,6 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }
-            print(interactive)
             if (!interactive){
                 if (save) {
                     draw(partial, name=paste(name, cat), save=save)
@@ -398,49 +393,12 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
                 }
             }
             else {
-                fullname <- paste(name, cat)
-                interactivedraw(partial, name="")
-                #interactivedraw(partial, name="")
-
-                #p1 <- interactivedraw(partial, name="")
-                #p2 <- interactivedraw(partial, name="")
-                #subplot(p1,p2, nrows = 2) %>% layout(yaxis = list(domain = c(0, 0.48)), 
-                #    yaxis2 = list(domain = c(0.52, 1)))
+                numcat <- paste(i, cat)
+                fullname <- paste(name, numcat)
+                plots[[i]] <- interactivedraw(partial, name=fullname)
             }
-        #}
-
-    #else {
-    #    lvls = levels(data[[grpcategory]])
-
-        #for(i in 1:length(lvls)){
-        #    cat = lvls[i]
-        #    graph = data[which(data[[grpcategory]] == cat), ]
-        #    data = data[, !(colnames(data) %in% c(grpcategory))]
-        #    if(is.null(k)){
-        #        partial <- partialNA(data, 5)
-        #    } else {
-        #        partial <- partialNA(data, k)
-        #    }
-
-    #        if(permute){
-    #            partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
-    #        }
-
-    #        if (!interactive){
-    #            if (save) {
-    #                draw(partial, name=paste(name, cat), save=save)
-    #            }
-    #            else {
-    #                generateScreen()
-    #                draw(partial, name=paste(name, cat))
-    #            }
-    #        }
-    #        else {
-    #            fullname <- paste(name, cat)
-    #            #interactivedraw(partial, name=fullname)
-    #            interactivedraw(partial, name=fullname)
-    #        }
-        #}
+        }
+        return(plots)
     }
 }
 
