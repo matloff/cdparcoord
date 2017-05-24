@@ -2,7 +2,7 @@
 \alias{discretize}
 
 \title{
-    A small example demonstrating discretize.
+    Convert continuous variables to discrete data.
 }
 
 \description{
@@ -25,7 +25,7 @@ discretize(dataset, input)
 }
 
 \author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
 }
 
 \examples{
@@ -34,6 +34,7 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
     data(mlb)
     # Get the Height, Weight, Age, and Position of Players
     m <- mlb[,4:7]
+
     inp1 <- list("name" = "Height", 
                  "partitions"=4, 
                  "labels"=c("low", "lowmid", "highmid", "high"))

@@ -1,5 +1,6 @@
 \name{freqparcoord.cd}
 \alias{freqparcoord.cd}
+\alias{discparcoord}
 
 \title{
     Parallel coordinates.
