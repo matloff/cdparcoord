@@ -84,8 +84,8 @@ for a saved file output instead.
 ##### 2. Categorical Variable Example
 
 ##### 3. Permute Example
-![Before Permute](permute_1.png | width=100)
-![After Permute](permute_2.png | width=100)
+<img src="permute_1.png" alt="Before Permute" width="100"/>
+<img src="permute_2.png" alt="After Permute" width="100"/>
 
 ### Authors
 Norm Matloff, Harrison Nguyen, Vincent Yang
