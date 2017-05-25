@@ -44,10 +44,10 @@ discretize <- function (dataset, input){
 
     labelcol = list()
     labelorder = list()
-    for(i in 1:length(input)){
-        labelcol[[i]] <- input[[i]]$name
-        labelorder[[i]] <- input[[i]]$labels
-    }
+    sapply(seq(1,length(input)), function(i) {
+      labelcol[[i]] <- input[[i]]$name
+      labelorder[[i]] <- input[[i]]$labels
+    } )
 
     # Save the categories and their orders
     attr(dataset, "categorycol") <- labelcol
@@ -98,11 +98,11 @@ partialNA = function (dataset, k){
 
     # get n highest rows, if no n inputted, default to top five
     if (!missing(k)){
-        count <- head(count[order(-count$freq),], k)
+      count <- head(count[order(-count$freq),], k)
     } else {
-        count <- head(count[order(-count$freq),], 5)
+      count <- head(count[order(-count$freq),], 5)
     }
-
+    
     for(i in 1:columns){
         if(is.numeric(count[, i])){
             next
