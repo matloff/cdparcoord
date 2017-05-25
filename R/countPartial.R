@@ -187,6 +187,10 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         fr <- round(fr / (0.05))
 
         fr <- round(fr)+1
+        # Account for if there is only one frequency
+        if (!is.finite(fr)) {
+            fr = 11
+        }
 
         lines(row, type='o', col=colfunc(21)[fr], 
               lwd=fr) # add plot lines
