@@ -186,7 +186,9 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         fr <- (fr-min_freq)/(max_freq-min_freq)
         fr <- round(fr / (0.05))
 
-        lines(row, type='o', col=colfunc(20)[round(fr/scale, digits=0)], 
+        fr <- round(fr)+1
+
+        lines(row, type='o', col=colfunc(21)[fr], 
               lwd=fr) # add plot lines
 
         if(!missing(labelsOff) && labelsOff == FALSE){
@@ -367,7 +369,7 @@ smallexample <- function(n) {
         partial <- partialNA(dataset, n)
     }
     print(partial)
-    draw(partial)
+    draw(partial, name="Small Example")
 }
 
 # this is the main graphing function - use this

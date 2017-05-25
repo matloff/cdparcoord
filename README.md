@@ -21,7 +21,7 @@ plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 ![Black Screen mlb](vignettes/black-screen-mlb.png)
 
-This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html).
+This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html)
 by displaying on the most frequent relations.  However, this is not
 suitable for categorical variables (though one can make them grouping
 variables). We account for this here by showing the most significant 
@@ -45,7 +45,7 @@ hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 # Create an interactive plot with the 10,000 most frequent tuples
 discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
 ```
-<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="500"/>
+<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
 
 ###### Categorical Example
 ```R
@@ -149,6 +149,7 @@ occur with `interactivedraw()`.
 library(freqparcoord.cd)
 smallexample()
 ```
+<img src="vignettes/smallexample.png" alt="small example" width="500"/>
 
 2. Using categorical variables with the mlb data set with `discretize`
 and interactive plotting, with the most significant 1000 tuples.
