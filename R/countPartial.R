@@ -41,6 +41,18 @@ discretize <- function (dataset, input){
         }
 
     }
+
+    labelcol = list()
+    labelorder = list()
+    for(i in 1:length(input)){
+        labelcol[[i]] <- input[[i]]$name
+        labelorder[[i]] <- input[[i]]$labels
+    }
+
+    # Save the categories and their orders
+    attr(dataset, "categorycol") <- labelcol
+    attr(dataset, "categoryorder") <- labelorder
+
     return(dataset)
 }
 
@@ -97,6 +109,11 @@ partialNA = function (dataset, k){
         } else {
             count[[i]] <- factor(count[[i]])
         }
+    }
+
+    if (!is.null(attr(dataset, "categorycol"))){
+        attr(count, "categorycol") <- attr(dataset, "categorycol")
+        attr(count, "categoryorder") <- attr(dataset, "categoryorder")
     }
 
     return(count)
@@ -203,7 +220,18 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
     # Map unique categorical variables to numbers
     for(col in 1:(ncol(partial)-1)){
         # Store the columns that have categorical variables
-        categ[[col]] <- c(levels(partial[, col]))
+        
+        # Preserve order for categorical variables changed in discretize()
+        if (!is.null(attr(partial, "categorycol")) && colnames(partial)[col] %in% attr(partial, "categorycol")){
+            # Get the index that the colname is in categorycol
+            # categoryorder[index] is the list that you want to assign
+            orderedcategories <- attr(partial, "categoryorder")[match(colnames(partial)[col], attr(partial, "categorycol"))][[1]]
+            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(partial[, col])))]
+        }
+        # Convert normal categorical variables
+        else {
+            categ[[col]] <- c(levels(partial[, col]))
+        }
 
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
@@ -222,6 +250,7 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
             partial[[col]] = as.numeric(partial[[col]])
         }
     }
+
 
     # find the max value and the max frequency to set max/min for our plot
     nums <- Filter(is.numeric, partial)
