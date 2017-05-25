@@ -1,18 +1,26 @@
 # freqparcoord.cd
 
-### About
+### Table of Contents
+1. [Overview](#overview)
+2. [Quickstart](#quickstart)
+3. [Key Functions](#key-functions)
+4. [Warnings](#warnings)
+5. [Further Examples](#further-examples)
+6. [Authors](#authors)
 
-The *freqparcoord.cd* package was created to serve as a parallel
+### Overview
+
+The **freqparcoord.cd** package was created to serve as a parallel
 coordinates graphing package with special focus on the black screen
 problem, dealing with categorical variables, and the NA problem. 
 
-The [*freqparcoord* package](https://cran.r-project.org/web/packages/freqparcoord/index.html)
+It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packages/freqparcoord/index.html).
 
-The black screen problem occurs when there are too many data points to
+* The black screen problem occurs when there are too many data points to
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 
-![Black Screen mlb](vignettes/black-screen-mlb.png)
+![Black Screen mlb](vignettes/black-screen-mlb.png "Black Screen MLB")
 
 This is solved in *freqparcoord* by
 displaying on the most frequent relations.  However, this is not
@@ -25,7 +33,7 @@ drastic effects, such as low counts and possible bias. We address this
 issue by allowing these rows to contribute to overall counts, but to
 lesser extents.
 
-### Instructions
+### Key Functions
 
 We provide 4 key functions -- **partialNA()** **draw()** **permute()** and
 **discretize()**  
@@ -50,8 +58,6 @@ The inner list should contain the following variables: `int partitions`, `string
 
 4. `permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
 
-### Implementation
-
 ### Warnings
 1. By default, `partialNA()` returns the five most frequent correlations. If there is low/no correlation between 
 variables, then this may be misleading.
@@ -64,7 +70,7 @@ labels in plot.
 values (ex: 100+), it can
 be difficult to differentiate between categories.
 
-### Example
+### Further Examples
 1. A small example of parallel coordinates plotting
 2. Categorical Variables
 
