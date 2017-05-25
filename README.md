@@ -20,6 +20,7 @@ It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packa
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 ![Black Screen mlb](vignettes/black-screen-mlb.png)
+
 This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html).
 by displaying on the most frequent relations.  However, this is not
 suitable for categorical variables (though one can make them grouping
@@ -112,7 +113,7 @@ also takes a name for the name of the plot, and a choice for whether or not to h
 many data points, the labels are unreadable and for these times it is better to leave labels off. The default is 
 to have labels on. 
 
-An example of discretized mlb data.
+An example of discretized mlb data drawn with `draw`.
 
 <img src="vignettes/discretemlbsimple.png" alt="c1" width="500"/>
 
@@ -128,29 +129,50 @@ relevant variables prior to using the package.
 labels in plot.
 4. Categorical data is currently scaled by 1, starting from 1. When placed on the same axis as numerical data with high 
 values (ex: 100+), it can
-be difficult to differentiate between categories.
+be difficult to differentiate between categories when used with `draw()`. This does not
+occur with `interactivedraw()`.
 
 ### Further Examples
 1. A small example of parallel coordinates plotting
-2. Categorical Variables
-
-##### 1. A small example of parallel coordinates plotting
 ```R
 library(freqparcoord.cd)
-smallexp <- smallexample()
-draw(smallexp) # opens the plot
+smallexample()
 ```
 
-Alternatively substitute the last line with 
+2. Using categorical variables with the mlb data set with `discretize`
+and interactive plotting, with the most significant 1000 tuples.
+
 ```R
-draw(smallexp, "smallexample.pdf")
+library(freqparcoord.cd)
+# load freqparcoord to get the mlb data set
+library(freqparcoord)
+data(mlb)
+# Get the Height, Weight, Age, and Position of Players
+m <- mlb[,4:7]
+
+inp1 <- list("name" = "Height",
+             "partitions"=4,
+             "labels"=c("low", "lowmid", "highmid", "high"))
+
+inp2 <- list("name" = "Weight",
+             "partitions"=3,
+             "labels"=c("light", "med", "heavy"))
+
+inp3 <- list("name" = "Age",
+             "partitions"=2,
+             "labels"=c("young", "old"))
+
+# Create one list to pass everything to discretize()
+discreteinput <- list(inp1, inp2, inp3)
+
+# At this point, all of the data has been discretized
+discretizedmlb <- discretize(m, discreteinput)
+
+# Account for NA values and weigh values; interactively plot; take top 1000 tuples
+discparcoord(discretizedmlb, interactive=TRUE, name="MLB", k=1000)
 ```
-for a saved file output instead.
+<img src="vignettes/mlb1000interactive.png" alt="FE2" width="500"/>
 
-##### 2. Categorical Variable Example
-
-##### 3. Permute Example
-<img src="vignettes/permute_1.png" alt="Before Permute" width="500"/> <img src="vignettes/permute_2.png" alt="After Permute" width="500"/>
 
 ### Authors
 Norm Matloff, Harrison Nguyen, Vincent Yang
