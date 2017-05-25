@@ -12,7 +12,7 @@ The black screen problem occurs when there are too many data points to
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 
-![Black Screen mlb](black-screen-mlb.png)
+![Black Screen mlb](vignettes/black-screen-mlb.png)
 
 This is solved in *freqparcoord* by
 displaying on the most frequent relations.  However, this is not
@@ -46,7 +46,7 @@ categorical variables.
 The inner list should contain the following variables: `int partitions`, `string vector labels`, `vector lower bounds`, 
 `vector upper bounds`. The last three are optional.
 
-![Discretized mlb data](discretize-mlb.png)
+![Discretized mlb data](vignettes/discretize-mlb.png)
 
 4. `permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
 
@@ -84,7 +84,7 @@ for a saved file output instead.
 ##### 2. Categorical Variable Example
 
 ##### 3. Permute Example
-<img src="permute_1.png" alt="Before Permute" width="500"/> <img src="permute_2.png" alt="After Permute" width="500"/>
+<img src="vignettes/permute_1.png" alt="Before Permute" width="500"/> <img src="vignettes/permute_2.png" alt="After Permute" width="500"/>
 
 ### Authors
 Norm Matloff, Harrison Nguyen, Vincent Yang
