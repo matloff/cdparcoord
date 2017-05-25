@@ -36,6 +36,17 @@ lesser extents.
 
 ### Quickstart
 
+###### Normal Example
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+
+# Create an interactive plot with the 10,000 most frequent tuples
+discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
+```
+<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="500"/>
+
 ###### Categorical Example
 ```R
 # Load data
