@@ -177,10 +177,16 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     for(i in 1:nrow(partial)){
         row <- partial[i,1:width]
         row <- as.numeric(row)
-        #fr <- 1
+
+        # Scale everything from 0 to 1, then partition into 20 for colors
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
-        lines(row, type='o', col=colfunc(max_freq)[round(fr/scale, digits=0)], 
+        max_freq <- max(partial[,ncol(partial)])
+        min_freq <- min(partial[,ncol(partial)])
+        fr <- (fr-min_freq)/(max_freq-min_freq)
+        fr <- round(fr / (0.05))
+
+        lines(row, type='o', col=colfunc(20)[round(fr/scale, digits=0)], 
               lwd=fr) # add plot lines
 
         if(!missing(labelsOff) && labelsOff == FALSE){
