@@ -203,8 +203,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     }
     legend_image <- as.raster(matrix(colfunc(20), ncol=1))
     plot(c(0,2),c(0,1),type = 'n', axes = F, 
-         xlab = '', ylab = '', main = 'Frequency %')
-    text(x=1.5, y = seq(0, 1, l=5), labels = seq(100,0,l=5))
+         xlab = '', ylab = '', main = 'Frequency')
+    text(x=1.5, y = seq(0, 1, l=5), labels = seq(round(max_freq),round(min_freq),l=5))
     rasterImage(legend_image, 0, 0, 1, 1)
 }
 

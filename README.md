@@ -113,6 +113,7 @@ many data points, the labels are unreadable and for these times it is better to 
 to have labels on. 
 
 An example of discretized mlb data.
+
 <img src="vignettes/discretemlbsimple.png" alt="c1" width="500"/>
 
 4. `interactivedraw` does the same as draw, but draws an interactive plot. We recommend using this option.
