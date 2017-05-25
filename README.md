@@ -19,44 +19,100 @@ It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packa
 * The black screen problem occurs when there are too many data points to
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
-
-![Black Screen mlb](vignettes/black-screen-mlb.png "Black Screen MLB")
-
-This is solved in *freqparcoord* by
-displaying on the most frequent relations.  However, this is not
+![Black Screen mlb](vignettes/black-screen-mlb.png)
+This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html).
+by displaying on the most frequent relations.  However, this is not
 suitable for categorical variables (though one can make them grouping
-variables).
+variables). We account for this here by showing the most significant 
+tuples.
 
-In addition, R and R packages typically leave out any rows with NA
+* In addition, R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
-drastic effects, such as low counts and possible bias. We address this
+drastic effects, such as low counts and possible bias. 
+[`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
 issue by allowing these rows to contribute to overall counts, but to
 lesser extents.
 
+### Quickstart
+
+###### Categorical Example
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+
+input1 = list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
+input = list(input1)
+# This will discretize the data by partitioning average monthly hours into 3parts
+# called low, med, and high
+hrdata = discretize(hrdata, input)
+
+# account for NA values and plot with parallel coordinates
+discparcoord(hrdata)                                  # plot c1
+```
+C1: ![c1](vignettes/c1.png)
+
+```R
+# same as above, but with scrambled columns
+# By default, interactive plotting allows you to drag around columns
+# to scramble them
+discparcoord(hrdata, permute=TRUE)                    # plot c2
+```
+C2: ![c2](vignettes/c2.png)
+
+```R
+# same as above, but show top k values  and interactive plot
+discparcoord(hrdata, k=8, interactive=TRUE)           # plot c3
+```
+C3: ![c3](vignettes/c3.png)
+
+```R
+# same as above, but group according to profession
+# This will create 11 different plots, 1 for each profession
+discparcoord(hrdata, grpcategory="sales", interactive=TRUE) 
+```
+
 ### Key Functions
 
-We provide 4 key functions -- **partialNA()** **draw()** **permute()** and
-**discretize()**  
+###### `discparcoord()`
+The main function is `discparcoord()`, which may optionally be used with `discretize()`.
+`discparcoord()` accounts for partial values and drawing.
 
-1. The call **partialNA(dataset,n)** inputs a dataset and
-returns a new dataset consisting of the **n** most frequent patterns
-with an added column -
-the frequency of each column.  This dataset contains no NA values, as
-all of the columns previously with NA values have now been eliminated. 
+###### `discretize()`
+`discparcoord()` may optionally be used with `discretize()`.
 
-2. `draw` takes a dataset and draws a parallel coordinates plot in the same directory. It
-also takes a name for the name of the plot, and a choice for whether or not to have labels. When there are 
-many data points, the labels are unreadable and for these times it is better to leave labels off. The default is 
-to have labels on. 
-
-3. `discretize` takes a dataset and a list of lists. It discretizes the dataset's values such that `plot()` may chart 
+`discretize` takes a dataset and a list of lists. It discretizes the dataset's values such that `plot()` may chart 
 categorical variables.
 The inner list should contain the following variables: `int partitions`, `string vector labels`, `vector lower bounds`, 
 `vector upper bounds`. The last three are optional.
 
 ![Discretized mlb data](vignettes/discretize-mlb.png)
 
-4. `permute` takes a dataset from `partialNA` and permutes the columns so you can find new relationships.
+###### `discparcoord()` details
+Encompassed in discparcoord, we provide 4 key functions -- `partialNA()` `grpcategory()`, `draw()`,
+and `interactivedraw()`.
+
+1. The call `partialNA(dataset,n)` inputs a dataset and
+returns a new dataset consisting of the **n** most frequent patterns
+with an added column -
+the frequency of each column.  This dataset contains no NA values, as
+all of the columns previously with NA values have now been eliminated. 
+
+By default, `partialNA` returns the 5 most significant tuples.
+
+2. The `grpcategory` option allows you to create multiple plots, one for each category. If
+a field has 4 possible values, then `discparcoord()` with the `grpcategory` option will 
+create a plot for each category, where each plot has the specific category's attributes.
+
+For example, if a field "Weight "has "Heavyweight" and "Lightweight", then this will create
+one plot where all tuples are heavyweights, then one more where where all tuples are lightweights.
+
+3. `draw` takes a dataset and draws a parallel coordinates plot in the same directory. It
+also takes a name for the name of the plot, and a choice for whether or not to have labels. When there are 
+many data points, the labels are unreadable and for these times it is better to leave labels off. The default is 
+to have labels on. 
+
+4. `interactivedraw` does the same as draw, but draws an interactive plot. We recommend using this option.
 
 ### Warnings
 1. By default, `partialNA()` returns the five most frequent correlations. If there is low/no correlation between 
