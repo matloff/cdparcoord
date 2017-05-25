@@ -74,11 +74,11 @@ discparcoord(hrdata, grpcategory="sales", interactive=TRUE)
 
 ### Key Functions
 
-###### `discparcoord()`
+#### `discparcoord()`
 The main function is `discparcoord()`, which may optionally be used with `discretize()`.
 `discparcoord()` accounts for partial values and drawing.
 
-###### `discretize()`
+#### `discretize()`
 `discparcoord()` may optionally be used with `discretize()`.
 
 `discretize` takes a dataset and a list of lists. It discretizes the dataset's values such that `plot()` may chart 
@@ -88,7 +88,7 @@ The inner list should contain the following variables: `int partitions`, `string
 
 ![Discretized mlb data](vignettes/discretize-mlb.png)
 
-###### `discparcoord()` details
+#### `discparcoord()` details
 Encompassed in discparcoord, we provide 4 key functions -- `partialNA()` `grpcategory()`, `draw()`,
 and `interactivedraw()`.
 

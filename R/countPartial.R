@@ -126,8 +126,13 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     width <- ncol(partial)-1
     # get only numbers
-    nums <- Filter(is.numeric, partial)
-    max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
+    nums <- Filter(is.numeric, subset(partial,,-c(freq)))
+    if (nrow(nums) == 0 || ncol(nums) == 0){
+        max_y = 0
+    }
+    else {
+        max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
+    }
     max_freq <- max(partial[,ncol(partial)])
 
     categ <- list()
@@ -172,6 +177,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     for(i in 1:nrow(partial)){
         row <- partial[i,1:width]
         row <- as.numeric(row)
+        #fr <- 1
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
         lines(row, type='o', col=colfunc(max_freq)[round(fr/scale, digits=0)], 
