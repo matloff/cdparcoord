@@ -36,7 +36,7 @@ lesser extents.
 
 ### Quickstart
 
-###### Normal Example
+##### Normal Example
 ```R
 # Load data
 file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
@@ -47,7 +47,8 @@ discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
 ```
 <img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
 
-###### Categorical Example
+##### Categorical Examples ([C1](#example-c1), [C2](#example-c2), [C3](#example-c3))
+###### Example C1
 ```R
 # Load data
 file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
@@ -62,16 +63,20 @@ hrdata = discretize(hrdata, input)
 # account for NA values and plot with parallel coordinates
 discparcoord(hrdata)                                  # plot c1
 ```
-C1: <img src="vignettes/c1.png" alt="c1" width="500"/>
+C1: 
+<img src="vignettes/c1.png" alt="c1" width="500"/>
 
+###### Example C2
 ```R
 # same as above, but with scrambled columns
 # By default, interactive plotting allows you to drag around columns
 # to scramble them
 discparcoord(hrdata, permute=TRUE)                    # plot c2
 ```
-C2: <img src="vignettes/c2.png" alt="c2" width="500"/>
+C2: 
+<img src="vignettes/c2.png" alt="c2" width="500"/>
 
+###### Example C3
 ```R
 # same as above, but show top k values, title,  and interactive plot
 discparcoord(hrdata, k=8, interactive=TRUE, name="Plot C3")           # plot c3
@@ -119,7 +124,7 @@ create a plot for each category, where each plot has the specific category's att
 For example, if a field "Weight "has "Heavyweight" and "Lightweight", then this will create
 one plot where all tuples are heavyweights, then one more where where all tuples are lightweights.
 
-3. `draw` takes a dataset and draws a parallel coordinates plot in the same directory. It
+3. `draw()` takes a dataset and draws a parallel coordinates plot in the same directory. It
 also takes a name for the name of the plot, and a choice for whether or not to have labels. When there are 
 many data points, the labels are unreadable and for these times it is better to leave labels off. The default is 
 to have labels on. 
@@ -128,7 +133,7 @@ An example of discretized mlb data drawn with `draw`.
 
 <img src="vignettes/discretemlbsimple.png" alt="c1" width="500"/>
 
-4. `interactivedraw` does the same as draw, but draws an interactive plot. We recommend using this option.
+4. `interactivedraw()` does the same as draw, but draws an interactive plot. We recommend using this option.
 
 ### Warnings
 1. By default, `partialNA()` returns the five most frequent correlations. If there is low/no correlation between 
@@ -183,7 +188,7 @@ discretizedmlb <- discretize(m, discreteinput)
 # Account for NA values and weigh values; interactively plot; take top 1000 tuples
 discparcoord(discretizedmlb, interactive=TRUE, name="MLB", k=1000)
 ```
-<img src="vignettes/mlb1000interactive.png" alt="FE2" width="500"/>
+<img src="vignettes/mlb1000interactive.png" alt="FE2" width="800"/>
 
 
 ### Authors
