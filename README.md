@@ -50,7 +50,7 @@ hrdata = discretize(hrdata, input)
 # account for NA values and plot with parallel coordinates
 discparcoord(hrdata)                                  # plot c1
 ```
-C1: ![c1](vignettes/c1.png)
+C1: <img src="vignettes/c1.png" alt="c1" width="500"/>
 
 ```R
 # same as above, but with scrambled columns
@@ -58,11 +58,11 @@ C1: ![c1](vignettes/c1.png)
 # to scramble them
 discparcoord(hrdata, permute=TRUE)                    # plot c2
 ```
-C2: ![c2](vignettes/c2.png)
+C2: <img src="vignettes/c2.png" alt="c2" width="500"/>
 
 ```R
-# same as above, but show top k values  and interactive plot
-discparcoord(hrdata, k=8, interactive=TRUE)           # plot c3
+# same as above, but show top k values, title,  and interactive plot
+discparcoord(hrdata, k=8, interactive=TRUE, name="Plot C3")           # plot c3
 ```
 C3: ![c3](vignettes/c3.png)
 
