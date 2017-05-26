@@ -23,7 +23,7 @@
 }
 
 \usage{
-    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE, save=FALSE, name="Parcoords")
+    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE, save=FALSE, name="Parcoords", labelsOff=TRUE)
 }
 
 \arguments{
@@ -48,6 +48,10 @@
     }
     \item{name}{
         The name for the plot (default is Parcoords).
+    }
+    \item{labelsOff}{
+        Whether or not labels are off. By default, they are off. This only comes into 
+        effect when interactive=FALSE.
     }
 }
 

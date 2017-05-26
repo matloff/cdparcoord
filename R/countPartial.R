@@ -155,13 +155,18 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     }
 
     # Layout left and right sides for the legend
+    generateScreen(12, 7)
     layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
+    par(mar=c(9, 4, 4, 2))
     plot(baserow,type="n", ylim = range(0, max_y), 
          xaxt="n", yaxt="n", xlab="", ylab="", frame.plot=FALSE)
 
     # Add aesthetic
     title(main=name, col.main="black", font.main=4)
-    axis(1, at=1:width, lab=head(colnames(partial), -1))
+    #par(mar=c(5,6,4,1)+.1) # set margins
+    par(mar=c(9, 4, 4, 2))
+    axis(1, at=seq(2, width, 2), lab=colnames(partial)[seq(2, width, 2)], cex.axis=0.5, las=2)
+    axis(1, at=seq(1, width, 2), lab=colnames(partial)[seq(1, width, 2)], cex.axis=0.5, las=2)
     axis(2, at=seq(0,max_y,1))
 
     # Get scale for lines if large dataset
@@ -384,7 +389,8 @@ smallexample <- function(n) {
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
-                         interactive = FALSE, save=FALSE, name="Parcoords"){
+                         interactive = FALSE, save=FALSE, name="Parcoords",
+                         labelsOff = TRUE){
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -406,7 +412,7 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         }
 
         if (!interactive){
-            draw(partial, name=name, save=save)
+            draw(partial, name=name, save=save, labelsOff=labelsOff)
         }
         else {
             interactivedraw(partial, name=name)
@@ -438,11 +444,11 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             if (!interactive){
                 # Saving is only an option on noninteractive plotting
                 if (save) {
-                    draw(partial, name=paste(name, cat), save=save)
+                    draw(partial, name=paste(name, cat), save=save, labelsOff=labelsOff)
                 }
                 else {
-                    generateScreen()
-                    draw(partial, name=paste(name, cat))
+                    generateScreen(12, 7)
+                    draw(partial, name=paste(name, cat), labelsOff=labelsOff)
                 }
             }
             else {
@@ -456,17 +462,17 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
 }
 
 # Create a new screen for grpcategory
-generateScreen <- function() {
+generateScreen <- function(width, height) {
     # MacOS
     if (grepl("darwin", R.version$os)){
-        quartz()
+        quartz(width=width, height=height)
     }
     # Linux
     else if (grepl("linux", R.version$os) || grepl("gnu", R.version$os)) {
-        X11()
+        X11(width=width, height=height)
     }
     # Windows
     else {
-        windows()
+        windows(width=width, height=height)
     }
 }
