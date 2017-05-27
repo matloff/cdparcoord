@@ -33,10 +33,21 @@ discretize <- function (dataset, input){
         tempLower = colMin
         tempUpper = 0
 
+        # Convert the entire column to be characters, because
+        # categorical variables are normally strings anyway. 
+        # After the first conversion, the entire column will be
+        # characters.
+        currentCol = as.character(dataset[[name]])
+
         # go through each and replace values according to partitions
         for(i in 1:partitions){
             tempUpper = tempLower + increments
-            dataset[[name]][dataset[[name]] <= tempUpper] <- labels[i]
+
+            # Now that the column has characters, 
+            # convert the potentially numerical values to numeric
+            # suppress warnings, and allow non-numeric values
+            # to become NA, so they don't get changed again
+            dataset[[name]][suppressWarnings(as.numeric(dataset[[name]])) <= tempUpper] <- labels[i]
             tempLower = tempUpper
         }
 
