@@ -25,6 +25,13 @@ discretize <- function (dataset, input){
         name = col[['name']]
         partitions = col[['partitions']]
         labels = col[['labels']]
+        # It is possible that a column has already been converted.
+        # If so, it will have non-numeric characters. Alternately,
+        # if it already has non-numeric characters, then it
+        # should not be considered for discretizing
+        if (!is.numeric(dataset[[name]])){
+            next
+        }
         colMax = max(dataset[name])
         colMin = min(dataset[name])
         range = colMax - colMin
@@ -61,8 +68,9 @@ discretize <- function (dataset, input){
     }
 
     # Save the categories and their orders
-    attr(dataset, "categorycol") <- labelcol
-    attr(dataset, "categoryorder") <- labelorder
+    attr(dataset, "categorycol") <- c(attr(dataset, "categorycol"), labelcol)
+    attr(dataset, "categoryorder") <- c(attr(dataset, "categoryorder"), labelorder)
+
 
     return(dataset)
 }
