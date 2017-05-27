@@ -40,7 +40,12 @@
         Whether or not you want to permute the columns before drawing.
     }
     \item{interactive}{
-        Whether or not you want to use interactive plotting. 
+        Whether or not you want to use interactive plotting. If this is true, then
+        Plotly will be used for interactive plotting. This allows for interactively 
+        readjusting column order and scrubbing.
+        If this is false, then this will use basic plotting that generates an image
+        or saves a png to the current directory.
+        By default, interactive = FALSE.
     }
     \item{save}{
         Whether or not you want to save the plot. If interactive mode is on, save
