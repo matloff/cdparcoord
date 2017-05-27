@@ -60,7 +60,7 @@ discretize <- function (dataset, input){
 # parameters:
 #   dataset (table): dataset to calculate partials for
 #   n (int): how many top rows to return (DEFAULT = 5)
-partialNA = function (dataset, k){
+partialNA = function (dataset, k = 5){
     # using plyr library to get a table 
     count = count(dataset, vars = NULL, wt_var = NULL)
     dimensions = dim(count)
@@ -97,11 +97,7 @@ partialNA = function (dataset, k){
     count <- count[complete.cases(count),]
 
     # get n highest rows, if no n inputted, default to top five
-    if (!missing(k)){
-        count <- head(count[order(-count$freq),], k)
-    } else {
-        count <- head(count[order(-count$freq),], 5)
-    }
+    count <- head(count[order(-count$freq),], k)
 
     for(i in 1:columns){
         if(is.numeric(count[, i])){
