@@ -172,6 +172,9 @@ discparcoord(discretizedmlb, interactive=TRUE, name="MLB", k=1000)
 ```
 <img src="vignettes/mlb1000interactive.png" alt="FE2" width="800"/>
 
+Discretized, it is easier to see that pitchers are typically younger, and 
+shorter people typically weigh less. 
+
 # Key Functions
 
 #### `discparcoord()`
@@ -185,8 +188,6 @@ The main function is `discparcoord()`, which may optionally be used with `discre
 categorical variables.
 The inner list should contain the following variables: `int partitions`, `string vector labels`, `vector lower bounds`, 
 `vector upper bounds`. The last three are optional.
-
-![Discretized mlb data](vignettes/discretize-mlb.png)
 
 #### `discparcoord()` details
 Encompassed in discparcoord, we provide 4 key functions -- `partialNA()` `grpcategory()`, `draw()`,
