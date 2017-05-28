@@ -27,6 +27,26 @@ suitable for categorical variables (though one can make them grouping
 variables). We account for this here by showing the most significant 
 tuples.
 
+# Create an interactive plot with the 10000 most frequent tuples
+Before: 
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
+```
+<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
+
+After: 
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
+```
+<img src="vignettes/hr_data_interactive100.png" alt="n1" width="800"/>
+
+
 * In addition, R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
@@ -42,10 +62,13 @@ lesser extents.
 file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
 hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 
-# Create an interactive plot with the 10,000 most frequent tuples
-discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
+# Create an interactive plot with the 100 most frequent tuples
+discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
-<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
+<img src="vignettes/hr_data_interactive100.png" alt="n1" width="800"/>
+Here, we can see that higher satisfaction level is associated with having more projects
+and more monthly hours, until number of projects or number of montly hours is too high,
+in which case satisfaction level drastically drops. 
 
 ##### Categorical Examples ([C1](#example-c1), [C2](#example-c2), [C3](#example-c3))
 ###### Example C1
