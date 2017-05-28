@@ -1,58 +1,12 @@
 # freqparcoord.cd
 
 ### Table of Contents
-1. [Overview](#overview)
-2. [Quickstart](#quickstart)
+1. [Quickstart](#quickstart)
+2. [Overview](#overview)
 3. [Key Functions](#key-functions)
 4. [Warnings](#warnings)
 5. [Further Examples](#further-examples)
 6. [Authors](#authors)
-
-### Overview
-
-The **freqparcoord.cd** package was created to serve as a parallel
-coordinates graphing package with special focus on the black screen
-problem, dealing with categorical variables, and the NA problem. 
-
-It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packages/freqparcoord/index.html).
-
-* The black screen problem occurs when there are too many data points to
-plot. This results in a complete black screen from which no useful
-information may be gleaned. 
-![Black Screen mlb](vignettes/black-screen-mlb.png)
-
-This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html)
-by displaying on the most frequent relations.  However, this is not
-suitable for categorical variables (though one can make them grouping
-variables). We account for this here by showing the most significant 
-tuples.
-
-# Create an interactive plot with the 10000 most frequent tuples
-Before: 
-```R
-# Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
-discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
-```
-<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
-
-After: 
-```R
-# Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
-discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
-```
-<img src="vignettes/hr_data_interactive100.png" alt="n1" width="800"/>
-
-
-* In addition, R and R packages typically leave out any rows with NA
-values. Unfortunately for data sets with high NA counts, this may have
-drastic effects, such as low counts and possible bias. 
-[`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
-issue by allowing these rows to contribute to overall counts, but to
-lesser extents.
 
 ### Quickstart
 
@@ -65,7 +19,7 @@ hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 # Create an interactive plot with the 100 most frequent tuples
 discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
-<img src="vignettes/hr_data_interactive100.png" alt="n1" width="800"/>
+<img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
 Here, we can see that higher satisfaction level is associated with having more projects
 and more monthly hours, until number of projects or number of montly hours is too high,
 in which case satisfaction level drastically drops. 
@@ -111,6 +65,53 @@ C3: ![c3](vignettes/c3.png)
 # This will create 11 different plots, 1 for each profession
 discparcoord(hrdata, grpcategory="sales", interactive=TRUE) 
 ```
+
+---
+
+### Overview
+
+The **freqparcoord.cd** package was created to serve as a parallel
+coordinates graphing package with special focus on the black screen
+problem, dealing with categorical variables, and the NA problem. 
+
+It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packages/freqparcoord/index.html).
+
+* The black screen problem occurs when there are too many data points to
+plot. This results in a complete black screen from which no useful
+information may be gleaned. 
+![Black Screen mlb](vignettes/black-screen-mlb.png)
+
+This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html)
+by displaying on the most frequent relations.  However, this is not
+suitable for categorical variables (though one can make them grouping
+variables). We account for this here by showing the most significant 
+tuples.
+
+Before: 
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
+```
+<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
+
+After: 
+```R
+# Load data
+file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
+```
+<img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
+
+
+* In addition, R and R packages typically leave out any rows with NA
+values. Unfortunately for data sets with high NA counts, this may have
+drastic effects, such as low counts and possible bias. 
+[`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
+issue by allowing these rows to contribute to overall counts, but to
+lesser extents.
 
 ### Key Functions
 
