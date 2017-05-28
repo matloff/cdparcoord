@@ -82,9 +82,7 @@ plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 
 This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html)
-by displaying on the most frequent relations.  However, this is not
-suitable for categorical variables (though one can make them grouping
-variables). We account for this here by showing the most significant 
+by displaying on the most frequent relations. We account for this here by showing the most significant 
 tuples.
 
 Before: 
@@ -124,7 +122,8 @@ lesser extents.
 ### Discretizing Data
 Sometimes, you want to use discrete data for your parallel coordinates plot. This
 allows you to more easily recognize trends. This can be done with `discretize()`.
-Before: 
+
+###### Before: 
 ```R
 library(freqparcoord.cd)
 # load freqparcoord to get the mlb data set
@@ -138,8 +137,8 @@ discparcoord(m, interactive=TRUE, k=1000)
 
 ![Black Screen mlb](vignettes/black-screen-mlb.png)
 
-After: 
-Using categorical variables with the mlb data set with `discretize`
+###### After: 
+Using categorical variables with the mlb data set with `discretize()`
 and interactive plotting, with the most significant 1000 tuples.
 
 ```R
