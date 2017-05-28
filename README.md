@@ -104,6 +104,13 @@ hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
 <img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
+The second plot is much simpler and significant relationships are much more visible. 
+Note that the relationship between satisfaction level and number of projects and
+the relationship between satisfaction level and number of monthly hours is more
+easily recognizable in the second plot. Higher satisfaction level here is shown
+to be associated with having more projects and more monthly hours, until a clear
+limit at which the employee has too many projects or has to work too many hours.
+In this case, satisfaction level drastically drops. 
 
 
 * In addition, R and R packages typically leave out any rows with NA
