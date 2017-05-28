@@ -1,6 +1,6 @@
 # freqparcoord.cd
 
-### Table of Contents
+# Table of Contents
 1. [Quickstart](#quickstart)
 2. [Overview](#overview)
 3. [Key Functions](#key-functions)
@@ -8,7 +8,7 @@
 5. [Further Examples](#further-examples)
 6. [Authors](#authors)
 
-### Quickstart
+# Quickstart
 
 ##### Normal Example
 ```R
@@ -68,7 +68,7 @@ discparcoord(hrdata, grpcategory="sales", interactive=TRUE)
 
 ---
 
-### Overview
+# Overview
 
 The **freqparcoord.cd** package was created to serve as a parallel
 coordinates graphing package with special focus on the black screen
@@ -76,7 +76,8 @@ problem, dealing with categorical variables, and the NA problem.
 
 It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packages/freqparcoord/index.html).
 
-* The black screen problem occurs when there are too many data points to
+#### The Black Screen Problem
+The black screen problem occurs when there are too many data points to
 plot. This results in a complete black screen from which no useful
 information may be gleaned. 
 ![Black Screen mlb](vignettes/black-screen-mlb.png)
@@ -113,14 +114,15 @@ limit at which the employee has too many projects or has to work too many hours.
 In this case, satisfaction level drastically drops. 
 
 
-* In addition, R and R packages typically leave out any rows with NA
+#### Accounting for NA Values
+R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
 [`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
 issue by allowing these rows to contribute to overall counts, but to
 lesser extents.
 
-### Key Functions
+# Key Functions
 
 #### `discparcoord()`
 The main function is `discparcoord()`, which may optionally be used with `discretize()`.
@@ -166,7 +168,7 @@ An example of discretized mlb data drawn with `draw`.
 
 4. `interactivedraw()` does the same as draw, but draws an interactive plot. We recommend using this option.
 
-### Warnings
+# Warnings
 1. By default, `partialNA()` returns the five most frequent correlations. If there is low/no correlation between 
 variables, then this may be misleading.
 2. Due to the limited size of screens compared to the number of variables in many data sets, we recommend subsetting 
@@ -179,7 +181,7 @@ values (ex: 100+), it can
 be difficult to differentiate between categories when used with `draw()`. This does not
 occur with `interactivedraw()`.
 
-### Further Examples
+# Further Examples
 1. A small example of parallel coordinates plotting
 ```R
 library(freqparcoord.cd)
@@ -222,5 +224,5 @@ discparcoord(discretizedmlb, interactive=TRUE, name="MLB", k=1000)
 <img src="vignettes/mlb1000interactive.png" alt="FE2" width="800"/>
 
 
-### Authors
+# Authors
 Norm Matloff, Harrison Nguyen, Vincent Yang
