@@ -228,9 +228,6 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         row <- partial[i,1:width]
         row <- as.numeric(row)
 
-        print("row:")
-        print(row)
-
         # Scale everything from 0 to 1, then partition into 20 for colors
         fr <- partial[i, width+1] / scale # determine thickness via frequency
 
