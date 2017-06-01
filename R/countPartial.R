@@ -32,8 +32,8 @@ discretize <- function (dataset, input){
         if (!is.numeric(dataset[[name]])){
             next
         }
-        colMax = max(dataset[name])
-        colMin = min(dataset[name])
+        colMax = max(dataset[name], na.rm = TRUE)
+        colMin = min(dataset[name], na.rm = TRUE)
         range = colMax - colMin
         increments = range/partitions
 
@@ -44,17 +44,18 @@ discretize <- function (dataset, input){
         # categorical variables are normally strings anyway. 
         # After the first conversion, the entire column will be
         # characters.
-        currentCol = as.character(dataset[[name]])
+        #currentCol = as.character(dataset[[name]])
 
         # go through each and replace values according to partitions
         for(i in 1:partitions){
+            currentCol = as.character(dataset[[name]])
             tempUpper = tempLower + increments
 
             # Now that the column has characters, 
             # convert the potentially numerical values to numeric
             # suppress warnings, and allow non-numeric values
             # to become NA, so they don't get changed again
-            dataset[[name]][suppressWarnings(as.numeric(dataset[[name]])) <= tempUpper] <- labels[i]
+            dataset[[name]][suppressWarnings(as.numeric(currentCol)) <= tempUpper] <- labels[i]
             tempLower = tempUpper
         }
 
