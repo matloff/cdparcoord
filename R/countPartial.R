@@ -200,18 +200,18 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     }
 
     # Layout left and right sides for the legend
-    generateScreen(12, 7)
+    generateScreen(10, 6.5)
     layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
-    par(mar=c(9, 4, 4, 2))
+    par(mar=c(10, 4, 4, 2))
     plot(baserow,type="n", ylim = range(0, max_y), 
          xaxt="n", yaxt="n", xlab="", ylab="", frame.plot=FALSE)
 
     # Add aesthetic
     title(main=name, col.main="black", font.main=4)
     #par(mar=c(5,6,4,1)+.1) # set margins
-    par(mar=c(9, 4, 4, 2))
-    axis(1, at=seq(2, width, 2), lab=colnames(partial)[seq(2, width, 2)], cex.axis=0.5, las=2)
-    axis(1, at=seq(1, width, 2), lab=colnames(partial)[seq(1, width, 2)], cex.axis=0.5, las=2)
+    par(mar=c(10, 4, 4, 2))
+    axis(1, at=seq(2, width, 2), lab=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
+    axis(1, at=seq(1, width, 2), lab=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
     axis(2, at=seq(0,max_y,1))
 
     # Get scale for lines if large dataset
