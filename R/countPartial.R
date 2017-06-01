@@ -44,7 +44,6 @@ discretize <- function (dataset, input){
         # categorical variables are normally strings anyway. 
         # After the first conversion, the entire column will be
         # characters.
-        #currentCol = as.character(dataset[[name]])
 
         # go through each and replace values according to partitions
         for(i in 1:partitions){
@@ -147,20 +146,50 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         max_y = 0
     }
     else {
-        max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
+        max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums))]) # option 1
     }
     max_freq <- max(partial[,ncol(partial)])
 
     categ <- list()
 
-    # create labels for categorical variables
+    # create labels for categorical variables; preserve order
     # if there is a greater max_y, replace
-    for(i in 1:(ncol(partial)-1)){
-        categ[[i]] <- c(levels(partial[, i]))
-        if (max_y < nlevels(partial[, i])){
-            max_y <- nlevels(partial[, i])
+    for(col in 1:(ncol(partial)-1)){
+        # Store the columns that have categorical variables
+        if (max_y < nlevels(partial[, col])){
+            max_y <- max(max_y, nlevels(partial[, col]))
+        }
+        
+        # Preserve order for categorical variables changed in discretize()
+        if (!is.null(attr(partial, "categorycol")) && colnames(partial)[col] %in% attr(partial, "categorycol")){
+            # Get the index that the colname is in categorycol
+            # categoryorder[index] is the list that you want to assign
+            orderedcategories <- attr(partial, "categoryorder")[match(colnames(partial)[col], attr(partial, "categorycol"))][[1]]
+            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(partial[, col])))]
+        }
+        # Convert normal categorical variables
+        else {
+            categ[[col]] <- c(levels(partial[, col]))
+        }
+
+        # if this column has categorical variables, change its values
+        # to the corresponding numbers accordingly.
+        if (col <= length(categ) && !is.null(categ[[col]])){
+            for(j in 1:(nrow(partial))){
+                tempval <- which(categ[[col]] == partial[j,col])
+
+                # Stop factorizing while we set the value
+                partial[[col]] = as.character(partial[[col]])
+                partial[j, col] <- tempval
+
+                # After setting the value, reset factors
+                partial[[col]] = as.factor(partial[[col]])
+            }
+            # Stop factorizing now that all values are numbers
+            partial[[col]] = as.numeric(partial[[col]])
         }
     }
+
 
     # draw one graph
     # creation of initial plot
@@ -198,6 +227,9 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     for(i in 1:nrow(partial)){
         row <- partial[i,1:width]
         row <- as.numeric(row)
+
+        print("row:")
+        print(row)
 
         # Scale everything from 0 to 1, then partition into 20 for colors
         fr <- partial[i, width+1] / scale # determine thickness via frequency
