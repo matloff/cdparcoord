@@ -34,14 +34,17 @@ case satisfaction level drastically drops.
 
 ###### Example C1
 
+Here we will discretize two of the continuous variables, and show the
+effects of the categorical variable Job Type.
+
 ```R
 # Load data
 file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
 hrdata <- read.table(file, header=TRUE, sep=",", na.strings="")
 
 input1 <- list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
-input = list(input1)
-# This will discretize the data by partitioning average monthly hours into 3parts
+input <- list(input1)
+# This will discretize the data by partitioning average monthly hours into 3 parts
 # called low, med, and high
 hrdata <- discretize(hrdata, input)
 
@@ -51,6 +54,10 @@ discparcoord(hrdata)                                  # plot c1
 
 C1: 
 <img src="vignettes/c1.png" alt="c1" width="500"/>
+
+Here the various job categories exhibit rather similar behavior, but it
+is interesting that the Technical workers have slightly higher job
+satisfaction in spite of having somewhat lower performance ratings.
 
 ###### Example C2
 
