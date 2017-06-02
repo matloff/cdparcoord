@@ -7,7 +7,7 @@ Date: 2017-02-13
 Title: 
 Description: Parallel coordinate plotting with resolutions for large data sets 
     and missing values.
-Depends: R (≥ 3.2.0), ggplot2, plyr, plotly
+Depends: R (>= 3.2.0), ggplot2, plyr, plotly
 Imports:
 Suggests: 
 LazyLoad: no
