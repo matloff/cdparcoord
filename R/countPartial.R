@@ -79,59 +79,59 @@ discretize <- function (dataset, input){
 # parameters:
 #   dataset (table): dataset to calculate partials for
 #   n (int): how many top rows to return (DEFAULT = 5)
-partialNA = function (dataset, k = 5){
+partialNA = function (dataset, k = 5, NAexp = 1.0){
     # using plyr library to get a table 
-    count = count(dataset, vars = NULL, wt_var = NULL)
-    dimensions = dim(count)
+    counts = count(dataset, vars = NULL, wt_var = NULL)
+    dimensions = dim(counts)
     rows = dimensions[1]
     columns = dimensions[2]
     NAValues = c()
-    CompleteTuple = c()
 
     # count up and get the partial values of the NA rows
-    for(i in 1:rows){
-        if(sum(is.na(count[i, ])) > 0 ) {
-            count[i, columns] = count[i, columns] * (((columns - 1) - 
-                        sum(is.na(count[i, ]))) / as.numeric(columns - 1))
-            NAValues = c(NAValues, i)
-        }
+    col1 <- columns - 1
+    numNAs <- apply(counts,1,
+       function(row) sum(is.na(row)))
+    NArows <- which(numNAs > 0)
+    for(i in NArows){
+            tmp <- (col1 - numNAs[i]) / col1
+            counts[i, columns] = counts[i, columns] * tmp^NAexp
     }
 
     # go through every NA row and if they match, 
     # add partials to complete frequencies
-    for(a in NAValues){
-        for(i in 1:rows){
-            if(i %in% NAValues){
-                next
-            } else {
-                check = count[a,1:columns - 1] == count[i, 1:columns - 1]
+    for(a in NArows){
+        for(i in setdiff(1:rows,NArows)){
+            ## if(i %in% NArows){
+            ##     next
+            ## } else {
+                check = counts[a,1:columns - 1] == counts[i, 1:columns - 1]
                 if(!any(check == FALSE, na.rm = TRUE)){
-                    count[i, columns] = count[i, columns] + count[a, columns]
+                    counts[i,columns] = counts[i, columns] + counts[a,columns]
                 }
-            }
+            ## }
         }
     }
 
     # remove na rows from table
-    count <- count[complete.cases(count),]
+    counts <- counts[complete.cases(counts),]
 
     # get n highest rows, if no n inputted, default to top five
-    count <- head(count[order(-count$freq),], k)
+    counts <- head(counts[order(-counts$freq),], k)
 
     for(i in 1:columns){
-        if(is.numeric(count[, i])){
+        if(is.numeric(counts[, i])){
             next
         } else {
-            count[[i]] <- factor(count[[i]])
+            counts[[i]] <- factor(counts[[i]])
         }
     }
 
     if (!is.null(attr(dataset, "categorycol"))){
-        attr(count, "categorycol") <- attr(dataset, "categorycol")
-        attr(count, "categoryorder") <- attr(dataset, "categoryorder")
+        attr(counts, "categorycol") <- attr(dataset, "categorycol")
+        attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
 
-    return(count)
+    return(counts)
 }
 
 
@@ -435,7 +435,7 @@ smallexample <- function(n) {
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
                          interactive = FALSE, save=FALSE, name="Parcoords",
-                         labelsOff = TRUE){
+                         labelsOff = TRUE, NAexp=1.0){
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
