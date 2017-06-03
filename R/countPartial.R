@@ -75,51 +75,89 @@ discretize <- function (dataset, input){
     return(dataset)
 }
 
-# currently counts all partials and adds them properly
+# finds the frequencies, counting NAs according to formiula
+
 # parameters:
-#   dataset (table): dataset to calculate partials for
-#   n (int): how many top rows to return (DEFAULT = 5)
+
+#   dataset: input data frame or data.table
+#   k: number of most-frequent patterns to return; if k < 0, return the
+#      least-frequent patterns
+#   NAexp: weighting factor
+
+# return value:
+
+#  data frame, one row per pattern in the data variables, with weighted
+#  frequencies
+
+# example:
+
+#  > md
+#     V1 V2 V3
+#  1:  1  2  8
+#  2:  1  3  4
+#  3:  1  2  8
+#  4:  5  6  2
+#  5:  5 NA NA
+#  6:  5 NA NA
+#  7: NA  6  2
+#  > partialNA(md,2)
+#    V1 V2 V3     freq
+#  3  5  6  2 2.333333
+#  1  1  2  8 2.000000
+
+# the tuple (1,2,8) appears twice in the input data, thus has a
+# frequency of 2; but (5,NA,NA) appears twice, and it is assumed that it
+# might be a match to (5,6,2), if only the NA values were known, so we
+# count them 1/3 each, and similarly count (NA,6,2) as a 2/3 match, for
+# a total of 1 + 2*(2/3) + 2/3 = 2 1/3; but if there were a pattern
+# (5,1,2), it would NOT count as a partial match to (5,6,2)
+
+# the argument NAexp is used to reduce the weights of partial matches;
+# in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
+
 partialNA = function (dataset, k = 5, NAexp = 1.0){
-    # using plyr library to get a table 
-    counts = count(dataset, vars = NULL, wt_var = NULL)
-    dimensions = dim(counts)
+    # data.table package very good for tabulating counts
+    if (!is.data.table(dataset)) dataset <- data.table(dataset)
+    counts <- dataset[,.N,names(dataset)]
+    counts <- as.data.frame(counts)
+    names(counts)[ncol(counts)] <- 'freq'
+    dimensions = dim(counts) 
     rows = dimensions[1]
-    columns = dimensions[2]
-    NAValues = c()
+    freqcol = dimensions[2]  # column number of 'freq'
+    freqcol1 <- freqcol - 1  # number of data cols
 
     # count up and get the partial values of the NA rows
-    col1 <- columns - 1
-    numNAs <- apply(counts,1,
-       function(row) sum(is.na(row)))
+    numNAs <- apply(counts,1, function(row) sum(is.na(row)))
     NArows <- which(numNAs > 0)
-    for(i in NArows){
-            tmp <- (col1 - numNAs[i]) / col1
-            counts[i, columns] = counts[i, columns] * tmp^NAexp
-    }
+    # in the rows with NAs, adjust their frequencies according to the
+    # number of NAs
+    tmp <- counts[NArows,freqcol] *
+       (1-numNAs[NArows] / freqcol1)^NAexp 
+    counts[NArows,freqcol] <- tmp
 
-    # go through every NA row and if they match, 
-    # add partials to complete frequencies
+    # go through every NA row and every non-NA row; whenever the NA 
+    # row matches the non-NA row in the non-NA values, add to the 
+    # frequency of the non-NA row
     for(a in NArows){
+        aRow <- counts[a,-freqcol]
+        nonNAcols <- which(!is.na(aRow))
+        aNonNAs <- aRow[nonNAcols]
         for(i in setdiff(1:rows,NArows)){
-            ## if(i %in% NArows){
-            ##     next
-            ## } else {
-                check = counts[a,1:columns - 1] == counts[i, 1:columns - 1]
-                if(!any(check == FALSE, na.rm = TRUE)){
-                    counts[i,columns] = counts[i, columns] + counts[a,columns]
-                }
-            ## }
+            if (all(aNonNAs == counts[i,nonNAcols]))
+               counts[i,freqcol] <- counts[i, freqcol] + counts[a,freqcol]
         }
     }
 
     # remove na rows from table
     counts <- counts[complete.cases(counts),]
 
-    # get n highest rows, if no n inputted, default to top five
-    counts <- head(counts[order(-counts$freq),], k)
+    # get k most/least-frequent rows
+    ordering <- order(counts$freq,decreasing=(k > 0))
+    # counts <- head(counts[order(-counts$freq),], k)
+    counts <- counts[ordering[1:abs(k)],]
 
-    for(i in 1:columns){
-        if(is.numeric(counts[, i])){
+    for(i in 1:freqcol){   
+        if(is.numeric(counts[[i]])){
             next
         } else {
             counts[[i]] <- factor(counts[[i]])
@@ -434,7 +472,7 @@ smallexample <- function(n) {
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
-                         interactive = FALSE, save=FALSE, name="Parcoords",
+                         interactive = TRUE, save=FALSE, name="Parcoords",
                          labelsOff = TRUE, NAexp=1.0){
 
     # check to see if column name is valid
