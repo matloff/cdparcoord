@@ -12,7 +12,8 @@
 
 ##### Continuous-Data Example
 
-This involves simulated HR data
+This involves [simulated HR data](https://www.kaggle.com/ludobenistant/hr-analytics),
+courtesy of Kaggle.
 
 ```R
 # Load data
@@ -25,9 +26,18 @@ discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 
 <img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
 
+Here we have displayed the **k** = 100 most frequent patterns.  The
+color legend at the right shows frequency.  Since the highest frequency
+was 6, we might consider trying a larger value of **k**.
+
+Setting **interactive** to TRUE invokes **plotly**, which allows us to
+change the order of the columns via mouse drag.  We could, for instance,
+use the mouse to move the salary column more to the center or left, by
+clciking and dragging the label 'salary' to the desired spot.
+
 Here, we can see, for example, that higher satisfaction level is 
 associated with having more projects and more monthly hours, until 
-number of projects or number of montly hours is too high, in which 
+number of projects or number of monthly hours is too high, in which 
 case satisfaction level drastically drops.  
 
 ##### Categorical-Data Examples ([C1](#example-c1), [C2](#example-c2),[C3](#example-c3))
