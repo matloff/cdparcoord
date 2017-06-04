@@ -15,8 +15,10 @@ library(plotly)
 #         3. lower bounds (vector) - OPTIONAL - lower cutoffs for each label
 #         4. upper bounds (vector) - Optional - upper cutoffs for each label
 # example:  
-# cat1 = list('name' = 'cat1', 'partitions' = 3, 'labels' = c('low', 'med', 'high'))
-# cat2 = list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
+# cat1 = 
+#    list('name' = 'cat1', 'partitions' = 3, 'labels' = c('low', 'med', 'high'))
+# cat2 = 
+#    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
 discretize <- function (dataset, input){
@@ -54,7 +56,8 @@ discretize <- function (dataset, input){
             # convert the potentially numerical values to numeric
             # suppress warnings, and allow non-numeric values
             # to become NA, so they don't get changed again
-            dataset[[name]][suppressWarnings(as.numeric(currentCol)) <= tempUpper] <- labels[i]
+            dataset[[name]][suppressWarnings(
+                as.numeric(currentCol)) <= tempUpper] <- labels[i]
             tempLower = tempUpper
         }
 
@@ -69,8 +72,8 @@ discretize <- function (dataset, input){
 
     # Save the categories and their orders
     attr(dataset, "categorycol") <- c(attr(dataset, "categorycol"), labelcol)
-    attr(dataset, "categoryorder") <- c(attr(dataset, "categoryorder"), labelorder)
-
+    attr(dataset, "categoryorder") <- c(attr(dataset, 
+       "categoryorder"), labelorder)
 
     return(dataset)
 }
@@ -83,6 +86,7 @@ discretize <- function (dataset, input){
 #   k: number of most-frequent patterns to return; if k < 0, return the
 #      least-frequent patterns
 #   NAexp: weighting factor
+#   countNAs: if TRUE, count NA values in a partial weighting
 
 # return value:
 
@@ -100,7 +104,7 @@ discretize <- function (dataset, input){
 #  5:  5 NA NA
 #  6:  5 NA NA
 #  7: NA  6  2
-#  > partialNA(md,2)
+#  > partialNA(md,2,countNAs=TRUE)
 #    V1 V2 V3     freq
 #  3  5  6  2 2.333333
 #  1  1  2  8 2.000000
@@ -115,41 +119,36 @@ discretize <- function (dataset, input){
 # the argument NAexp is used to reduce the weights of partial matches;
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
-partialNA = function (dataset, k = 5, NAexp = 1.0){
+partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
-    counts <- dataset[,.N,names(dataset)]
+    # somehow NAs really slow things down
+    nonNArows <- which(complete.cases(dataset))
+    counts <- dataset[nonNArows,.N,names(dataset)]
     counts <- as.data.frame(counts)
     names(counts)[ncol(counts)] <- 'freq'
     dimensions = dim(counts) 
-    rows = dimensions[1]
-    freqcol = dimensions[2]  # column number of 'freq'
+    freqcol = ncol(counts)  # column number of 'freq'
     freqcol1 <- freqcol - 1  # number of data cols
 
-    # count up and get the partial values of the NA rows
-    numNAs <- apply(counts,1, function(row) sum(is.na(row)))
-    NArows <- which(numNAs > 0)
-    # in the rows with NAs, adjust their frequencies according to the
-    # number of NAs
-    tmp <- counts[NArows,freqcol] *
-       (1-numNAs[NArows] / freqcol1)^NAexp 
-    counts[NArows,freqcol] <- tmp
-
-    # go through every NA row and every non-NA row; whenever the NA 
-    # row matches the non-NA row in the non-NA values, add to the 
-    # frequency of the non-NA row
-    for(a in NArows){
-        aRow <- counts[a,-freqcol]
-        nonNAcols <- which(!is.na(aRow))
-        aNonNAs <- aRow[nonNAcols]
-        for(i in setdiff(1:rows,NArows)){
-            if (all(aNonNAs == counts[i,nonNAcols]))
-               counts[i,freqcol] <- counts[i, freqcol] + counts[a,freqcol]
-        }
+    if (countNAs)  {
+       # go through every NA row and every non-NA row; whenever the NA 
+       # row matches the non-NA row in the non-NA values, add to the 
+       # frequency of the non-NA row
+       partialMatch <- function(nonNArow) all(aNonNAs == nonNArow[nonNAcols])
+       NArows <- setdiff(1:nrow(dataset),nonNArows)
+       dsNA <- as.data.frame(dataset[NArows,])
+       for (a in 1:nrow(dsNA)) {
+           aRow <- dsNA[a,]
+           nonNAcols <- which(!is.na(aRow))
+           aNonNAs <- aRow[nonNAcols]
+           tmp <- apply(counts,1,partialMatch)
+           wherePartMatch <- which(tmp)
+           freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
+           counts[wherePartMatch,freqcol] <- 
+              counts[wherePartMatch,freqcol] + freqincrem
+       }
     }
-
-    # remove na rows from table
-    counts <- counts[complete.cases(counts),]
 
     # get k most/least-frequent rows
     ordering <- order(counts$freq,decreasing=(k > 0))
@@ -199,11 +198,17 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         }
         
         # Preserve order for categorical variables changed in discretize()
-        if (!is.null(attr(partial, "categorycol")) && colnames(partial)[col] %in% attr(partial, "categorycol")){
+        if (
+            !is.null(attr(partial, "categorycol")) && 
+            colnames(partial)[col] %in% attr(partial, "categorycol")) {
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
-            orderedcategories <- attr(partial, "categoryorder")[match(colnames(partial)[col], attr(partial, "categorycol"))][[1]]
-            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(partial[, col])))]
+            orderedcategories <- 
+               attr(partial, "categoryorder")[match(colnames(partial)[col], 
+                  attr(partial, "categorycol"))][[1]]
+            categ[[col]] <- 
+               orderedcategories[(orderedcategories 
+                  %in% c(levels(partial[, col])))]
         }
         # Convert normal categorical variables
         else {
@@ -473,7 +478,7 @@ smallexample <- function(n) {
 # 4. Need to add in a way to choose which names to label pdfs with
 discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
                          interactive = TRUE, save=FALSE, name="Parcoords",
-                         labelsOff = TRUE, NAexp=1.0){
+                         labelsOff = TRUE, NAexp=1.0, countNAs=FALSE) {
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){

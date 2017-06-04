@@ -23,7 +23,9 @@
 }
 
 \usage{
-    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE, interactive = FALSE, save=FALSE, name="Parcoords", labelsOff=TRUE)
+    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE,
+      interactive = FALSE, save=FALSE, name="Parcoords", labelsOff=TRUE,
+      NAexp=1.0,countNAs=FALSE)
 }
 
 \arguments{
