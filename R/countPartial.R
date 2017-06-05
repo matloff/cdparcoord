@@ -518,7 +518,7 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
     } 
     # grpcategory is given and is valid
     else {
-        lvls = levels(data[[grpcategory]])
+        lvls = unique(data[[grpcategory]])
 
         # generate a list of plots for grpcategory
         plots = list()
@@ -526,8 +526,8 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
         # iterate through each different value in the selected category
         for(i in 1:length(lvls)){
             cat = lvls[i]
-            graph = data[which(data[[grpcategory]] == cat), ]
-            ctgdata = data[, !(colnames(data) %in% c(grpcategory))]
+            ctgdata = data[which(data[[grpcategory]] == cat), ]
+            ctgdata[[grpcategory]] <- NULL
 
             if (is.null(k)){
                 partial <- partialNA(ctgdata, k=5)
