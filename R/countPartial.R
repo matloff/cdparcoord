@@ -21,7 +21,7 @@ library(plotly)
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input){
+discretize <- function (dataset, input) {
     for(col in input){
         # read all the input into local variables
         name = col[['name']]
@@ -76,6 +76,16 @@ discretize <- function (dataset, input){
        "categoryorder"), labelorder)
 
     return(dataset)
+}
+
+# wrapper for discretize(); use to order the levels of a factor in a
+# desired sequence
+reOrder <- function(dataset,colName,levelNames) {
+   inputlist <- list()
+   inputlist$name <- colName
+   inputlist$partitions<- length(levelNames)
+   inputlist$labels<- levelNames
+   discretize(dataset,list(inputlist))
 }
 
 # finds the frequencies, counting NAs according to formiula
