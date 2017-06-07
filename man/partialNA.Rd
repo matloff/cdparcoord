@@ -57,8 +57,7 @@ value is 2, for example, the 7/8 increment will be 7/8 squared.
      rbind(c(1,2,8),c(1,3,4),c(1,2,8),c(5,NA,NA),c(5,6,2),c(5,NA,NA),c(NA,6,2))
   partialNA(md)
   partialNA(md,countNAs=TRUE)
-  file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-  dataset = read.table(file, header=TRUE, sep=";", na.strings="")
-  partial <- partialNA(dataset)  
+  data(smallexample)
+  partial <- partialNA(smallexample)  
   partial
 }

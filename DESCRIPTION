@@ -3,15 +3,15 @@ Version: 1.0.0
 Author: Norm Matloff <normmatloff@gmail.com> and 
     Harrison Nguyen <hhnguy@ucdavis.edu> and Vincent Yang <vinyang@ucdavis.edu>
 Maintainer: Norm Matloff <normmatloff@gmail.com>
-Date: 2017-02-13
-Title: 
+Date: 2017-06-07
+Title: Top Frequency-Based Parallel Coordinates
 Description: Parallel coordinate plotting with resolutions for large data sets 
     and missing values.
-Depends: R (>= 3.2.0), ggplot2, data.table, plotly
+Depends: R (>= 3.2.0), ggplot2, data.table, plotly, freqparcoord
 Imports:
 Suggests: 
 LazyLoad: no
-License:
+License: GPL (>= 2)
 NeedsCompilation: no
 Packaged:
 Date/Publication:

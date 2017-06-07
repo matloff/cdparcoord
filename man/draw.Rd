@@ -34,9 +34,9 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 }
 
 \examples{
-    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-    dataset <- read.table(file, header=TRUE, sep=";", na.strings="")
+    library(freqparcoord.cd)
+    data(smallexample)
     # Grab the 5 most significant tuples. 
-    partial <- partialNA(dataset)
-    draw(partial, "Small Demo Example")
+    partial <- partialNA(smallexample)
+    #draw(partial, name="Small Demo Example")
 }

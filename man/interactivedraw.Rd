@@ -36,14 +36,12 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 
 \examples{
     # Drawing an interactive parallel coordinates plot without categorical variables
-    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-    dataset <- read.table(file, header=TRUE, sep=";", na.strings="")
-    partial <- partialNA(dataset)
+    data(smallexample)
+    partial <- partialNA(smallexample)
     interactivedraw(partial)
 
     # Drawing an interactive parallel coordinates plot with categorical variable 
-    file <- system.file("data", "categoricalexample.csv", package="freqparcoord.cd")
-    dataset <- read.table(file, header=TRUE, sep=";", na.strings="")
-    partial <- partialNA(dataset)
+    data(categoricalexample)
+    partial <- partialNA(categoricalexample)
     interactivedraw(partial)
 }

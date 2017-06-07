@@ -93,8 +93,7 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 }
 
 \examples{
-    file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-    hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+    data(hrdata)
     input1 = list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
     input = list(input1)
     # This will discretize the data by partitioning average monthly hours into 3 parts 

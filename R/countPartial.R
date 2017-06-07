@@ -133,6 +133,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
     # somehow NAs really slow things down
+
     nonNArows <- which(complete.cases(dataset))
     counts <- dataset[nonNArows,.N,names(dataset)]
     counts <- as.data.frame(counts)
@@ -150,6 +151,9 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
        dsNA <- as.data.frame(dataset[NArows,])
        for (a in 1:nrow(dsNA)) {
            aRow <- dsNA[a,]
+           if (all(is.na(aRow))) {
+               next
+           }
            nonNAcols <- which(!is.na(aRow))
            aNonNAs <- aRow[nonNAcols]
            tmp <- apply(counts,1,partialMatch)
@@ -161,8 +165,8 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     }
 
     # get k most/least-frequent rows
+    k = min(k, nrow(counts))
     ordering <- order(counts$freq,decreasing=(k > 0))
-    # counts <- head(counts[order(-counts$freq),], k)
     counts <- counts[ordering[1:abs(k)],]
 
     for(i in 1:freqcol){   
@@ -173,6 +177,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         }
     }
 
+    # Save attributes and their orders for drawing
     if (!is.null(attr(dataset, "categorycol"))){
         attr(counts, "categorycol") <- attr(dataset, "categorycol")
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
@@ -449,33 +454,29 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
 }
 
 interactcategoricalexample <- function(n, categ) {
-    file <- system.file("data", "categoricalexample.csv", 
-                        package="freqparcoord.cd")
-    dataset = read.table(file, header=TRUE, sep=";", na.strings="")
+    data(categoricalexample)
 
     # select top n frequencies
     if (missing(n)){
-        partial <- partialNA(dataset)  
+        partial <- partialNA(categoricalexample)  
     }
     else {
-        partial <- partialNA(dataset, n)
+        partial <- partialNA(categoricalexample, n)
     }
     print(partial)
     interactivedraw(partial)
 }
 
-smallexample <- function(n) {
-    file <- system.file("data", "smallexample.csv", package="freqparcoord.cd")
-    dataset = read.table(file, header=TRUE, sep=";", na.strings="")
+runsmallexample <- function(n) {
+    data(smallexample)
 
     # select top n frequencies
     if (missing(n)){
-        partial <- partialNA(dataset)  
+        partial <- partialNA(smallexample)  
     }
     else {
-        partial <- partialNA(dataset, n)
+        partial <- partialNA(smallexample, k=n)
     }
-    print(partial)
     draw(partial, name="Small Example")
 }
 

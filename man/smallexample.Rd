@@ -26,5 +26,5 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 
 \examples{
     # This will draw a plot for the smallexample.csv dataset
-    smallexample()
+    #runsmallexample()
 }
