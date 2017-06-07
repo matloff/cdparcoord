@@ -1,6 +1,7 @@
 library(plyr)
 library(plotly)
-
+library(parallel)
+library(data.table)
 # possible optimization -> add in R code to find the # of columns first
 
 
@@ -129,8 +130,9 @@ reOrder <- function(dataset,colName,levelNames) {
 # the argument NAexp is used to reduce the weights of partial matches;
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
-partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
-    # data.table package very good for tabulating counts
+partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE, cl = NULL) {
+  
+  # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
     # somehow NAs really slow things down
     nonNArows <- which(complete.cases(dataset))
@@ -141,6 +143,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     freqcol = ncol(counts)  # column number of 'freq'
     freqcol1 <- freqcol - 1  # number of data cols
 
+    
     if (countNAs)  {
        # go through every NA row and every non-NA row; whenever the NA 
        # row matches the non-NA row in the non-NA values, add to the 
@@ -148,7 +151,20 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
        partialMatch <- function(nonNArow) all(aNonNAs == nonNArow[nonNAcols])
        NArows <- setdiff(1:nrow(dataset),nonNArows)
        dsNA <- as.data.frame(dataset[NArows,])
-       for (a in 1:nrow(dsNA)) {
+       
+       ### attempt at going parallel ###
+       
+       if (!is.null(cl)){
+         no_cores <- detectCores() - 1 # get the amount of available cores
+         
+         # throw error if all cores being used
+         if (cl >= no_cores) {
+           stop("Using too many cores")
+         }
+         
+         cl <- makeCluster(no_cores)
+         
+         parSapply(cl, 1:nrow(dsNA), function(x) {
            aRow <- dsNA[a,]
            nonNAcols <- which(!is.na(aRow))
            aNonNAs <- aRow[nonNAcols]
@@ -156,8 +172,22 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
            wherePartMatch <- which(tmp)
            freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
            counts[wherePartMatch,freqcol] <- 
+             counts[wherePartMatch,freqcol] + freqincrem
+         })
+         
+       } else {
+          for (a in 1:nrow(dsNA)) {
+            aRow <- dsNA[a,]
+            nonNAcols <- which(!is.na(aRow))
+            aNonNAs <- aRow[nonNAcols]
+            tmp <- apply(counts,1,partialMatch)
+            wherePartMatch <- which(tmp)
+            freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
+            counts[wherePartMatch,freqcol] <- 
               counts[wherePartMatch,freqcol] + freqincrem
+          }
        }
+       
     }
 
     # get k most/least-frequent rows
