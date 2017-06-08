@@ -2,31 +2,13 @@
 \alias{smallexample}
 
 \title{
-    A small example demonstrating freqparcoord.cd.
+    A small dataset for showing how partialNA works in freqparcoord.cd
 }
 
 \description{
-    A small example showing how the freqparcoord.cd package creates
-    parallel coordinate plots.
+    A small fictional dataset with different values and NA's to emphasize
+    partialNA and frequency based calculations with freqparcoord.cd.
 }
-
 \usage{
-smallexample(n)
-}
-
-\arguments{
-    \item{n}{
-        The optional number of top frequencies you'd like to select.
-    }
-}
-
-\author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
-}
-
-\examples{
-    # This will draw a plot for the smallexample.csv dataset
-    \dontrun{
-        runsmallexample()
-    }
+data(smallexample); smallexample
 }

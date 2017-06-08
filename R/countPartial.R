@@ -1,3 +1,4 @@
+library(data.table)
 library(plyr)
 library(plotly)
 
@@ -193,7 +194,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     width <- ncol(partial)-1
     # get only numbers
-    nums <- Filter(is.numeric, subset(partial,,-c(freq)))
+    nums <- Filter(is.numeric, partial[1:ncol(partial)-1])
     if (nrow(nums) == 0 || ncol(nums) == 0){
         max_y = 0
     }
