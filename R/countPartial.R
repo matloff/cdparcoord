@@ -437,7 +437,7 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
                                 reversescale = TRUE,
                                 cmin = min_freq,
                                 cmax = max_freq),
-                    dimensions = interactiveList)
+                    dimensions = interactiveList) 
     }
     else {
         plot_ly(partial, type = 'parcoords', 
@@ -447,8 +447,7 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
-                dimensions = interactiveList
-                ) %>%
+                dimensions = interactiveList) %>%
                 layout(title=name)
     }
 }

@@ -25,7 +25,12 @@ partialNA(dataset, k=5, NAexp=1, countNAs=FALSE)
         frequent tuples, unless \code{k} is negative, in which case the
         least-frequent tuples will be returned.  The latter is useful
         for hunting for outliers.
-        
+    }
+    \item{NAexp}{
+        Scale NA signifiance.
+    }
+    \item{countNAs}{
+        Whether or not you want to count NA values.
     }
 }
 

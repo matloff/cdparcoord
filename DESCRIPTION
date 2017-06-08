@@ -9,7 +9,8 @@ Description: Parallel coordinate plotting with resolutions for large data sets
     and missing values.
 Depends: R (>= 3.2.0), ggplot2, data.table, plotly, freqparcoord
 Imports:
-Suggests: 
+Suggests: rmarkdown, knitr
+VignetteBuilder: knitr
 LazyLoad: no
 License: GPL (>= 2)
 NeedsCompilation: no

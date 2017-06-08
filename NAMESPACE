@@ -1,3 +1,11 @@
-
+importFrom("grDevices", "X11", "as.raster", "colorRampPalette", "png",
+           "quartz")
+importFrom("graphics", "axis", "layout", "lines", "par", "plot",
+           "rasterImage", "text", "title")
+importFrom("stats", "complete.cases")
+importFrom("utils", "data")
+importFrom("data.table", "is.data.table")
+importFrom("plotly", "plot_ly")
 export(partialNA,draw,runsmallexample,discretize,discparcoord,interactivedraw)
+
 

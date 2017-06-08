@@ -54,5 +54,7 @@ discretize(dataset, input)
     discretizedmlb <- discretize(m, discreteinput)
 
     # Account for NA values and weigh values; interactively plot
-    discparcoord(discretizedmlb, interactive=TRUE)
+    \dontrun{
+        discparcoord(discretizedmlb, interactive=TRUE)
+    }
 }

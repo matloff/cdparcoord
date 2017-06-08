@@ -24,7 +24,7 @@
 
 \usage{
     discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE,
-      interactive = FALSE, save=FALSE, name="Parcoords", labelsOff=TRUE,
+      interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
       NAexp=1.0,countNAs=FALSE)
 }
 
@@ -47,7 +47,7 @@
         readjusting column order and scrubbing.
         If this is false, then this will use basic plotting that generates an image
         or saves a png to the current directory.
-        By default, interactive = FALSE.
+        By default, interactive = TRUE
     }
     \item{save}{
         Whether or not you want to save the plot. If interactive mode is on, save
@@ -59,6 +59,12 @@
     \item{labelsOff}{
         Whether or not labels are off. By default, they are off. This only comes into 
         effect when interactive=FALSE.
+    }
+    \item{NAexp}{
+        Scale NA signifiance.
+    }
+    \item{countNAs}{
+        Whether or not you want to count NA values.
     }
 }
 
@@ -94,7 +100,8 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
 
 \examples{
     data(hrdata)
-    input1 = list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
+    input1 = list("name" = "average_montly_hours", 
+                  "partitions" = 3, "labels" = c("low", "med", "high"))
     input = list(input1)
     # This will discretize the data by partitioning average monthly hours into 3 parts 
     # called low, med, and high
