@@ -38,5 +38,7 @@ Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and
     data(smallexample)
     # Grab the 5 most significant tuples. 
     partial <- partialNA(smallexample)
-    #draw(partial, name="Small Demo Example")
+    \dontrun{
+        draw(partial, name="Small Demo Example")
+    }
 }
