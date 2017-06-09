@@ -1,6 +1,7 @@
 import(freqparcoord)
 import(ggplot2)
 import(data.table)
+
 importFrom("grDevices", "X11", "as.raster", "colorRampPalette", "png",
            "quartz")
 importFrom("graphics", "axis", "lines", "par", "plot",
@@ -9,9 +10,7 @@ importFrom(data.table,as.data.table)
 importFrom(data.table,is.data.table)
 importFrom(data.table,".N")
 importFrom(magrittr,"%>%")
-importFrom(graphics, layout)
 importFrom("stats", "complete.cases")
 importFrom("utils", "data")
-importFrom(plotly, layout)
 importFrom("plotly", "plot_ly")
 export(partialNA,draw,runsmallexample,discretize,discparcoord,interactivedraw)

@@ -260,7 +260,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     # Layout left and right sides for the legend
     generateScreen(10, 6.5)
-    layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
+    graphics::layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
     par(mar=c(10, 4, 4, 2))
     plot(baserow,type="n", ylim = range(0, max_y), 
          xaxt="n", yaxt="n", xlab="", ylab="", frame.plot=FALSE)
@@ -449,7 +449,7 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
                             cmin = min_freq,
                             cmax = max_freq),
                 dimensions = interactiveList) %>%
-                layout(title=name)
+                plotly::layout(title=name)
     }
 }
 
