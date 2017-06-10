@@ -330,7 +330,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Accepts a result from partialNA and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
-interactivedraw <- function(partial, name="Interactive Parcoords",
+interactivedraw <- function(pna, name="Interactive Parcoords",
                       accentuate=NULL ) {
     # How it works:
     # Plotly requires input by columns of values. For example,
@@ -343,9 +343,9 @@ interactivedraw <- function(partial, name="Interactive Parcoords",
     # which categorical variable represents what. 
 
     if (!is.null(accentuate)) {
-       cmd <- paste("tmp <- which(partial",accentuate,")",sep='')
+       cmd <- paste("tmp <- which(",accentuate,")",sep='')
        docmd(cmd)
-       partial[tmp,]$freq <- 100 * partial[tmp,]$freq
+       pna[tmp,]$freq <- 100 * pna[tmp,]$freq
     }
 
     # create list of lists of lines to be inputted for Plotly
@@ -356,50 +356,50 @@ interactivedraw <- function(partial, name="Interactive Parcoords",
     categ <- list() 
 
     # Map unique categorical variables to numbers
-    for(col in 1:(ncol(partial)-1)){
+    for(col in 1:(ncol(pna)-1)){
         # Store the columns that have categorical variables
         
         # Preserve order for categorical variables changed in discretize()
-        if (!is.null(attr(partial, "categorycol")) && colnames(partial)[col] %in% attr(partial, "categorycol")){
+        if (!is.null(attr(pna, "categorycol")) && colnames(pna)[col] %in% attr(pna, "categorycol")){
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
-            orderedcategories <- attr(partial, "categoryorder")[match(colnames(partial)[col], attr(partial, "categorycol"))][[1]]
-            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(partial[, col])))]
+            orderedcategories <- attr(pna, "categoryorder")[match(colnames(pna)[col], attr(pna, "categorycol"))][[1]]
+            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(pna[, col])))]
         }
         # Convert normal categorical variables
         else {
-            categ[[col]] <- c(levels(partial[, col]))
+            categ[[col]] <- c(levels(pna[, col]))
         }
 
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
         if (col <= length(categ) && !is.null(categ[[col]])){
-            for(j in 1:(nrow(partial))){
-                tempval <- which(categ[[col]] == partial[j,col])
+            for(j in 1:(nrow(pna))){
+                tempval <- which(categ[[col]] == pna[j,col])
 
                 # Stop factorizing while we set the value
-                partial[[col]] = as.character(partial[[col]])
-                partial[j, col] <- tempval
+                pna[[col]] = as.character(pna[[col]])
+                pna[j, col] <- tempval
 
                 # After setting the value, reset factors
-                partial[[col]] = as.factor(partial[[col]])
+                pna[[col]] = as.factor(pna[[col]])
             }
             # Stop factorizing now that all values are numbers
-            partial[[col]] = as.numeric(partial[[col]])
+            pna[[col]] = as.numeric(pna[[col]])
         }
     }
 
 
     # find the max value and the max frequency to set max/min for our plot
-    nums <- Filter(is.numeric, partial)
+    nums <- Filter(is.numeric, pna)
     max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
-    max_freq <- max(partial[,ncol(partial)])
-    min_freq <- min(partial[,ncol(partial)])
+    max_freq <- max(pna[,ncol(pna)])
+    min_freq <- min(pna[,ncol(pna)])
 
     # update max value for categorical variables, not including freq
-    for(i in 1:(ncol(partial)-1)){
-        if (max_y < nlevels(partial[, i])){
-            max_y <- nlevels(partial[, i])
+    for(i in 1:(ncol(pna)-1)){
+        if (max_y < nlevels(pna[, i])){
+            max_y <- nlevels(pna[, i])
         }
 
         # Create list of lists for graphing
@@ -410,18 +410,18 @@ interactivedraw <- function(partial, name="Interactive Parcoords",
             if (length(categ[[i]]) == 1){
                 interactiveList[[i]] <-
                     list(range = c(0, 2),
-                    label = colnames(partial)[i],
-                    values = unlist(partial[,i]),
+                    label = colnames(pna)[i],
+                    values = unlist(pna[,i]),
                     tickvals = 0:2,
                     ticktext = c(" ", categ[[i]][[1]], " ")
                     )
             }
             else {
             interactiveList[[i]] <-
-                list(range = c(min(partial[[i]]), max(partial[[i]])),
-                constraintrange = c(min(partial[[i]]), max(partial[[i]])),
-                label = colnames(partial)[i],
-                values = unlist(partial[,i]),
+                list(range = c(min(pna[[i]]), max(pna[[i]])),
+                constraintrange = c(min(pna[[i]]), max(pna[[i]])),
+                label = colnames(pna)[i],
+                values = unlist(pna[,i]),
                 tickvals = 1:length(categ[[i]]),
                 ticktext = categ[[i]]
                 )
@@ -430,20 +430,20 @@ interactivedraw <- function(partial, name="Interactive Parcoords",
         # Otherwise, you don't need special ticks/labels
         else {
             interactiveList[[i]] <-
-                list(range = c(min(partial[[i]]), max(partial[[i]])),
+                list(range = c(min(pna[[i]]), max(pna[[i]])),
                     tickformat = '.2f',
-                    constraintrange = c(min(partial[[i]]), max(partial[[i]])),
-                    label = colnames(partial)[i],
-                    values = unlist(partial[,i]))
+                    constraintrange = c(min(pna[[i]]), max(pna[[i]])),
+                    label = colnames(pna)[i],
+                    values = unlist(pna[,i]))
         }
     }
 
 
-    # Convert partial to plot
+    # Convert pna to plot
     if (name == ""){
-        partial %>%
+        pna %>%
             plot_ly(type = 'parcoords', 
-                    line = list(color = partial$freq,
+                    line = list(color = pna$freq,
                                 colorscale = 'Jet',
                                 showscale = TRUE,
                                 reversescale = TRUE,
@@ -452,8 +452,8 @@ interactivedraw <- function(partial, name="Interactive Parcoords",
                     dimensions = interactiveList) 
     }
     else {
-        plot_ly(partial, type = 'parcoords', 
-                line = list(color = partial$freq,
+        plot_ly(pna, type = 'parcoords', 
+                line = list(color = pna$freq,
                             colorscale = 'Jet',
                             showscale = TRUE,
                             reversescale = TRUE,
