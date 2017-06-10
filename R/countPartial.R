@@ -323,10 +323,15 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     rasterImage(legend_image, 0, 0, 1, 1)
 }
 
+# utility: after building up a command as string form, call docmd() to
+# execute it
+docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
+
 # Accepts a result from partialNA and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
-interactivedraw <- function(partial, name="Interactive Parcoords") {
+interactivedraw <- function(partial, name="Interactive Parcoords",
+                      accentuate=NULL ) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -336,6 +341,12 @@ interactivedraw <- function(partial, name="Interactive Parcoords") {
     # this number in the original dataset, then plot it. Finally,
     # we use our mapping from labels to numbers to actually demonstrate
     # which categorical variable represents what. 
+
+    if (!is.null(accentuate)) {
+       cmd <- paste("tmp <- which(partial",accentuate,")",sep='')
+       docmd(cmd)
+       partial[tmp,]$freq <- 100 * partial[tmp,]$freq
+    }
 
     # create list of lists of lines to be inputted for Plotly
     interactiveList <- list()
@@ -487,9 +498,10 @@ runsmallexample <- function(n) {
 # 2. interactive columns
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
-discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE, 
+discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE, 
                          interactive = TRUE, save=FALSE, name="Parcoords",
-                         labelsOff = TRUE, NAexp=1.0, countNAs=FALSE) {
+                         labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
+                         accentuate=NULL) {
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -498,12 +510,8 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
 
     # check to see if grpcategory given
     else if (is.null(grpcategory)){
-        # get top k or default to five
-        if(is.null(k)){
-            partial <- partialNA(data, 5)
-        } else {
-            partial <- partialNA(data, k=k)
-        }
+        # get top k 
+        partial <- partialNA(data, k=k)
 
         # to permute or not to permute
         if(permute){
@@ -514,7 +522,7 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             draw(partial, name=name, save=save, labelsOff=labelsOff)
         }
         else {
-            interactivedraw(partial, name=name)
+            interactivedraw(partial, name=name, accentuate=accentuate)
         }
     } 
     # grpcategory is given and is valid
@@ -553,7 +561,8 @@ discparcoord <- function(data, k = NULL, grpcategory = NULL, permute = FALSE,
             else {
                 numcat <- paste(i, cat)
                 fullname <- paste(name, numcat)
-                plots[[i]] <- interactivedraw(partial, name=fullname)
+                plots[[i]] <- 
+                   interactivedraw(partial,name=fullname,accentuate=accentuate)
             }
         }
         return(plots)
