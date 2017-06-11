@@ -205,7 +205,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     return(counts)
 }
 
-clsPartialNA <- function (dataset, datasetsetname, k = 5, NAexp = 1.0,countNAs=FALSE) {
+clsPartialNA <- function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     # Save categories for after potential dataset conversion to data.table
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
@@ -332,32 +332,32 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
             # categoryorder[index] is the list that you want to assign
             orderedcategories <- 
                 attr(partial, "categoryorder")[match(colnames(partial)[col], 
-                                                     attr(partial, "categorycol"))][[1]]
+                attr(partial, "categorycol"))][[1]]
             categ[[col]] <- 
                 orderedcategories[(orderedcategories 
                                    %in% c(levels(partial[, col])))]
         }
         # Convert normal categorical variables
-    else {
-        categ[[col]] <- c(levels(partial[, col]))
-    }
-
-    # if this column has categorical variables, change its values
-    # to the corresponding numbers accordingly.
-    if (col <= length(categ) && !is.null(categ[[col]])){
-        for(j in 1:(nrow(partial))){
-            tempval <- which(categ[[col]] == partial[j,col])
-
-            # Stop factorizing while we set the value
-            partial[[col]] = as.character(partial[[col]])
-            partial[j, col] <- tempval
-
-            # After setting the value, reset factors
-            partial[[col]] = as.factor(partial[[col]])
+        else {
+            categ[[col]] <- c(levels(partial[, col]))
         }
-        # Stop factorizing now that all values are numbers
-        partial[[col]] = as.numeric(partial[[col]])
-    }
+
+        # if this column has categorical variables, change its values
+        # to the corresponding numbers accordingly.
+        if (col <= length(categ) && !is.null(categ[[col]])){
+            for(j in 1:(nrow(partial))){
+                tempval <- which(categ[[col]] == partial[j,col])
+
+                # Stop factorizing while we set the value
+                partial[[col]] = as.character(partial[[col]])
+                partial[j, col] <- tempval
+
+                # After setting the value, reset factors
+                partial[[col]] = as.factor(partial[[col]])
+            }
+            # Stop factorizing now that all values are numbers
+            partial[[col]] = as.numeric(partial[[col]])
+        }
     }
 
 
@@ -415,7 +415,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         lines(row, type='o', col=colfunc(21)[fr], 
               lwd=fr) # add plot lines
 
-        if(!missing(labelsOff) && labelsOff == FALSE){
+        if (!missing(labelsOff) && labelsOff == FALSE){
             # add on labels
             for(i in 1:(ncol(partial)-1)){
                 # if this column is full of categorical variables
@@ -430,7 +430,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     legend_image <- as.raster(matrix(rev(colfunc(20)), ncol=1))
     plot(c(0,2),c(0,1),type = 'n', axes = F, 
          xlab = '', ylab = '', main = 'Frequency')
-    text(x=1.5, y = seq(1, 0, l=5), labels = seq(round(max_freq), round(min_freq), l=5))
+    text(x=1.5, y = seq(1, 0, l=5), labels = seq(round(max_freq), 
+                                                 round(min_freq), l=5))
     rasterImage(legend_image, 0, 0, 1, 1)
 }
 
@@ -617,7 +618,7 @@ runsmallexample <- function(n) {
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE, 
                          interactive = TRUE, save=FALSE, name="Parcoords",
                          labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
-                         accentuate=NULL) {
+                         accentuate=NULL, inParallel=FALSE) {
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -627,7 +628,12 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
     # check to see if grpcategory given
     else if (is.null(grpcategory)){
         # get top k 
-        partial <- partialNA(data, k=k)
+        if (!inParallel) {
+            partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
+        }
+        else {
+            partial <- clsPartialNA(data, k=k, NAexp=NAexp, countNAs)
+        }
 
         # to permute or not to permute
         if(permute){
@@ -654,12 +660,15 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             ctgdata = data[which(data[[grpcategory]] == cat), ]
             ctgdata[[grpcategory]] <- NULL
 
-            if (is.null(k)){
-                partial <- partialNA(ctgdata, k=5)
+            if (!inParallel) {
+                partial <- partialNA(data, k=k, NAexp=NAexp, 
+                                     countNAs=countNAs)
             }
             else {
-                partial <- partialNA(ctgdata, k=k)
+                partial <- clsPartialNA(data, k=k, NAexp=NAexp, 
+                                        countNAs = countNAs)
             }
+
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }

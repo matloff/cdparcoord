@@ -23,9 +23,9 @@
 }
 
 \usage{
-    discparcoord(data, k = NULL, grpcategory = NULL, permute = FALSE,
+    discparcoord(data, k = 5, grpcategory = NULL, permute = FALSE,
       interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
-      NAexp=1.0,countNAs=FALSE)
+      NAexp=1.0,countNAs=FALSE, accentuate=NULL, inParallel=FALSE)
 }
 
 \arguments{
@@ -65,6 +65,12 @@
     }
     \item{countNAs}{
         Whether or not you want to count NA values.
+    }
+    \item{accentuate}{
+        The property you want to accentuate.
+    }
+    \item{inParallel}{
+        Whether or not you want to calculate tuple frequencies in parallel. Default is false.
     }
 }
 

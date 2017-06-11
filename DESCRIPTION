@@ -7,7 +7,7 @@ Date: 2017-06-07
 Title: Top Frequency-Based Parallel Coordinates
 Description: Parallel coordinate plotting with resolutions for large data sets 
     and missing values.
-Depends: R (>= 3.2.0), ggplot2, data.table, plotly, freqparcoord, magrittr
+Depends: R (>= 3.2.0), ggplot2, data.table, plotly, freqparcoord, magrittr, partools
 Imports:
 Suggests: rmarkdown, knitr
 VignetteBuilder: knitr

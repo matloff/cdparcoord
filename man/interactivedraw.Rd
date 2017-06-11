@@ -18,15 +18,18 @@ Each axis is independent, and has its max/min based off of its own data.
 }
 
 \usage{
-interactivedraw(partial, name)
+interactivedraw(pna, name, accentuate)
 }
 
 \arguments{
-    \item{partial}{
+    \item{pna}{
         The dataset after processing from partialNA().
     }
     \item{name}{
         The name for the plot.
+    }
+    \item{accentuate}{
+        The column and value you want to accentuate.
     }
 }
 
