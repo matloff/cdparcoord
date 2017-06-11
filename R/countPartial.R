@@ -142,8 +142,15 @@ reOrder <- function(dataset,colName,levelNames) {
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+
+    original_categorycol = attr(dataset, "categorycol")
+    original_categoryorder = attr(dataset, "categoryorder")
+
     # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
+    attr(dataset, "categorycol") <- original_categorycol
+    attr(dataset, "categoryorder") <- original_categoryorder
+
     # somehow NAs really slow things down
 
     nonNArows <- which(complete.cases(dataset))
@@ -190,7 +197,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     }
 
     # Save attributes and their orders for drawing
-    if (!is.null(attr(dataset, "categorycol"))){
+    if (!is.null(attr(dataset, "categorycol"))) {
         attr(counts, "categorycol") <- attr(dataset, "categorycol")
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
@@ -199,8 +206,15 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
 }
 
 clsPartialNA <- function (dataset, datasetsetname, k = 5, NAexp = 1.0,countNAs=FALSE) {
+    # Save categories for after potential dataset conversion to data.table
+    original_categorycol = attr(dataset, "categorycol")
+    original_categoryorder = attr(dataset, "categoryorder")
+
     # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
+    attr(dataset, "categorycol") <- original_categorycol
+    attr(dataset, "categoryorder") <- original_categoryorder
+
     # This part sets the base table for non-NA rows
     nonNArows <- which(complete.cases(dataset))
     counts <- dataset[nonNArows,.N,names(dataset)]
@@ -311,9 +325,9 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         }
 
         # Preserve order for categorical variables changed in discretize()
-        if (
-            !is.null(attr(partial, "categorycol")) && 
+        if (!is.null(attr(partial, "categorycol")) && 
                 colnames(partial)[col] %in% attr(partial, "categorycol")) {
+
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
             orderedcategories <- 
