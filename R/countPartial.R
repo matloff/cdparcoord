@@ -205,7 +205,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     return(counts)
 }
 
-clsPartialNA <- function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+clsPartialNA <- function (cls, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     # Save categories for after potential dataset conversion to data.table
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
@@ -232,8 +232,11 @@ clsPartialNA <- function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
 
     if (countNAs) {
         # Don't take all cores because we need to leave one open for main usage
-        numCores = detectCores() - 1
-        cls = makeCluster(numCores)
+        madeCluster=FALSE
+        if (!cls) {
+            cls = makeCluster(numCores)
+            madeCluster=TRUE
+        }
 
         # Split our na dataframe amongst each core
         distribsplit(cls, 'na_counts')
@@ -270,10 +273,12 @@ clsPartialNA <- function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         r <- clusterEvalQ(cls, minipna(na_counts, counts, NAexp))
         counts$freq = original_freq
 
-        for(clusterNum in 1:numCores){
+        for(clusterNum in 1:length(r)){
             counts$freq = as.numeric(counts$freq) + as.numeric(r[[clusterNum]]$freq)
         }
-        stopCluster(cls)
+        if (madeCluster){
+            stopCluster(cls)
+        }
     }
 
     # get k most/least-frequent rows
@@ -628,6 +633,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save=FALSE, name="Parcoords",
                          labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
                          accentuate=NULL, accval=100, inParallel=FALSE,
+                         cls=NULL,
                          differentiate=FALSE) {
 
     # check to see if column name is valid
@@ -642,7 +648,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
         }
         else {
-            partial <- clsPartialNA(data, k=k, NAexp=NAexp, countNAs)
+            partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
         }
 
         # to permute or not to permute
@@ -677,7 +683,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                                      countNAs=countNAs)
             }
             else {
-                partial <- clsPartialNA(data, k=k, NAexp=NAexp, 
+                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, 
                                         countNAs = countNAs)
             }
 

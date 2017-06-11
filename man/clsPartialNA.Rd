@@ -15,10 +15,13 @@ common with it.
 }
 
 \usage{
-clsPartialNA(dataset, k=5, NAexp=1, countNAs=FALSE)
+clsPartialNA(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
 }
 
 \arguments{
+    \item{cls}{
+        The cluster to use to process. If not supplied, it generates its own cluster.
+    }
     \item{dataset}{
         The dataset to process, a data frame or data.table.
     }
