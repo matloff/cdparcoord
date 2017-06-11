@@ -1,6 +1,7 @@
 library(data.table)
 library(plyr)
 library(plotly)
+library(partools)
 
 # possible optimization -> add in R code to find the # of columns first
 
@@ -58,7 +59,7 @@ discretize <- function (dataset, input) {
             # suppress warnings, and allow non-numeric values
             # to become NA, so they don't get changed again
             dataset[[name]][suppressWarnings(
-                as.numeric(currentCol)) <= tempUpper] <- labels[i]
+                                             as.numeric(currentCol)) <= tempUpper] <- labels[i]
             tempLower = tempUpper
         }
 
@@ -74,7 +75,7 @@ discretize <- function (dataset, input) {
     # Save the categories and their orders
     attr(dataset, "categorycol") <- c(attr(dataset, "categorycol"), labelcol)
     attr(dataset, "categoryorder") <- c(attr(dataset, 
-       "categoryorder"), labelorder)
+                                             "categoryorder"), labelorder)
 
     return(dataset)
 }
@@ -82,11 +83,11 @@ discretize <- function (dataset, input) {
 # wrapper for discretize(); use to order the levels of a factor in a
 # desired sequence
 reOrder <- function(dataset,colName,levelNames) {
-   inputlist <- list()
-   inputlist$name <- colName
-   inputlist$partitions<- length(levelNames)
-   inputlist$labels<- levelNames
-   discretize(dataset,list(inputlist))
+    inputlist <- list()
+    inputlist$name <- colName
+    inputlist$partitions<- length(levelNames)
+    inputlist$labels<- levelNames
+    discretize(dataset,list(inputlist))
 }
 
 # finds the frequencies, counting NAs according to formiula
@@ -143,26 +144,112 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     freqcol = ncol(counts)  # column number of 'freq'
     freqcol1 <- freqcol - 1  # number of data cols
 
-    if (countNAs)  {
-       # go through every NA row and every non-NA row; whenever the NA 
-       # row matches the non-NA row in the non-NA values, add to the 
-       # frequency of the non-NA row
-       partialMatch <- function(nonNArow) all(aNonNAs == nonNArow[nonNAcols])
-       NArows <- setdiff(1:nrow(dataset),nonNArows)
-       dsNA <- as.data.frame(dataset[NArows,])
-       for (a in 1:nrow(dsNA)) {
-           aRow <- dsNA[a,]
-           if (all(is.na(aRow))) {
-               next
-           }
-           nonNAcols <- which(!is.na(aRow))
-           aNonNAs <- aRow[nonNAcols]
-           tmp <- apply(counts,1,partialMatch)
-           wherePartMatch <- which(tmp)
-           freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
-           counts[wherePartMatch,freqcol] <- 
-              counts[wherePartMatch,freqcol] + freqincrem
-       }
+    if (countNAs) {
+        # go through every NA row and every non-NA row; whenever the NA 
+        # row matches the non-NA row in the non-NA values, add to the 
+        # frequency of the non-NA row
+        partialMatch <- function(nonNArow) all(aNonNAs == nonNArow[nonNAcols])
+        NArows <- setdiff(1:nrow(dataset),nonNArows)
+        dsNA <- as.data.frame(dataset[NArows,])
+        for (a in 1:nrow(dsNA)) {
+            aRow <- dsNA[a,]
+            if (all(is.na(aRow))) {
+                next
+            }
+            nonNAcols <- which(!is.na(aRow))
+            aNonNAs <- aRow[nonNAcols]
+            tmp <- apply(counts,1,partialMatch)
+            wherePartMatch <- which(tmp)
+            freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
+            counts[wherePartMatch,freqcol] <- 
+                counts[wherePartMatch,freqcol] + freqincrem
+        }
+    }
+
+    # get k most/least-frequent rows
+    k = min(k, nrow(counts))
+    ordering <- order(counts$freq,decreasing=(k > 0))
+    counts <- counts[ordering[1:abs(k)],]
+
+    for(i in 1:freqcol){   
+        if(is.numeric(counts[[i]])){
+            next
+        } else {
+            counts[[i]] <- factor(counts[[i]])
+        }
+    }
+
+    # Save attributes and their orders for drawing
+    if (!is.null(attr(dataset, "categorycol"))){
+        attr(counts, "categorycol") <- attr(dataset, "categorycol")
+        attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
+    }
+
+    return(counts)
+}
+
+clsPartialNA <- function (dataset, datasetsetname, k = 5, NAexp = 1.0,countNAs=FALSE) {
+    # data.table package very good for tabulating counts
+    if (!is.data.table(dataset)) dataset <- data.table(dataset)
+    # This part sets the base table for non-NA rows
+    nonNArows <- which(complete.cases(dataset))
+    counts <- dataset[nonNArows,.N,names(dataset)]
+    counts <- as.data.frame(counts)
+    if (nrow(counts) == 0) {
+        stop("Must have at least one full row.")
+    }
+    names(counts)[ncol(counts)] <- 'freq'
+    dimensions = dim(counts) 
+    freqcol = ncol(counts)  # column number of 'freq'
+    freqcol1 <- freqcol - 1  # number of data cols
+
+    # Make a data frame of just rows with NA's
+    na_counts <- as.data.frame(dataset[!nonNArows,.N,names(dataset)])
+
+    if (countNAs) {
+        # Don't take all cores because we need to leave one open for main usage
+        numCores = detectCores() - 1
+        cls = makeCluster(numCores)
+
+        # Split our na dataframe amongst each core
+        distribsplit(cls, 'na_counts')
+
+        # This function takes each subset of the na dataframe
+        # and adds corresponding frequencies to the "full row" column.
+        minipna <- function(df, counts, NAexp=1.0){
+            partialMatch<- function(nonNArow) all(aNonNAs==nonNArow[nonNAcols])
+            NArows <- setdiff(1:nrow(dataset),nonNArows)
+
+            # For each row of our subset, add the NA frequency portions
+            for (a in 1:nrow(df)) {
+                aRow <- df[a,]
+                if (all(is.na(aRow))) {
+                    next
+                }
+                nonNAcols <- which(!is.na(aRow))
+                aNonNAs <- aRow[nonNAcols]
+                tmp <- apply(counts,1,partialMatch)
+                wherePartMatch <- which(tmp)
+                freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
+                counts[wherePartMatch,freqcol] <- 
+                    counts[wherePartMatch,freqcol] + freqincrem
+            }
+
+            return(counts)
+        }
+        # Save original frequencies
+        original_freq = counts$freq
+        # Zero frequencies so we only have to account for the partial
+        # frequencies after cluster processing
+        counts$freq = 0
+        clusterExport(cls, varlist=c("minipna", "counts", "NAexp"), envir=environment())
+        r <- clusterEvalQ(cls, minipna(na_counts, counts, NAexp))
+        counts$freq = original_freq
+
+        for(clusterNum in 1:numCores){
+            counts$freq = as.numeric(counts$freq) + as.numeric(r[[clusterNum]]$freq)
+        }
+        stopCluster(cls)
     }
 
     # get k most/least-frequent rows
@@ -212,41 +299,41 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         if (max_y < nlevels(partial[, col])){
             max_y <- max(max_y, nlevels(partial[, col]))
         }
-        
+
         # Preserve order for categorical variables changed in discretize()
         if (
             !is.null(attr(partial, "categorycol")) && 
-            colnames(partial)[col] %in% attr(partial, "categorycol")) {
+                colnames(partial)[col] %in% attr(partial, "categorycol")) {
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
             orderedcategories <- 
-               attr(partial, "categoryorder")[match(colnames(partial)[col], 
-                  attr(partial, "categorycol"))][[1]]
+                attr(partial, "categoryorder")[match(colnames(partial)[col], 
+                                                     attr(partial, "categorycol"))][[1]]
             categ[[col]] <- 
-               orderedcategories[(orderedcategories 
-                  %in% c(levels(partial[, col])))]
+                orderedcategories[(orderedcategories 
+                                   %in% c(levels(partial[, col])))]
         }
         # Convert normal categorical variables
-        else {
-            categ[[col]] <- c(levels(partial[, col]))
+    else {
+        categ[[col]] <- c(levels(partial[, col]))
+    }
+
+    # if this column has categorical variables, change its values
+    # to the corresponding numbers accordingly.
+    if (col <= length(categ) && !is.null(categ[[col]])){
+        for(j in 1:(nrow(partial))){
+            tempval <- which(categ[[col]] == partial[j,col])
+
+            # Stop factorizing while we set the value
+            partial[[col]] = as.character(partial[[col]])
+            partial[j, col] <- tempval
+
+            # After setting the value, reset factors
+            partial[[col]] = as.factor(partial[[col]])
         }
-
-        # if this column has categorical variables, change its values
-        # to the corresponding numbers accordingly.
-        if (col <= length(categ) && !is.null(categ[[col]])){
-            for(j in 1:(nrow(partial))){
-                tempval <- which(categ[[col]] == partial[j,col])
-
-                # Stop factorizing while we set the value
-                partial[[col]] = as.character(partial[[col]])
-                partial[j, col] <- tempval
-
-                # After setting the value, reset factors
-                partial[[col]] = as.factor(partial[[col]])
-            }
-            # Stop factorizing now that all values are numbers
-            partial[[col]] = as.numeric(partial[[col]])
-        }
+        # Stop factorizing now that all values are numbers
+        partial[[col]] = as.numeric(partial[[col]])
+    }
     }
 
 
@@ -331,7 +418,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
-                      accentuate=NULL ) {
+                            accentuate=NULL ) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -343,9 +430,9 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     # which categorical variable represents what. 
 
     if (!is.null(accentuate)) {
-       cmd <- paste("tmp <- which(",accentuate,")",sep='')
-       docmd(cmd)
-       pna[tmp,]$freq <- 100 * pna[tmp,]$freq
+        cmd <- paste("tmp <- which(",accentuate,")",sep='')
+        docmd(cmd)
+        pna[tmp,]$freq <- 100 * pna[tmp,]$freq
     }
 
     # create list of lists of lines to be inputted for Plotly
@@ -358,13 +445,18 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     # Map unique categorical variables to numbers
     for(col in 1:(ncol(pna)-1)){
         # Store the columns that have categorical variables
-        
+
         # Preserve order for categorical variables changed in discretize()
-        if (!is.null(attr(pna, "categorycol")) && colnames(pna)[col] %in% attr(pna, "categorycol")){
+        if (!is.null(attr(pna, "categorycol")) && 
+            colnames(pna)[col] %in% attr(pna, "categorycol")){
+
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
-            orderedcategories <- attr(pna, "categoryorder")[match(colnames(pna)[col], attr(pna, "categorycol"))][[1]]
-            categ[[col]] <- orderedcategories[(orderedcategories %in% c(levels(pna[, col])))]
+            orderedcategories <- 
+                attr(pna, "categoryorder")[match(colnames(pna)[col], 
+                attr(pna, "categorycol"))][[1]]
+            categ[[col]] <- orderedcategories[(orderedcategories %in% 
+                                               c(levels(pna[, col])))]
         }
         # Convert normal categorical variables
         else {
@@ -403,38 +495,38 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         }
 
         # Create list of lists for graphing
-        
+
         # If it is a categorical variable, add ticks and labels
         if (i <= length(categ) && !is.null(categ[[i]])){
 
             if (length(categ[[i]]) == 1){
                 interactiveList[[i]] <-
                     list(range = c(0, 2),
-                    label = colnames(pna)[i],
-                    values = unlist(pna[,i]),
-                    tickvals = 0:2,
-                    ticktext = c(" ", categ[[i]][[1]], " ")
-                    )
+                         label = colnames(pna)[i],
+                         values = unlist(pna[,i]),
+                         tickvals = 0:2,
+                         ticktext = c(" ", categ[[i]][[1]], " ")
+                         )
             }
             else {
-            interactiveList[[i]] <-
-                list(range = c(min(pna[[i]]), max(pna[[i]])),
-                constraintrange = c(min(pna[[i]]), max(pna[[i]])),
-                label = colnames(pna)[i],
-                values = unlist(pna[,i]),
-                tickvals = 1:length(categ[[i]]),
-                ticktext = categ[[i]]
-                )
+                interactiveList[[i]] <-
+                    list(range = c(min(pna[[i]]), max(pna[[i]])),
+                         constraintrange = c(min(pna[[i]]), max(pna[[i]])),
+                         label = colnames(pna)[i],
+                         values = unlist(pna[,i]),
+                         tickvals = 1:length(categ[[i]]),
+                         ticktext = categ[[i]]
+                         )
             }
         }
         # Otherwise, you don't need special ticks/labels
         else {
             interactiveList[[i]] <-
                 list(range = c(min(pna[[i]]), max(pna[[i]])),
-                    tickformat = '.2f',
-                    constraintrange = c(min(pna[[i]]), max(pna[[i]])),
-                    label = colnames(pna)[i],
-                    values = unlist(pna[,i]))
+                     tickformat = '.2f',
+                     constraintrange = c(min(pna[[i]]), max(pna[[i]])),
+                     label = colnames(pna)[i],
+                     values = unlist(pna[,i]))
         }
     }
 
@@ -460,7 +552,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
                             cmin = min_freq,
                             cmax = max_freq),
                 dimensions = interactiveList) %>%
-                plotly::layout(title=name)
+        plotly::layout(title=name)
     }
 }
 
@@ -562,7 +654,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 numcat <- paste(i, cat)
                 fullname <- paste(name, numcat)
                 plots[[i]] <- 
-                   interactivedraw(partial,name=fullname,accentuate=accentuate)
+                    interactivedraw(partial,name=fullname,accentuate=accentuate)
             }
         }
         return(plots)
