@@ -28,8 +28,8 @@ discretize <- function (dataset, input=NULL) {
           if (length(table(dscol)) <= 10) next
           inp <- list()
           inp[['name']] <- nm
-          inp[['partitions']] <- 3
-          inp[['labels']] <- c('low','med','high')
+          inp[['partitions']] <- 5
+          inp[['labels']] <- c('low','lowmed','med','highmed','high')
           i <- i + 1
           input[[i]] <- inp
        }
@@ -443,7 +443,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
-                            accentuate=NULL ) {
+                            accentuate=NULL, accval=100) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -457,7 +457,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     if (!is.null(accentuate)) {
         cmd <- paste("tmp <- which(",accentuate,")",sep='')
         docmd(cmd)
-        pna[tmp,]$freq <- 100 * pna[tmp,]$freq
+        pna[tmp,]$freq <- accval * pna[tmp,]$freq
     }
 
     # create list of lists of lines to be inputted for Plotly
@@ -468,41 +468,41 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     categ <- list() 
 
     # Map unique categorical variables to numbers
-    for(col in 1:(ncol(pna)-1)){
+    for(colnum in 1:(ncol(pna)-1)){
         # Store the columns that have categorical variables
 
         # Preserve order for categorical variables changed in discretize()
         if (!is.null(attr(pna, "categorycol")) && 
-            colnames(pna)[col] %in% attr(pna, "categorycol")){
+            colnames(pna)[colnum] %in% attr(pna, "categorycol")){
 
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
             orderedcategories <- 
-                attr(pna, "categoryorder")[match(colnames(pna)[col], 
+                attr(pna, "categoryorder")[match(colnames(pna)[colnum], 
                 attr(pna, "categorycol"))][[1]]
-            categ[[col]] <- orderedcategories[(orderedcategories %in% 
-                                               c(levels(pna[, col])))]
+            categ[[colnum]] <- orderedcategories[(orderedcategories %in% 
+                                               c(levels(pna[, colnum])))]
         }
         # Convert normal categorical variables
         else {
-            categ[[col]] <- c(levels(pna[, col]))
+            categ[[colnum]] <- c(levels(pna[, colnum]))
         }
 
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
-        if (col <= length(categ) && !is.null(categ[[col]])){
+        if (colnum <= length(categ) && !is.null(categ[[colnum]])){
             for(j in 1:(nrow(pna))){
-                tempval <- which(categ[[col]] == pna[j,col])
+                tempval <- which(categ[[colnum]] == pna[j,colnum])
 
                 # Stop factorizing while we set the value
-                pna[[col]] = as.character(pna[[col]])
-                pna[j, col] <- tempval
+                pna[[colnum]] = as.character(pna[[colnum]])
+                pna[j, colnum] <- tempval
 
                 # After setting the value, reset factors
-                pna[[col]] = as.factor(pna[[col]])
+                pna[[colnum]] = as.factor(pna[[colnum]])
             }
             # Stop factorizing now that all values are numbers
-            pna[[col]] = as.numeric(pna[[col]])
+            pna[[colnum]] = as.numeric(pna[[colnum]])
         }
     }
 
@@ -618,7 +618,7 @@ runsmallexample <- function(n) {
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE, 
                          interactive = TRUE, save=FALSE, name="Parcoords",
                          labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
-                         accentuate=NULL, inParallel=FALSE) {
+                         accentuate=NULL, accval=100, inParallel=FALSE) {
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -644,7 +644,8 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             draw(partial, name=name, save=save, labelsOff=labelsOff)
         }
         else {
-            interactivedraw(partial, name=name, accentuate=accentuate)
+            interactivedraw(partial, name=name, 
+               accentuate=accentuate, accval=accval)
         }
     } 
     # grpcategory is given and is valid
