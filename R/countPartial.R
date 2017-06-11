@@ -1,8 +1,3 @@
-library(data.table)
-library(plyr)
-library(plotly)
-library(partools)
-
 # possible optimization -> add in R code to find the # of columns first
 
 
@@ -23,7 +18,22 @@ library(partools)
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input) {
+discretize <- function (dataset, input=NULL) {
+    if (is.null(input)) {
+       input <- list() 
+       i <- 0
+       for (nm in names(dataset)) {
+          dscol <- dataset[[nm]]
+          if (!is.numeric(dscol)) next
+          if (length(table(dscol)) <= 10) next
+          inp <- list()
+          inp[['name']] <- nm
+          inp[['partitions']] <- 3
+          inp[['labels']] <- c('low','med','high')
+          i <- i + 1
+          input[[i]] <- inp
+       }
+    }
     for(col in input){
         # read all the input into local variables
         name = col[['name']]
