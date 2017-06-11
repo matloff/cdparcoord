@@ -443,7 +443,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
-                            accentuate=NULL, accval=100) {
+                            accentuate=NULL, accval=100, differentiate=FALSE) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -555,6 +555,15 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         }
     }
 
+    scaleOn=TRUE
+
+    # Use random colors to differentiate lines
+    if (differentiate){
+        pna$freq = 1:nrow(pna)
+        min_freq = 1
+        max_freq = nrow(pna)
+        scaleOn=FALSE
+    }
 
     # Convert pna to plot
     if (name == ""){
@@ -562,7 +571,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
             plot_ly(type = 'parcoords', 
                     line = list(color = pna$freq,
                                 colorscale = 'Jet',
-                                showscale = TRUE,
+                                showscale = scaleOn,
                                 reversescale = TRUE,
                                 cmin = min_freq,
                                 cmax = max_freq),
@@ -572,7 +581,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         plot_ly(pna, type = 'parcoords', 
                 line = list(color = pna$freq,
                             colorscale = 'Jet',
-                            showscale = TRUE,
+                            showscale = scaleOn,
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
@@ -618,7 +627,8 @@ runsmallexample <- function(n) {
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE, 
                          interactive = TRUE, save=FALSE, name="Parcoords",
                          labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
-                         accentuate=NULL, accval=100, inParallel=FALSE) {
+                         accentuate=NULL, accval=100, inParallel=FALSE,
+                         differentiate=FALSE) {
 
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
@@ -645,7 +655,8 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         }
         else {
             interactivedraw(partial, name=name, 
-               accentuate=accentuate, accval=accval)
+               accentuate=accentuate, accval=accval,
+               differentiate=differentiate)
         }
     } 
     # grpcategory is given and is valid
@@ -688,7 +699,10 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 numcat <- paste(i, cat)
                 fullname <- paste(name, numcat)
                 plots[[i]] <- 
-                    interactivedraw(partial,name=fullname,accentuate=accentuate)
+                    interactivedraw(partial,
+                                    name=fullname,
+                                    accentuate=accentuate,
+                                    differentiate=differentiate)
             }
         }
         return(plots)
