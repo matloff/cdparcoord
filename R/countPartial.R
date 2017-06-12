@@ -7,8 +7,8 @@
 #   list of lists where each list within is used to represent a column -
 #       the inner list should contain the following vars:
 #         1. partitions (int) - number of partitions to make
-#         2. labels (vector of strs) - OPTIONAL -what to label the partitions. if none, 
-#                                     default is just to have ints as labels
+#         2. labels (vector of strs) - OPTIONAL -what to label the 
+#            partitions. if none, default is just to have ints as labels
 #         3. lower bounds (vector) - OPTIONAL - lower cutoffs for each label
 #         4. upper bounds (vector) - Optional - upper cutoffs for each label
 # example:  
@@ -28,8 +28,10 @@ discretize <- function (dataset, input=NULL) {
           if (length(table(dscol)) <= 10) next
           inp <- list()
           inp[['name']] <- nm
-          inp[['partitions']] <- 5
-          inp[['labels']] <- c('low','lowmed','med','highmed','high')
+          inp[['partitions']] <- 10
+          inp[['labels']] <- c(
+             'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
+             'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
           i <- i + 1
           input[[i]] <- inp
        }
@@ -448,7 +450,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
-                            accentuate=NULL, accval=100, differentiate=FALSE) {
+                            accentuate=NULL, accval=100, differentiate=TRUE) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -564,7 +566,8 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 
     # Use random colors to differentiate lines
     if (differentiate){
-        pna$freq = 1:nrow(pna)
+        nrpna <- nrow(pna)
+        pna$freq = sample(1:nrpna,nrpna,replace=FALSE)
         min_freq = 1
         max_freq = nrow(pna)
         scaleOn=FALSE
