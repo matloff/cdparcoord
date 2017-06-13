@@ -102,6 +102,8 @@ reOrder <- function(dataset,colName,levelNames) {
     discretize(dataset,list(inputlist))
 }
 
+# partialNA():
+
 # finds the frequencies, counting NAs according to formiula
 
 # parameters:
@@ -114,8 +116,8 @@ reOrder <- function(dataset,colName,levelNames) {
 
 # return value:
 
-#  data frame, one row per pattern in the data variables, with weighted
-#  frequencies
+#  data frame of subclass 'pna', one row per pattern in the data
+#  variables, with weighted frequencies
 
 # example:
 
@@ -204,10 +206,15 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
 
+    class(counts) <- c('pna','data.frame')
+    attr(counts,'k') <- k
+
     return(counts)
 }
 
 clsPartialNA <- function (cls, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+    if (class(dataset)[1] == 'pna') 
+       stop('does not yet allow preprocessed data')
     # Save categories for after potential dataset conversion to data.table
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
@@ -639,6 +646,9 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          cls=NULL,
                          differentiate=FALSE) {
 
+    if (class(data)[1] == 'pna' && !is.null(grpcategory)) 
+       stop('group case does not yet handle preprocessed data')
+
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
         stop("Invalid column names")
@@ -646,6 +656,10 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
 
     # check to see if grpcategory given
     else if (is.null(grpcategory)){
+    if (class(data)[1] == 'pna') {
+       partial <- data
+       k <- attr(data,'k')
+    } else {
         # get top k 
         if (!inParallel) {
             partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
@@ -658,6 +672,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         if(permute){
             partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
         }
+     }
 
         if (!interactive){
             draw(partial, name=name, save=save, labelsOff=labelsOff)
