@@ -102,7 +102,6 @@ discretize <- function (dataset, input=NULL, ndigs=NULL) {
 ###         }
 
     }
-browser()
 
     labelcol = list()
     labelorder = list()
