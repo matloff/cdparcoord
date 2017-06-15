@@ -18,23 +18,43 @@
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input=NULL) {
+discretize <- function (dataset, input=NULL, ndigs=NULL) {
     if (is.null(input)) {
+       if (!is.null(ndigs)) {
+          # save original number of digits, restore later
+          savedigs <- options()$digits
+          setdigsoption <- function(nds) {
+             cmd <- paste('options(digits=',nds,')',sep='')
+             docmd(cmd)
+             }
+          setdigsoption(ndigs)
+       }
        input <- list() 
-       i <- 0
+       nlevels <- 10
+       ### i <- 0
        for (nm in names(dataset)) {
           dscol <- dataset[[nm]]
           if (!is.numeric(dscol)) next
-          if (length(table(dscol)) <= 10) next
+          if (length(table(dscol)) <= nlevels) next
           inp <- list()
           inp[['name']] <- nm
-          inp[['partitions']] <- 10
-          inp[['labels']] <- c(
-             'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
-             'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
-          i <- i + 1
-          input[[i]] <- inp
+          inp[['partitions']] <- nlevels
+          if (!is.null(ndigs)) {
+             tmp <- seq(1/nlevels,1.0,1/nlevels)
+             lbls <- quantile(dscol,tmp)
+             ### lbls <- as.character(lbls)
+             lbls <- format(lbls,digits=ndigs)
+          } else {
+             lbls <- c(
+                'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
+                'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
+           }
+          inp[['labels']] <- lbls
+          ### i <- i + 1
+          ### input[[i]] <- inp
+          input[[nm]] <- inp
        }
+       if (!is.null(ndigs)) setdigsoption(savedigs)
     }
     for(col in input){
         # read all the input into local variables
@@ -61,21 +81,28 @@ discretize <- function (dataset, input=NULL) {
         # After the first conversion, the entire column will be
         # characters.
 
-        # go through each and replace values according to partitions
-        for(i in 1:partitions){
-            currentCol = as.character(dataset[[name]])
-            tempUpper = tempLower + increments
+        thisColData <- dataset[name][,1]
+        lvls <- round((thisColData - colMin) / increments)
+        lvls <- pmax(lvls,1)
+        lvls <- pmin(lvls,partitions)
+        dataset[[name]] <- labels[lvls]
 
-            # Now that the column has characters, 
-            # convert the potentially numerical values to numeric
-            # suppress warnings, and allow non-numeric values
-            # to become NA, so they don't get changed again
-            dataset[[name]][suppressWarnings(
-                                             as.numeric(currentCol)) <= tempUpper] <- labels[i]
-            tempLower = tempUpper
-        }
+###         # go through each and replace values according to partitions
+###         for(i in 1:partitions){
+###             currentCol = as.character(dataset[[name]])
+###             tempUpper = tempLower + increments
+### 
+###             # Now that the column has characters, 
+###             # convert the potentially numerical values to numeric
+###             # suppress warnings, and allow non-numeric values
+###             # to become NA, so they don't get changed again
+###             dataset[[name]][suppressWarnings(
+###                as.numeric(currentCol)) <= tempUpper] <- labels[i]
+###             tempLower = tempUpper
+###         }
 
     }
+browser()
 
     labelcol = list()
     labelorder = list()
