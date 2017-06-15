@@ -172,6 +172,8 @@ reOrder <- function(dataset,colName,levelNames) {
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+    if (class(dataset)[1] == 'pna') 
+       stop('does not yet allow preprocessed data')
 
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
@@ -334,6 +336,9 @@ clsPartialNA <- function (cls, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         attr(counts, "categorycol") <- attr(dataset, "categorycol")
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
+
+    class(counts) <- c('pna','data.frame')
+    attr(counts,'k') <- k
 
     return(counts)
 }
