@@ -18,20 +18,9 @@
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input=NULL, ndigs=NULL) {
+discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
     if (is.null(input)) {
-###        if (!is.null(ndigs)) {
-###           # save original number of digits, restore later
-###           savedigs <- options()$digits
-###           setdigsoption <- function(nds) {
-###              cmd <- paste('options(digits=',nds,')',sep='')
-###              docmd(cmd)
-###              }
-###           setdigsoption(ndigs)
-###        }
        input <- list() 
-       nlevels <- 10
-       ### i <- 0
        for (nm in names(dataset)) {
           dscol <- dataset[[nm]]
           inp <- list()
@@ -43,7 +32,7 @@ discretize <- function (dataset, input=NULL, ndigs=NULL) {
           } else {
              inp[['name']] <- nm
              inp[['partitions']] <- nlevels
-             if (!is.null(ndigs)) {
+             if (ndigs > 0) {
                 tmp <- seq(1/nlevels,1.0,1/nlevels)
                 lbls <- quantile(dscol,tmp)
                 ### lbls <- as.character(lbls)
@@ -60,7 +49,6 @@ discretize <- function (dataset, input=NULL, ndigs=NULL) {
           ### input[[i]] <- inp
           input[[nm]] <- inp
        }
-###        if (!is.null(ndigs)) setdigsoption(savedigs)
     }
     for(col in input){
         if (col$dontchange) next
@@ -548,7 +536,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 
                 # Stop factorizing while we set the value
                 pna[[colnum]] = as.character(pna[[colnum]])
-                pna[j, colnum] <- tempval
+                pna[j, colnum] <- tempval[1]
 
                 # After setting the value, reset factors
                 pna[[colnum]] = as.factor(pna[[colnum]])
