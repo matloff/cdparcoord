@@ -20,43 +20,50 @@
 
 discretize <- function (dataset, input=NULL, ndigs=NULL) {
     if (is.null(input)) {
-       if (!is.null(ndigs)) {
-            # save original number of digits, restore later
-            savedigs <- options()$digits
-            setdigsoption <- function(nds) {
-                cmd <- paste('options(digits=',nds,')',sep='')
-                docmd(cmd)
-                }
-            setdigsoption(ndigs)
-       }
+###        if (!is.null(ndigs)) {
+###           # save original number of digits, restore later
+###           savedigs <- options()$digits
+###           setdigsoption <- function(nds) {
+###              cmd <- paste('options(digits=',nds,')',sep='')
+###              docmd(cmd)
+###              }
+###           setdigsoption(ndigs)
+###        }
        input <- list() 
        nlevels <- 10
        ### i <- 0
        for (nm in names(dataset)) {
-            dscol <- dataset[[nm]]
-            if (!is.numeric(dscol)) next
-            if (length(table(dscol)) <= nlevels) next
-            inp <- list()
-            inp[['name']] <- nm
-            inp[['partitions']] <- nlevels
-            if (!is.null(ndigs)) {
+          dscol <- dataset[[nm]]
+          inp <- list()
+          if (!is.numeric(dscol) || length(table(dscol)) <= nlevels) {
+             inp[['dontchange']] <- TRUE
+             unqdscol <- names(table(dscol))
+             inp[['partitions']] <- length(unqdscol)
+             inp[['labels']] <- as.character(unqdscol)
+          } else {
+             inp[['name']] <- nm
+             inp[['partitions']] <- nlevels
+             if (!is.null(ndigs)) {
                 tmp <- seq(1/nlevels,1.0,1/nlevels)
                 lbls <- quantile(dscol,tmp)
                 ### lbls <- as.character(lbls)
                 lbls <- format(lbls,digits=ndigs)
-            } else {
+             } else {
                 lbls <- c(
                    'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
                    'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
-            }
-            inp[['labels']] <- lbls
-            ### i <- i + 1
-            ### input[[i]] <- inp
-            input[[nm]] <- inp
-        }
-        if (!is.null(ndigs)) setdigsoption(savedigs)
+              }
+             inp[['labels']] <- lbls
+             inp[['dontchange']] <- FALSE
+          }
+          ### i <- i + 1
+          ### input[[i]] <- inp
+          input[[nm]] <- inp
+       }
+###        if (!is.null(ndigs)) setdigsoption(savedigs)
     }
     for(col in input){
+        if (col$dontchange) next
         # read all the input into local variables
         name = col[['name']]
         partitions = col[['partitions']]
@@ -107,7 +114,7 @@ discretize <- function (dataset, input=NULL, ndigs=NULL) {
     labelorder = list()
     for(i in 1:length(input)){
         labelcol[[i]] <- input[[i]]$name
-        labelorder[[i]] <- unique(input[[i]]$labels)
+        labelorder[[i]] <- input[[i]]$labels
     }
 
     # Save the categories and their orders
@@ -525,7 +532,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
             orderedcategories <- 
                 attr(pna, "categoryorder")[match(colnames(pna)[colnum], 
                 attr(pna, "categorycol"))][[1]]
-
             categ[[colnum]] <- orderedcategories[(orderedcategories %in% 
                                                c(levels(pna[, colnum])))]
         }
@@ -537,7 +543,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
         if (colnum <= length(categ) && !is.null(categ[[colnum]])){
-
             for(j in 1:(nrow(pna))){
                 tempval <- which(categ[[colnum]] == pna[j,colnum])
 
@@ -548,7 +553,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
                 # After setting the value, reset factors
                 pna[[colnum]] = as.factor(pna[[colnum]])
             }
-
             # Stop factorizing now that all values are numbers
             pna[[colnum]] = as.numeric(pna[[colnum]])
         }
@@ -666,6 +670,9 @@ runsmallexample <- function(n) {
     draw(partial, name="Small Example")
 }
 
+# this is the main graphing function - use this
+# data should be input as a dataframe
+# need to figure out how to DISCRETIZE COLUMNS 
 # 1. permute columns
 # 2. interactive columns
 # 3. figure out labeling program
