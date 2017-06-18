@@ -1,5 +1,29 @@
+
+# the word "variable" in the data context generally is used in the
+# statistical sense, i.e. a column in the data
+
 # possible optimization -> add in R code to find the # of columns first
 
+# dispInts():
+
+# utility function; senses when a variable in dataset is an integer
+# (is.integer() does NOT test this), and changes it to a factor, so that
+# it displays better, e.g. 2 instead of 2.00; only kicks in for numerica
+# variables of at most 'nlevels' values
+
+dispInts <- function(dataset,nlevels=10) {
+   if (!is.data.frame(dataset)) stop('input must be data frame/data table')
+   checkInt <- function(x) all(round(x) == x)
+   for (col in 1:ncol(dataset)) {
+      dscol <- dataset[[col]]
+      if (!is.numeric(dscol)) next
+      if (checkInt(dscol)) {
+         if (length(unique(dscol)) <= nlevels)
+            dataset[[col]] <- as.factor(dscol)
+      }
+   }
+   dataset
+}
 
 # Used to select a column and discretize
 # parameters
@@ -381,6 +405,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
         else {
             categ[[col]] <- c(levels(partial[, col]))
         }
+
+        categ <- names(table(categ))
 
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
