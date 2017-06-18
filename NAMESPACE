@@ -19,4 +19,5 @@ importFrom("parallel", detectCores)
 importFrom("parallel", clusterExport)
 importFrom("parallel", clusterEvalQ)
 importFrom("partools", distribsplit)
-export(partialNA,draw,runsmallexample,discretize,discparcoord,interactivedraw, clsPartialNA)
+export(partialNA,draw,runsmallexample,discretize,discparcoord,interactivedraw,
+clsPartialNA,dispInts)
