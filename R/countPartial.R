@@ -594,7 +594,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         # Otherwise, you don't need special ticks/labels
         else {
             tf <- ':2f'
-            if (is.numeric(pna[[i]]) && !is.integer(pna[[i]])){
+            if (max(pna[[i]]) < 5){
                 tf <- '.2f'
             }
             interactiveList[[i]] <-
