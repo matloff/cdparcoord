@@ -593,9 +593,13 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         }
         # Otherwise, you don't need special ticks/labels
         else {
+            tf <- ':2f'
+            if (is.numeric(pna[[i]]) && !is.integer(pna[[i]])){
+                tf <- '.2f'
+            }
             interactiveList[[i]] <-
                 list(range = c(min(pna[[i]]), max(pna[[i]])),
-                     tickformat = '.2f',
+                     tickformat = tf,
                      constraintrange = c(min(pna[[i]]), max(pna[[i]])),
                      label = colnames(pna)[i],
                      values = unlist(pna[,i]))
