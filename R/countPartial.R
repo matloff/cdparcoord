@@ -1,29 +1,5 @@
-
-# the word "variable" in the data context generally is used in the
-# statistical sense, i.e. a column in the data
-
 # possible optimization -> add in R code to find the # of columns first
 
-# dispInts():
-
-# utility function; senses when a variable in dataset is an integer
-# (is.integer() does NOT test this), and changes it to a factor, so that
-# it displays better, e.g. 2 instead of 2.00; only kicks in for numerica
-# variables of at most 'nlevels' values
-
-dispInts <- function(dataset,nlevels=10) {
-   if (!is.data.frame(dataset)) stop('input must be data frame/data table')
-   checkInt <- function(x) all(round(x) == x)
-   for (col in 1:ncol(dataset)) {
-      dscol <- dataset[[col]]
-      if (!is.numeric(dscol)) next
-      if (checkInt(dscol)) {
-         if (length(unique(dscol)) <= nlevels)
-            dataset[[col]] <- as.factor(dscol)
-      }
-   }
-   dataset
-}
 
 # Used to select a column and discretize
 # parameters
@@ -42,40 +18,45 @@ dispInts <- function(dataset,nlevels=10) {
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
+discretize <- function (dataset, input=NULL, ndigs=NULL) {
     if (is.null(input)) {
+       if (!is.null(ndigs)) {
+            # save original number of digits, restore later
+            savedigs <- options()$digits
+            setdigsoption <- function(nds) {
+                cmd <- paste('options(digits=',nds,')',sep='')
+                docmd(cmd)
+                }
+            setdigsoption(ndigs)
+       }
        input <- list() 
+       nlevels <- 10
+       ### i <- 0
        for (nm in names(dataset)) {
-          dscol <- dataset[[nm]]
-          inp <- list()
-          if (!is.numeric(dscol) || length(table(dscol)) <= nlevels) {
-             inp[['dontchange']] <- TRUE
-             unqdscol <- names(table(dscol))
-             inp[['partitions']] <- length(unqdscol)
-             inp[['labels']] <- as.character(unqdscol)
-          } else {
-             inp[['name']] <- nm
-             inp[['partitions']] <- nlevels
-             if (ndigs > 0) {
+            dscol <- dataset[[nm]]
+            if (!is.numeric(dscol)) next
+            if (length(table(dscol)) <= nlevels) next
+            inp <- list()
+            inp[['name']] <- nm
+            inp[['partitions']] <- nlevels
+            if (!is.null(ndigs)) {
                 tmp <- seq(1/nlevels,1.0,1/nlevels)
                 lbls <- quantile(dscol,tmp)
                 ### lbls <- as.character(lbls)
                 lbls <- format(lbls,digits=ndigs)
-             } else {
+            } else {
                 lbls <- c(
                    'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
                    'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
-              }
-             inp[['labels']] <- lbls
-             inp[['dontchange']] <- FALSE
-          }
-          ### i <- i + 1
-          ### input[[i]] <- inp
-          input[[nm]] <- inp
-       }
+            }
+            inp[['labels']] <- lbls
+            ### i <- i + 1
+            ### input[[i]] <- inp
+            input[[nm]] <- inp
+        }
+        if (!is.null(ndigs)) setdigsoption(savedigs)
     }
     for(col in input){
-        if (col$dontchange) next
         # read all the input into local variables
         name = col[['name']]
         partitions = col[['partitions']]
@@ -126,7 +107,7 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
     labelorder = list()
     for(i in 1:length(input)){
         labelcol[[i]] <- input[[i]]$name
-        labelorder[[i]] <- input[[i]]$labels
+        labelorder[[i]] <- unique(input[[i]]$labels)
     }
 
     # Save the categories and their orders
@@ -406,8 +387,6 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
             categ[[col]] <- c(levels(partial[, col]))
         }
 
-        categ <- names(table(categ))
-
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
         if (col <= length(categ) && !is.null(categ[[col]])){
@@ -546,6 +525,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
             orderedcategories <- 
                 attr(pna, "categoryorder")[match(colnames(pna)[colnum], 
                 attr(pna, "categorycol"))][[1]]
+
             categ[[colnum]] <- orderedcategories[(orderedcategories %in% 
                                                c(levels(pna[, colnum])))]
         }
@@ -557,21 +537,22 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         # if this column has categorical variables, change its values
         # to the corresponding numbers accordingly.
         if (colnum <= length(categ) && !is.null(categ[[colnum]])){
+
             for(j in 1:(nrow(pna))){
                 tempval <- which(categ[[colnum]] == pna[j,colnum])
 
                 # Stop factorizing while we set the value
                 pna[[colnum]] = as.character(pna[[colnum]])
-                pna[j, colnum] <- tempval[1]
+                pna[j, colnum] <- tempval
 
                 # After setting the value, reset factors
                 pna[[colnum]] = as.factor(pna[[colnum]])
             }
+
             # Stop factorizing now that all values are numbers
             pna[[colnum]] = as.numeric(pna[[colnum]])
         }
     }
-
 
     # find the max value and the max frequency to set max/min for our plot
     nums <- Filter(is.numeric, pna)
@@ -684,9 +665,6 @@ runsmallexample <- function(n) {
     draw(partial, name="Small Example")
 }
 
-# this is the main graphing function - use this
-# data should be input as a dataframe
-# need to figure out how to DISCRETIZE COLUMNS 
 # 1. permute columns
 # 2. interactive columns
 # 3. figure out labeling program
