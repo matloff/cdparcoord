@@ -2,21 +2,6 @@ library(pracma)
 
 # This program investigates runtimes of various parallel coordinates packages.
 # List of parallel coordinates packages:
-# freqparcoord.cd
-# freqparcoord
-# ggparallel
-# ggparcoord
-# lattice
-# rggobi
-# parcoord (MASS)
-#
-# Metrics:
-# Large data sets:
-#   MSD
-#
-# Medium data sets:
-#
-# Small data sets:
 
 # Load a library 10 times and return the avg time it takes
 # Timing code: https://stats.idre.ucla.edu/r/faq/how-can-i-time-my-code/
@@ -55,12 +40,6 @@ time_small_datasets <- function(){
     timed_plot("freqparcoord", hrdata)
 }
 
-# Load time
-#start_time <- proc.time()
-#library(freqparcoord)
-#freqparcoord_load <- proc.time() - start_time
-#
-#library(freqparcoord.cd)
 
 print("Freqparcoord time: ")
 test_load("freqparcoord")
@@ -72,13 +51,7 @@ print("ggparallel time: ")
 test_load("ggparallel")
 
 # ggparcoord unavailable for R version 3.4
-#print("ggparcoord time: ")
-#test_load("ggparcoord")
-
 # parcoord unavailable for R version 3.4
-#print("parcoord time: ")
-#test_load("parcoord")
-
 # rggobi unavailable due to RGtk2 unavailablity (RGtk2 doesn't work either)
 
 ######### Test data sets #######
