@@ -170,6 +170,10 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     if (class(dataset)[1] == 'pna') 
        stop('does not yet allow preprocessed data')
 
+    if (sum(complete.cases(dataset)) == 0){
+        stop('Cannot process datasets without any complete rows.')
+    }
+    
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
 
