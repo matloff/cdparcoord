@@ -239,7 +239,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     return(counts)
 }
 
-clsPartialNA <- function (cls, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     if (class(dataset)[1] == 'pna') 
        stop('does not yet allow preprocessed data')
     # Save categories for after potential dataset conversion to data.table
@@ -270,6 +270,7 @@ clsPartialNA <- function (cls, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         # Don't take all cores because we need to leave one open for main usage
         madeCluster=FALSE
         if (!cls) {
+            numCores = detectCores()
             cls = makeCluster(numCores)
             madeCluster=TRUE
         }
@@ -424,8 +425,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     title(main=name, col.main="black", font.main=4)
     #par(mar=c(5,6,4,1)+.1) # set margins
     par(mar=c(10, 4, 4, 2))
-    axis(1, at=seq(2, width, 2), lab=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
-    axis(1, at=seq(1, width, 2), lab=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
+    axis(1, at=seq(2, width, 2), labels=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
+    axis(1, at=seq(1, width, 2), labels=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
     axis(2, at=seq(0,max_y,1))
 
     # Get scale for lines if large dataset
@@ -487,7 +488,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
-                            accentuate=NULL, accval=100, differentiate=TRUE) {
+                            accentuate=NULL, accval=100, differentiate=FALSE) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.

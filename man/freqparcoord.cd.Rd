@@ -25,7 +25,8 @@
 \usage{
     discparcoord(data, k = 5, grpcategory = NULL, permute = FALSE,
       interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
-      NAexp=1.0,countNAs=FALSE, accentuate=NULL, inParallel=FALSE)
+      NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
+      cls=NULL, differentiate=FALSE)
 }
 
 \arguments{
@@ -69,8 +70,19 @@
     \item{accentuate}{
         The property you want to accentuate.
     }
+    \item{accval}{
+        The value to accentuate. By default, this is 100.
+    }
     \item{inParallel}{
         Whether or not you want to calculate tuple frequencies in parallel. Default is false.
+    }
+    \item{cls}{
+        The cluster of cores you'd like to use for computing frequencies in parallel. If 
+        isParallel is TRUE and this is not supplied, it will use numCores by default.
+    }
+    \item{differentiate}{
+       Whether or not you want to randomize coloring to differentiate overlapping
+       lines. By default, this is FALSE.
     }
 }
 

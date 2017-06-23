@@ -10,7 +10,7 @@
 }
 
 \usage{
-discretize(dataset, input)
+    discretize(dataset, input, ndigs=0, nlevels=10)
 }
 
 \arguments{
@@ -21,6 +21,12 @@ discretize(dataset, input)
         Specifies what columns to partition, the number of partitions, and labels for each partition.
         The outermost list holds each column's specifications. The inner lists hold
         the name of the column, the number of partitions, and a list of labels for each partition.
+    }
+    \item{ndigs}{
+        Labels for default partitioning if input is not supplied as a list.
+    }
+    \item{nlevels}{
+        The number of partitions to have. By default, this is 10.
     }
 }
 

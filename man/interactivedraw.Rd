@@ -18,7 +18,8 @@ Each axis is independent, and has its max/min based off of its own data.
 }
 
 \usage{
-interactivedraw(pna, name, accentuate)
+interactivedraw(pna, name="Interactive Parcoords", accentuate=NULL, 
+                accval=100, differentiate=FALSE)
 }
 
 \arguments{
@@ -30,6 +31,14 @@ interactivedraw(pna, name, accentuate)
     }
     \item{accentuate}{
         The column and value you want to accentuate.
+    }
+    \item{accval}{
+        The amount to accentuate.
+    }
+    \item{differentiate}{
+        Whether or not you want to use random coloring. This will help you find where
+        lines differ, but will not differentiate frequencies by color. By default,
+        this is FALSE.
     }
 }
 
