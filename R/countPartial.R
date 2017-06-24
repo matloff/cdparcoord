@@ -637,6 +637,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 }
 
 interactcategoricalexample <- function(n, categ) {
+    categoricalexample <- NULL
     data(categoricalexample)
 
     # select top n frequencies
@@ -651,6 +652,7 @@ interactcategoricalexample <- function(n, categ) {
 }
 
 runsmallexample <- function(n) {
+    smallexample <- NULL
     data(smallexample)
 
     # select top n frequencies
