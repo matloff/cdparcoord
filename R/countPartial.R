@@ -785,6 +785,7 @@ generateScreen <- function(width, height) {
 # Given a tuple with NA's and a list of intact tuples,
 # find all possible fitting values for the NAs
 findParentTuples <- function(row, intact) {
+    stop('not currently implemented')
     # find the indexes of NA values
     naIndex <- which(is.na(row))
     filledIndex <- which(!is.na(row))
