@@ -21,4 +21,4 @@ importFrom("parallel", clusterEvalQ)
 importFrom("partools", distribsplit)
 importFrom("stats", "quantile")
 export(partialNA,draw,runsmallexample,discretize,discparcoord,interactivedraw,
-clsPartialNA)
+clsPartialNA, findParentTuples)

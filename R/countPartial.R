@@ -781,3 +781,21 @@ generateScreen <- function(width, height) {
         windows(width=width, height=height)
     }
 }
+
+# Given a tuple with NA's and a list of intact tuples,
+# find all possible fitting values for the NAs
+findParentTuples <- function(row, intact) {
+    # find the indexes of NA values
+    naIndex <- which(is.na(row))
+    filledIndex <- which(!is.na(row))
+
+    #intact[filledIndex]
+
+    # Row numbers in intact where non-na values match row's non-na values
+    match <- apply(intact[filledIndex], 1, function(r) all(r == row[filledIndex]))
+
+    # Rows in intact where non-na values match
+    matchIntact <- intact[which(match),]
+    do.call(rbind, matchIntact[naIndex])
+}
+
