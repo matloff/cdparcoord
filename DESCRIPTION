@@ -3,7 +3,7 @@ Version: 1.0.0
 Author: Norm Matloff <normmatloff@gmail.com> and 
     Harrison Nguyen <hhnguy@ucdavis.edu> and Vincent Yang <vinyang@ucdavis.edu>
 Maintainer: Norm Matloff <normmatloff@gmail.com>
-Date: 2017-06-07
+Date: 2017-07-20
 Title: Top Frequency-Based Parallel Coordinates
 Description: Parallel coordinate plotting with resolutions for large data sets 
     and missing values.

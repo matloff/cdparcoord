@@ -5,8 +5,7 @@
 2. [Overview](#overview)
 3. [Key Functions](#key-functions)
 4. [Warnings](#warnings)
-5. [Further Examples](#further-examples)
-6. [Authors](#authors)
+5. [Authors](#authors)
 
 # Quickstart
 
@@ -38,7 +37,7 @@ associated with having more projects and more monthly hours, until
 number of projects or number of monthly hours is too high, in which 
 case satisfaction level drastically drops.  
 
-##### Categorical-Data Examples ([C1](#example-c1), [C2](#example-c2),[C3](#example-c3))
+##### Categorical-Data Examples ([C1](#example-c1), [C2](#example-c2), [C3](#example-c3))
 
 ###### Example C1
 
@@ -72,8 +71,9 @@ satisfaction in spite of having somewhat lower performance ratings.
 ```R
 # same as above, but with scrambled columns
 # By default, interactive plotting allows you to drag around columns
-# to scramble them
-discparcoord(hrdata, permute=TRUE)                    # plot c2
+# to scramble them, but we may use permute to scramble columns in 
+# non-interactive plotting as well.
+discparcoord(hrdata, permute=TRUE, interactive=FALSE)  # plot c2
 ```
 C2: 
 <img src="vignettes/c2.png" alt="c2" width="500"/>
