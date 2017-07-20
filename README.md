@@ -17,11 +17,9 @@ courtesy of Kaggle.
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata <- read.table(file, header=TRUE, sep=",", na.strings="")
-
-# Create an interactive plot with the 100 most frequent tuples
-discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
+library(freqparcoord.cd)
+data(hrdata)
+discparcoord(hrdata, k=100, name="Nondiscrete HR Data")
 ```
 
 <img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
@@ -30,10 +28,10 @@ Here we have displayed the **k** = 100 most frequent patterns.  The
 color legend at the right shows frequency.  Since the highest frequency
 was 6, we might consider trying a larger value of **k**.
 
-Setting **interactive** to TRUE invokes **plotly**, which allows us to
+**plotly** allows us to
 change the order of the columns via mouse drag.  We could, for instance,
 use the mouse to move the salary column more to the center or left, by
-clciking and dragging the label 'salary' to the desired spot.
+clicking and dragging the label 'salary' to the desired spot. 
 
 Here, we can see, for example, that higher satisfaction level is 
 associated with having more projects and more monthly hours, until 
@@ -49,8 +47,8 @@ effects of the categorical variable Job Type.
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata <- read.table(file, header=TRUE, sep=",", na.strings="")
+library(freqparcoord.cd)
+data(hrdata)
 
 input1 <- list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
 input <- list(input1)
@@ -83,7 +81,7 @@ C2:
 ###### Example C3
 ```R
 # same as above, but show top k values, title,  and interactive plot
-discparcoord(hrdata, k=8, interactive=TRUE, name="Plot C3")           # plot c3
+discparcoord(hrdata, k=8, name="Plot C3")           # plot c3
 ```
 
 C3: ![c3](vignettes/c3.png)
@@ -91,7 +89,7 @@ C3: ![c3](vignettes/c3.png)
 ```R
 # same as above, but group according to profession
 # This will create 11 different plots, 1 for each profession
-discparcoord(hrdata, grpcategory="sales", interactive=TRUE) 
+discparcoord(hrdata, grpcategory="sales") 
 ```
 
 ---
@@ -117,9 +115,8 @@ Before:
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
-discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
+data(hrdata)
+discparcoord(hrdata, k=10000, name="Nondiscrete HR Data")
 ```
 
 <img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
@@ -128,8 +125,8 @@ After:
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
-hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
+library(freqparcoord.cd)
+data(hrdata)
 discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
 
@@ -170,7 +167,7 @@ data(mlb)
 # Get the Height, Weight, Age, and Position of Players
 m <- mlb[,4:7]
 # Account for NA values and weigh values; interactively plot; take top 1000 tuples
-discparcoord(m, interactive=TRUE, k=1000)
+discparcoord(m, k=1000)
 ```
 
 ![Black Screen mlb](vignettes/black-screen-mlb.png)
@@ -207,7 +204,7 @@ discreteinput <- list(inp1, inp2, inp3)
 discretizedmlb <- discretize(m, discreteinput)
 
 # Account for NA values and weigh values; interactively plot; take top 1000 tuples
-discparcoord(discretizedmlb, interactive=TRUE, name="MLB", k=1000)
+discparcoord(discretizedmlb, name="MLB", k=1000)
 ```
 
 <img src="vignettes/mlb1000interactive.png" alt="FE2" width="800"/>
@@ -232,8 +229,8 @@ The last three are optional.
 
 #### `discparcoord()` details
 
-Encompassed in discparcoord, we provide 4 key functions -- `partialNA()`
-`grpcategory()`, `draw()`, and `interactivedraw()`.
+Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
+`grpcategory()`, and `interactivedraw()`.
 
 1. The call `partialNA(dataset,n)` inputs a dataset and returns a new
    dataset consisting of the **n** most frequent patterns with an added
@@ -253,18 +250,10 @@ Encompassed in discparcoord, we provide 4 key functions -- `partialNA()`
    then this will create one plot where all tuples are heavyweights,
    then one more where where all tuples are lightweights.
 
-3. `draw()` takes a dataset and draws a parallel coordinates plot in the
-   same directory. It also takes a name for the name of the plot, and a
-   choice for whether or not to have labels. When there are many data
-   points, the labels are unreadable and for these times it is better to
-   leave labels off. The default is to have labels on. 
-
-An example of discretized mlb data drawn with `draw`.
-
-<img src="vignettes/discretemlbsimple.png" alt="c1" width="500"/>
-
-4. `interactivedraw()` does the same as draw, but draws an interactive
-   plot. We recommend using this option.
+3. `interactivedraw()` takes a dataset and draws a parallel coordinates plot 
+   that opens in your browser. It has movable columns, brushing, and the ability
+   to save your plots. You can also choose to toggle labels on and off. 
+   For more information, type `?interactivedraw` into the console.
 
 # Warnings
 
@@ -283,18 +272,6 @@ An example of discretized mlb data drawn with `draw`.
    placed on the same axis as numerical data with high values (ex:
    100+), it can be difficult to differentiate between categories when
    used with `draw()`. This does not occur with `interactivedraw()`.
-
-# Further Examples
-
-1. A small example of parallel coordinates plotting
-
-```R
-library(freqparcoord.cd)
-smallexample()
-```
-
-<img src="vignettes/smallexample.png" alt="small example" width="500"/>
-
 
 # Authors
 
