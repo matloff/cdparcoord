@@ -2,16 +2,17 @@
 \alias{draw}
 
 \title{
-Draw parallel coordinates.
+    Draw parallel coordinates.
 }
 
 \description{
-Takes the output of partialNA, which has the rightmost column denoting
-frequency of each tuple, and draws a parallel coordinates plot.
+    Takes the output of partialNA, which has the rightmost column denoting
+    frequency of each tuple, and draws a parallel coordinates plot. The recommended
+    method of drawing is through interactivedraw. 
 }
 
 \usage{
-draw(partial, name, labelsOff, save=FALSE)
+    draw(partial, name, labelsOff, save=FALSE)
 }
 
 \arguments{
@@ -30,7 +31,7 @@ draw(partial, name, labelsOff, save=FALSE)
 }
 
 \author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
 
 \examples{

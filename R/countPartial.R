@@ -1,3 +1,5 @@
+# This is the workhorse file for the package.
+
 # possible optimization -> add in R code to find the # of columns first
 
 
@@ -7,48 +9,45 @@
 #   list of lists where each list within is used to represent a column -
 #       the inner list should contain the following vars:
 #         1. partitions (int) - number of partitions to make
-#         2. labels (vector of strs) - OPTIONAL -what to label the 
+#         2. labels (vector of strs) - OPTIONAL -what to label the
 #            partitions. if none, default is just to have ints as labels
 #         3. lower bounds (vector) - OPTIONAL - lower cutoffs for each label
 #         4. upper bounds (vector) - Optional - upper cutoffs for each label
-# example:  
-# cat1 = 
+# example:
+# cat1 =
 #    list('name' = 'cat1', 'partitions' = 3, 'labels' = c('low', 'med', 'high'))
-# cat2 = 
+# cat2 =
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
 discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
     if (is.null(input)) {
-       input <- list() 
-       for (nm in names(dataset)) {
-          dscol <- dataset[[nm]]
-          inp <- list()
-          if (!is.numeric(dscol) || length(table(dscol)) <= nlevels) {
-             inp[['dontchange']] <- TRUE
-             unqdscol <- unique(dscol)
-             inp[['partitions']] <- length(unqdscol)
-             inp[['labels']] <- as.character(unqdscol)
-          } else {
-             inp[['name']] <- nm
-             inp[['partitions']] <- nlevels
-             if (ndigs > 0) {
-                tmp <- seq(1/nlevels,1.0,1/nlevels)
-                lbls <- quantile(dscol,tmp)
-                ### lbls <- as.character(lbls)
-                lbls <- format(lbls,digits=ndigs)
-             } else {
-                lbls <- c(
-                   'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
-                   'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
-              }
-             inp[['labels']] <- lbls
-             inp[['dontchange']] <- FALSE
-          }
-          ### i <- i + 1
-          ### input[[i]] <- inp
-          input[[nm]] <- inp
-       }
+        input <- list()
+        for (nm in names(dataset)) {
+            dscol <- dataset[[nm]]
+            inp <- list()
+            if (!is.numeric(dscol) || length(table(dscol)) <= nlevels) {
+                inp[['dontchange']] <- TRUE
+                unqdscol <- unique(dscol)
+                inp[['partitions']] <- length(unqdscol)
+                inp[['labels']] <- as.character(unqdscol)
+            } else {
+                inp[['name']] <- nm
+                inp[['partitions']] <- nlevels
+                if (ndigs > 0) {
+                    tmp <- seq(1/nlevels,1.0,1/nlevels)
+                    lbls <- quantile(dscol,tmp)
+                    lbls <- format(lbls,digits=ndigs)
+                } else {
+                    lbls <- c(
+                              'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
+                              'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
+                }
+                inp[['labels']] <- lbls
+                inp[['dontchange']] <- FALSE
+            }
+            input[[nm]] <- inp
+        }
     }
     for(col in input){
         if (!is.null(col$dontchange)) next
@@ -56,6 +55,7 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
         name = col[['name']]
         partitions = col[['partitions']]
         labels = col[['labels']]
+
         # It is possible that a column has already been converted.
         # If so, it will have non-numeric characters. Alternately,
         # if it already has non-numeric characters, then it
@@ -63,6 +63,7 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
         if (!is.numeric(dataset[[name]])){
             next
         }
+
         colMax = max(dataset[name], na.rm = TRUE)
         colMin = min(dataset[name], na.rm = TRUE)
         range = colMax - colMin
@@ -72,42 +73,26 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
         tempUpper = 0
 
         # Convert the entire column to be characters, because
-        # categorical variables are normally strings anyway. 
+        # categorical variables are normally strings anyway.
         # After the first conversion, the entire column will be
         # characters.
-
         thisColData <- dataset[name][,1]
         lvls <- round((thisColData - colMin) / increments)
         lvls <- pmax(lvls,1)
         lvls <- pmin(lvls,partitions)
         dataset[[name]] <- labels[lvls]
-
-###         # go through each and replace values according to partitions
-###         for(i in 1:partitions){
-###             currentCol = as.character(dataset[[name]])
-###             tempUpper = tempLower + increments
-### 
-###             # Now that the column has characters, 
-###             # convert the potentially numerical values to numeric
-###             # suppress warnings, and allow non-numeric values
-###             # to become NA, so they don't get changed again
-###             dataset[[name]][suppressWarnings(
-###                as.numeric(currentCol)) <= tempUpper] <- labels[i]
-###             tempLower = tempUpper
-###         }
-
     }
 
-    labelcol = list()
-    labelorder = list()
-    for(i in 1:length(input)){
+    labelcol <- list()
+    labelorder <- list()
+    for(i in 1:length(input)) {
         labelcol[[i]] <- unique(input[[i]]$name)
         labelorder[[i]] <- unique(input[[i]]$labels)
     }
 
     # Save the categories and their orders
     attr(dataset, "categorycol") <- c(attr(dataset, "categorycol"), labelcol)
-    attr(dataset, "categoryorder") <- c(attr(dataset, 
+    attr(dataset, "categoryorder") <- c(attr(dataset,
                                              "categoryorder"), labelorder)
 
     return(dataset)
@@ -167,13 +152,13 @@ reOrder <- function(dataset,colName,levelNames) {
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
-    if (class(dataset)[1] == 'pna') 
-       stop('does not yet allow preprocessed data')
+    if (class(dataset)[1] == 'pna')
+        stop('does not yet allow preprocessed data')
 
     if (sum(complete.cases(dataset)) == 0){
         stop('Cannot process datasets without any complete rows.')
     }
-    
+
     original_categorycol = attr(dataset, "categorycol")
     original_categoryorder = attr(dataset, "categoryorder")
 
@@ -188,13 +173,13 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     counts <- dataset[nonNArows,.N,names(dataset)]
     counts <- as.data.frame(counts)
     names(counts)[ncol(counts)] <- 'freq'
-    dimensions = dim(counts) 
+    dimensions = dim(counts)
     freqcol = ncol(counts)  # column number of 'freq'
     freqcol1 <- freqcol - 1  # number of data cols
 
     if (countNAs) {
-        # go through every NA row and every non-NA row; whenever the NA 
-        # row matches the non-NA row in the non-NA values, add to the 
+        # go through every NA row and every non-NA row; whenever the NA
+        # row matches the non-NA row in the non-NA values, add to the
         # frequency of the non-NA row
         partialMatch <- function(nonNArow) all(aNonNAs == nonNArow[nonNAcols])
         NArows <- setdiff(1:nrow(dataset),nonNArows)
@@ -209,7 +194,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
             tmp <- apply(counts,1,partialMatch)
             wherePartMatch <- which(tmp)
             freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
-            counts[wherePartMatch,freqcol] <- 
+            counts[wherePartMatch,freqcol] <-
                 counts[wherePartMatch,freqcol] + freqincrem
         }
     }
@@ -219,7 +204,7 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     ordering <- order(counts$freq,decreasing=(k > 0))
     counts <- counts[ordering[1:abs(k)],]
 
-    for(i in 1:freqcol){   
+    for(i in 1:freqcol){
         if(is.numeric(counts[[i]])){
             next
         } else {
@@ -240,11 +225,13 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
 }
 
 clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
-    if (class(dataset)[1] == 'pna') 
-       stop('does not yet allow preprocessed data')
+    if (class(dataset)[1] == 'pna') {
+        stop('does not yet allow preprocessed data')
+    }
+
     # Save categories for after potential dataset conversion to data.table
-    original_categorycol = attr(dataset, "categorycol")
-    original_categoryorder = attr(dataset, "categoryorder")
+    original_categorycol <- attr(dataset, "categorycol")
+    original_categoryorder <- attr(dataset, "categoryorder")
 
     # data.table package very good for tabulating counts
     if (!is.data.table(dataset)) dataset <- data.table(dataset)
@@ -255,12 +242,14 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
     nonNArows <- which(complete.cases(dataset))
     counts <- dataset[nonNArows,.N,names(dataset)]
     counts <- as.data.frame(counts)
+
     if (nrow(counts) == 0) {
         stop("Must have at least one full row.")
     }
+
     names(counts)[ncol(counts)] <- 'freq'
-    dimensions = dim(counts) 
-    freqcol = ncol(counts)  # column number of 'freq'
+    dimensions <- dim(counts)
+    freqcol <- ncol(counts)   # column number of 'freq'
     freqcol1 <- freqcol - 1  # number of data cols
 
     # Make a data frame of just rows with NA's
@@ -268,11 +257,11 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
 
     if (countNAs) {
         # Don't take all cores because we need to leave one open for main usage
-        madeCluster=FALSE
+        madeCluster <- FALSE
         if (!cls) {
-            numCores = detectCores()
-            cls = makeCluster(numCores)
-            madeCluster=TRUE
+            numCores <- detectCores()
+            cls <- makeCluster(numCores)
+            madeCluster <- TRUE
         }
 
         # Split our na dataframe amongst each core
@@ -280,8 +269,10 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
 
         # This function takes each subset of the na dataframe
         # and adds corresponding frequencies to the "full row" column.
-        minipna <- function(df, counts, NAexp=1.0){
-            partialMatch<- function(nonNArow) all(aNonNAs==nonNArow[nonNAcols])
+        minipna <- function(df, counts, NAexp = 1.0){
+            partialMatch<- function(nonNArow)
+                all(aNonNAs == nonNArow[nonNAcols])
+
             NArows <- setdiff(1:nrow(dataset),nonNArows)
 
             # For each row of our subset, add the NA frequency portions
@@ -295,17 +286,18 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
                 tmp <- apply(counts,1,partialMatch)
                 wherePartMatch <- which(tmp)
                 freqincrem <- (length(nonNAcols) / freqcol1)^NAexp
-                counts[wherePartMatch,freqcol] <- 
+                counts[wherePartMatch,freqcol] <-
                     counts[wherePartMatch,freqcol] + freqincrem
             }
 
             return(counts)
         }
         # Save original frequencies
-        original_freq = counts$freq
+        original_freq <- counts$freq
+
         # Zero frequencies so we only have to account for the partial
         # frequencies after cluster processing
-        counts$freq = 0
+        counts$freq <- 0
         clusterExport(cls, varlist=c("minipna", "counts", "NAexp"), envir=environment())
         r <- clusterEvalQ(cls, minipna(na_counts, counts, NAexp))
         counts$freq = original_freq
@@ -313,18 +305,19 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
         for(clusterNum in 1:length(r)){
             counts$freq = as.numeric(counts$freq) + as.numeric(r[[clusterNum]]$freq)
         }
+
         if (madeCluster){
             stopCluster(cls)
         }
     }
 
     # get k most/least-frequent rows
-    k = min(k, nrow(counts))
+    k <- min(k, nrow(counts))
     ordering <- order(counts$freq,decreasing=(k > 0))
     counts <- counts[ordering[1:abs(k)],]
 
-    for(i in 1:freqcol){   
-        if(is.numeric(counts[[i]])){
+    for(i in 1:freqcol) {
+        if(is.numeric(counts[[i]])) {
             next
         } else {
             counts[[i]] <- factor(counts[[i]])
@@ -332,7 +325,7 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
     }
 
     # Save attributes and their orders for drawing
-    if (!is.null(attr(dataset, "categorycol"))){
+    if (!is.null(attr(dataset, "categorycol"))) {
         attr(counts, "categorycol") <- attr(dataset, "categorycol")
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
@@ -346,13 +339,13 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
-
+draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
     width <- ncol(partial)-1
+
     # get only numbers
     nums <- Filter(is.numeric, partial[1:ncol(partial)-1])
     if (nrow(nums) == 0 || ncol(nums) == 0){
-        max_y = 0
+        max_y <- 0
     }
     else {
         max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums))]) # option 1
@@ -363,25 +356,26 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     # create labels for categorical variables; preserve order
     # if there is a greater max_y, replace
-    for(col in 1:(ncol(partial)-1)){
+    for(col in 1:(ncol(partial)-1)) {
         # Store the columns that have categorical variables
-        if (max_y < nlevels(partial[, col])){
+        if (max_y < nlevels(partial[, col])) {
             max_y <- max(max_y, nlevels(partial[, col]))
         }
 
         # Preserve order for categorical variables changed in discretize()
-        if (!is.null(attr(partial, "categorycol")) && 
-                colnames(partial)[col] %in% attr(partial, "categorycol")) {
+        if (!is.null(attr(partial, "categorycol")) &&
+            colnames(partial)[col] %in% attr(partial, "categorycol")) {
 
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
-            orderedcategories <- 
-                attr(partial, "categoryorder")[match(colnames(partial)[col], 
-                attr(partial, "categorycol"))][[1]]
-            categ[[col]] <- 
-                orderedcategories[(orderedcategories 
+            orderedcategories <-
+                attr(partial, "categoryorder")[match(colnames(partial)[col],
+                                                     attr(partial, "categorycol"))][[1]]
+            categ[[col]] <-
+                orderedcategories[(orderedcategories
                                    %in% c(levels(partial[, col])))]
         }
+
         # Convert normal categorical variables
         else {
             categ[[col]] <- c(levels(partial[, col]))
@@ -408,8 +402,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
     # draw one graph
     # creation of initial plot
-    cats = rep(max_y, width)
-    baserow = c(1, cats) 
+    cats <- rep(max_y, width)
+    baserow <- c(1, cats)
     if (save) {
         png(paste(name, "png", sep=".")) # Save the file instead of displaying
     }
@@ -418,12 +412,11 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     generateScreen(10, 6.5)
     graphics::layout(matrix(1:2, ncol=2), width = c(2,1), height = c(1,1))
     par(mar=c(10, 4, 4, 2))
-    plot(baserow,type="n", ylim = range(0, max_y), 
+    plot(baserow,type="n", ylim = range(0, max_y),
          xaxt="n", yaxt="n", xlab="", ylab="", frame.plot=FALSE)
 
     # Add aesthetic
     title(main=name, col.main="black", font.main=4)
-    #par(mar=c(5,6,4,1)+.1) # set margins
     par(mar=c(10, 4, 4, 2))
     axis(1, at=seq(2, width, 2), labels=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
     axis(1, at=seq(1, width, 2), labels=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
@@ -439,7 +432,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
     colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
 
     # add on lines
-    for(i in 1:nrow(partial)){
+    for(i in 1:nrow(partial)) {
         row <- partial[i,1:width]
         row <- as.numeric(row)
 
@@ -448,19 +441,20 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
 
         max_freq <- max(partial[,ncol(partial)])
         min_freq <- min(partial[,ncol(partial)])
-        fr <- (fr-min_freq)/(max_freq-min_freq)
+        fr <- (fr-min_freq) / (max_freq-min_freq)
         fr <- round(fr / (0.05))
 
-        fr <- round(fr)+1
+        fr <- round(fr) + 1
+
         # Account for if there is only one frequency
         if (!is.finite(fr)) {
             fr = 11
         }
 
-        lines(row, type='o', col=colfunc(21)[fr], 
+        lines(row, type='o', col=colfunc(21)[fr],
               lwd=fr) # add plot lines
 
-        if (!missing(labelsOff) && labelsOff == FALSE){
+        if (!missing(labelsOff) && labelsOff == FALSE) {
             # add on labels
             for(i in 1:(ncol(partial)-1)){
                 # if this column is full of categorical variables
@@ -472,10 +466,11 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE){
             }
         }
     }
+
     legend_image <- as.raster(matrix(rev(colfunc(20)), ncol=1))
-    plot(c(0,2),c(0,1),type = 'n', axes = F, 
+    plot(c(0,2),c(0,1),type = 'n', axes = F,
          xlab = '', ylab = '', main = 'Frequency')
-    text(x=1.5, y = seq(1, 0, l=5), labels = seq(round(max_freq), 
+    text(x=1.5, y = seq(1, 0, l=5), labels = seq(round(max_freq),
                                                  round(min_freq), l=5))
     rasterImage(legend_image, 0, 0, 1, 1)
 }
@@ -492,12 +487,12 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
-    # Then, col1.val1, col2.val1, col3.val1 would make one line. 
+    # Then, col1.val1, col2.val1, col3.val1 would make one line.
     # For categorical variables, we map each unique variable, found
     # with factors, down to a corresponding number. We then substitute
     # this number in the original dataset, then plot it. Finally,
     # we use our mapping from labels to numbers to actually demonstrate
-    # which categorical variable represents what. 
+    # which categorical variable represents what.
 
     if (!is.null(accentuate)) {
         cmd <- paste("tmp <- which(",accentuate,")",sep='')
@@ -510,23 +505,23 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 
     # Store categorical variables - categ[[i]] holds the ith column's unique
     # variables. If categ[[i]] is null, that means it is not categorical.
-    categ <- list() 
+    categ <- list()
 
     # Map unique categorical variables to numbers
-    for(colnum in 1:(ncol(pna)-1)){
+    for(colnum in 1:(ncol(pna)-1)) {
         # Store the columns that have categorical variables
 
         # Preserve order for categorical variables changed in discretize()
-        if (!is.null(attr(pna, "categorycol")) && 
-            colnames(pna)[colnum] %in% attr(pna, "categorycol")){
+        if (!is.null(attr(pna, "categorycol")) &&
+            colnames(pna)[colnum] %in% attr(pna, "categorycol")) {
 
             # Get the index that the colname is in categorycol
             # categoryorder[index] is the list that you want to assign
-            orderedcategories <- 
-                attr(pna, "categoryorder")[match(colnames(pna)[colnum], 
-                attr(pna, "categorycol"))][[1]]
-            categ[[colnum]] <- orderedcategories[(orderedcategories %in% 
-                                               c(levels(pna[, colnum])))]
+            orderedcategories <-
+                attr(pna, "categoryorder")[match(colnames(pna)[colnum],
+                                                 attr(pna, "categorycol"))][[1]]
+            categ[[colnum]] <- orderedcategories[(orderedcategories %in%
+                                                  c(levels(pna[, colnum])))]
         }
         # Convert normal categorical variables
         else {
@@ -551,7 +546,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         }
     }
 
-
     # find the max value and the max frequency to set max/min for our plot
     nums <- Filter(is.numeric, pna)
     max_y <- max(nums[(1:nrow(nums)),1:(ncol(nums) - 1)]) # option 1
@@ -568,7 +562,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 
         # If it is a categorical variable, add ticks and labels
         if (i <= length(categ) && !is.null(categ[[i]])){
-
             if (length(categ[[i]]) == 1){
                 interactiveList[[i]] <-
                     list(range = c(0, 2),
@@ -600,31 +593,31 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
         }
     }
 
-    scaleOn=TRUE
+    scaleOn <- TRUE
 
     # Use random colors to differentiate lines
     if (differentiate){
         nrpna <- nrow(pna)
-        pna$freq = sample(1:nrpna,nrpna,replace=FALSE)
-        min_freq = 1
-        max_freq = nrow(pna)
-        scaleOn=FALSE
+        pna$freq <- sample(1:nrpna,nrpna,replace=FALSE)
+        min_freq <- 1
+        max_freq <- nrow(pna)
+        scaleOn <- FALSE
     }
 
     # Convert pna to plot
     if (name == ""){
         pna %>%
-            plot_ly(type = 'parcoords', 
+            plot_ly(type = 'parcoords',
                     line = list(color = pna$freq,
                                 colorscale = 'Jet',
                                 showscale = scaleOn,
                                 reversescale = TRUE,
                                 cmin = min_freq,
                                 cmax = max_freq),
-                    dimensions = interactiveList) 
+                    dimensions = interactiveList)
     }
     else {
-        plot_ly(pna, type = 'parcoords', 
+        plot_ly(pna, type = 'parcoords',
                 line = list(color = pna$freq,
                             colorscale = 'Jet',
                             showscale = scaleOn,
@@ -636,113 +629,99 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     }
 }
 
-interactcategoricalexample <- function(n, categ) {
-    categoricalexample <- NULL
-    data(categoricalexample)
-
-    # select top n frequencies
-    if (missing(n)){
-        partial <- partialNA(categoricalexample)  
-    }
-    else {
-        partial <- partialNA(categoricalexample, n)
-    }
-    print(partial)
-    interactivedraw(partial)
-}
-
 runsmallexample <- function(n) {
     smallexample <- NULL
     data(smallexample)
 
     # select top n frequencies
     if (missing(n)){
-        partial <- partialNA(smallexample)  
+        partial <- partialNA(smallexample)
     }
     else {
         partial <- partialNA(smallexample, k=n)
     }
-    draw(partial, name="Small Example")
+    draw(partial, name = "Small Example")
 }
 
 # this is the main graphing function - use this
 # data should be input as a dataframe
-# need to figure out how to DISCRETIZE COLUMNS 
+# need to figure out how to DISCRETIZE COLUMNS
 # 1. permute columns
 # 2. interactive columns
 # 3. figure out labeling program
 # 4. Need to add in a way to choose which names to label pdfs with
-discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE, 
-                         interactive = TRUE, save=FALSE, name="Parcoords",
-                         labelsOff = TRUE, NAexp=1.0, countNAs=FALSE,
-                         accentuate=NULL, accval=100, inParallel=FALSE,
-                         cls=NULL,
-                         differentiate=FALSE) {
+discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
+                         interactive = TRUE, save = FALSE, name = "Parcoords",
+                         labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
+                         accentuate = NULL, accval = 100, inParallel = FALSE,
+                         cls = NULL,
+                         differentiate = FALSE) {
 
-    if (class(data)[1] == 'pna' && !is.null(grpcategory)) 
-       stop('group case does not yet handle preprocessed data')
+    if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
+        stop('group case does not yet handle preprocessed data')
+    }
 
     # check to see if column name is valid
-    if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))){
+    if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))) {
         stop("Invalid column names")
-    } 
+    }
 
     # check to see if grpcategory given
-    else if (is.null(grpcategory)){
-    if (class(data)[1] == 'pna') {
-       partial <- data
-       k <- attr(data,'k')
-    } else {
-        # get top k 
-        if (!inParallel) {
-            partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
-        }
-        else {
-            partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
-        }
-
-        # to permute or not to permute
-        if(permute){
-            partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
-        }
-     }
-
-        if (!interactive){
-            draw(partial, name=name, save=save, labelsOff=labelsOff)
-        }
-        else {
-            interactivedraw(partial, name=name, 
-               accentuate=accentuate, accval=accval,
-               differentiate=differentiate)
-        }
-    } 
-    # grpcategory is given and is valid
-    else {
-        lvls = unique(data[[grpcategory]])
-
-        # generate a list of plots for grpcategory
-        plots = list()
-
-        # iterate through each different value in the selected category
-        for(i in 1:length(lvls)){
-            cat = lvls[i]
-            ctgdata = data[which(data[[grpcategory]] == cat), ]
-            ctgdata[[grpcategory]] <- NULL
-
+    else if (is.null(grpcategory)) {
+        if (class(data)[1] == 'pna') {
+            partial <- data
+            k <- attr(data,'k')
+        } else {
+            # get top k
             if (!inParallel) {
-                partial <- partialNA(data, k=k, NAexp=NAexp, 
-                                     countNAs=countNAs)
+                partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
             }
             else {
-                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, 
-                                        countNAs = countNAs)
+                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
             }
 
+            # to permute or not to permute
             if(permute){
                 partial = partial[,c(sample(ncol(partial)-1), ncol(partial))]
             }
+        }
 
-            if (!interactive){
+        if (!interactive) {
+            draw(partial, name=name, save=save, labelsOff=labelsOff)
+        }
+        else {
+            interactivedraw(partial, name = name,
+                            accentuate = accentuate, accval = accval,
+                            differentiate = differentiate)
+        }
+    }
+    # grpcategory is given and is valid
+    else {
+        lvls <- unique(data[[grpcategory]])
+
+        # generate a list of plots for grpcategory
+        plots <- list()
+
+        # iterate through each different value in the selected category
+        for(i in 1:length(lvls)){
+            cat <- lvls[i]
+            ctgdata <- data[which(data[[grpcategory]] == cat), ]
+            ctgdata[[grpcategory]] <- NULL
+
+            if (!inParallel) {
+                partial <- partialNA(data, k=k, NAexp=NAexp,
+                                     countNAs=countNAs)
+            }
+            else {
+                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp,
+                                        countNAs = countNAs)
+            }
+
+            if(permute) {
+                partial <- partial[,c(sample(ncol(partial)-1), ncol(partial))]
+            }
+
+            if (!interactive) {
                 # Saving is only an option on noninteractive plotting
                 if (save) {
                     draw(partial, name=paste(name, cat), save=save, labelsOff=labelsOff)
@@ -755,7 +734,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             else {
                 numcat <- paste(i, cat)
                 fullname <- paste(name, numcat)
-                plots[[i]] <- 
+                plots[[i]] <-
                     interactivedraw(partial,
                                     name=fullname,
                                     accentuate=accentuate,
@@ -799,4 +778,3 @@ findParentTuples <- function(row, intact) {
     matchIntact <- intact[which(match),]
     do.call(rbind, matchIntact[naIndex])
 }
-

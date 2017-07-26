@@ -18,8 +18,8 @@ Each axis is independent, and has its max/min based off of its own data.
 }
 
 \usage{
-interactivedraw(pna, name="Interactive Parcoords", accentuate=NULL, 
-                accval=100, differentiate=FALSE)
+    interactivedraw(pna, name="Interactive Parcoords", accentuate=NULL, 
+                    accval=100, differentiate=FALSE)
 }
 
 \arguments{
@@ -43,7 +43,7 @@ interactivedraw(pna, name="Interactive Parcoords", accentuate=NULL,
 }
 
 \author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
 
 \examples{

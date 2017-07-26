@@ -23,10 +23,10 @@
 }
 
 \usage{
-    discparcoord(data, k = 5, grpcategory = NULL, permute = FALSE,
-      interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
-      NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
-      cls=NULL, differentiate=FALSE)
+    discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
+                 interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
+                 NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
+                 cls=NULL, differentiate=FALSE)
 }
 
 \arguments{
@@ -113,7 +113,7 @@
 }
 
 \author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
 
 \examples{

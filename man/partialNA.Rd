@@ -27,7 +27,7 @@ partialNA(dataset, k=5, NAexp=1, countNAs=FALSE)
         for hunting for outliers.
     }
     \item{NAexp}{
-        Scale NA signifiance.
+        Scale NA signifiance. This is experimental and may run extremely slowly. 
     }
     \item{countNAs}{
         Whether or not you want to count NA values.
@@ -35,7 +35,7 @@ partialNA(dataset, k=5, NAexp=1, countNAs=FALSE)
 }
 
 \author{
-Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
 
 \details{
@@ -57,7 +57,6 @@ value is 2, for example, the 7/8 increment will be 7/8 squared.
 }
 
 \examples{
-
   md <- 
      rbind(c(1,2,8),c(1,3,4),c(1,2,8),c(5,NA,NA),c(5,6,2),c(5,NA,NA),c(NA,6,2))
   partialNA(md)

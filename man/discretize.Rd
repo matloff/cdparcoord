@@ -31,7 +31,7 @@
 }
 
 \author{
-    Norm Matloff <matloff@cs.ucdavis.edu>, Harrison Nguyen <hhnguy@ucdavis.edu>, and Vincent Yang <vinyang@ucdavis.edu>
+    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
 
 \examples{
@@ -41,16 +41,16 @@
     # Get the Height, Weight, Age, and Position of Players
     m <- mlb[,4:7]
 
-    inp1 <- list("name" = "Height", 
-                 "partitions"=4, 
+    inp1 <- list("name" = "Height",
+                 "partitions"=4,
                  "labels"=c("low", "lowmid", "highmid", "high"))
 
-    inp2 <- list("name" = "Weight", 
-                 "partitions"=3, 
+    inp2 <- list("name" = "Weight",
+                 "partitions"=3,
                  "labels"=c("light", "med", "heavy"))
 
-    inp3 <- list("name" = "Age", 
-                 "partitions"=2, 
+    inp3 <- list("name" = "Age",
+                 "partitions"=2,
                  "labels"=c("young", "old"))
 
     # Create one list to pass everything to discretize()
