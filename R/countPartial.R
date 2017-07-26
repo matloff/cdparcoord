@@ -49,7 +49,7 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
             input[[nm]] <- inp
         }
     }
-    for(col in input){
+    for(col in input) {
         if (!is.null(col$dontchange)) next
         # read all the input into local variables
         name = col[['name']]
@@ -60,7 +60,7 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
         # If so, it will have non-numeric characters. Alternately,
         # if it already has non-numeric characters, then it
         # should not be considered for discretizing
-        if (!is.numeric(dataset[[name]])){
+        if (!is.numeric(dataset[[name]])) {
             next
         }
 
@@ -399,7 +399,6 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
         }
     }
 
-
     # draw one graph
     # creation of initial plot
     cats <- rep(max_y, width)
@@ -596,7 +595,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     scaleOn <- TRUE
 
     # Use random colors to differentiate lines
-    if (differentiate){
+    if (differentiate) {
         nrpna <- nrow(pna)
         pna$freq <- sample(1:nrpna,nrpna,replace=FALSE)
         min_freq <- 1
@@ -605,7 +604,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     }
 
     # Convert pna to plot
-    if (name == ""){
+    if (name == "") {
         pna %>%
             plot_ly(type = 'parcoords',
                     line = list(color = pna$freq,
@@ -629,27 +628,28 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     }
 }
 
-runsmallexample <- function(n) {
-    smallexample <- NULL
-    data(smallexample)
-
-    # select top n frequencies
-    if (missing(n)){
-        partial <- partialNA(smallexample)
-    }
-    else {
-        partial <- partialNA(smallexample, k=n)
-    }
-    draw(partial, name = "Small Example")
-}
-
-# this is the main graphing function - use this
-# data should be input as a dataframe
-# need to figure out how to DISCRETIZE COLUMNS
-# 1. permute columns
-# 2. interactive columns
-# 3. figure out labeling program
-# 4. Need to add in a way to choose which names to label pdfs with
+# This is the main function. It ties together all of the other functions.
+# 1. data: The dataset
+# 2. k: The number of most-frequent tuples to keep
+# 3. grpcategory: Categories to keep constant
+# 4. permute: Whether or not to permute the columns.
+#   This is not used by default, as interactivedraw has this feature.
+# 5. interactive: Which type of plotting to use - interactive or not. By default,
+#   it uses interactive.
+# 6. save: Whether or not to save the plot drawn. By default, this is
+#   off as interactive has this feature embedded.
+# 7. name: The name for the plot
+# 8. labelsOff: Whether or not to use labels.
+# 9. NAexp: Emphasis of NA values.
+# 10. countNAs: Whether or not to count NA values.
+# 11. accentuate: Whether or not to accentuate a few lines. This is useful
+#   for differentiating lines that are close/blended, if you don't want to
+#   use the filtering in interactive mode.
+# 12. accval: The value to accentuate.
+# 13. inParallel: Whether or not to run this function in parallel.
+# 14. cls: If running in parallel, the cluster.
+# 15. differentiate: Whether or not you want to randomize coloring
+#   to differentiate overlapping lines.
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save = FALSE, name = "Parcoords",
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
