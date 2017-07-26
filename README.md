@@ -1,4 +1,4 @@
-# freqparcoord.cd
+# cdparcoord:  Categorical and Discrete Parallel Coordinates
 
 # Table of Contents
 1. [Quickstart](#quickstart)
@@ -7,30 +7,56 @@
 4. [Warnings](#warnings)
 5. [Authors](#authors)
 
+The *parallel coordinates* approach is a popular method for graphing
+multivariate data.  However, for large data sets, the method suffers
+from the "black screen problem" -- the jumble of lines fills the screen
+and it is difficult if not impossible to discern any relationships in
+the data.  Our solution is to graph only the most frequent lines.
+
+Our **freqparcoord** package, aimed at continuous variables, with line
+frequency defined in terms of estimated multivariate density.  The
+current package, **cdparcoord**, covers the case of categorical
+variables, with frequency defined as actual tuple count.  (In a mixed
+continuous-categorical setting, the continuous variables are
+discretized.)
+
 # Quickstart
 
-##### Continuous-Data Example
+Here we give a quick view of the mechanics of the package operations.
+Details, and especially issues of interpretation, will be presented in
+the later sections.
 
-This involves [simulated HR data](https://www.kaggle.com/ludobenistant/hr-analytics),
-courtesy of Kaggle.
+It is assumed that the user has already executed
 
 ```R
-# Load data
-library(freqparcoord.cd)
+library(cdparcoord)
+```
+
+##### Example
+
+This involves [simulated HR
+data](https://www.kaggle.com/ludobenistant/hr-analytics), courtesy of
+Kaggle.
+
+```R
+# load data
 data(hrdata)
 discparcoord(hrdata, k=100, name="Nondiscrete HR Data")
 ```
 
 <img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
 
+(In this example all the variables are continuous, but we have not
+discretized the data.)
+
 Here we have displayed the **k** = 100 most frequent patterns.  The
 color legend at the right shows frequency.  Since the highest frequency
 was 6, we might consider trying a larger value of **k**.
 
-**plotly** allows us to
-change the order of the columns via mouse drag.  We could, for instance,
-use the mouse to move the salary column more to the center or left, by
-clicking and dragging the label 'salary' to the desired spot. 
+The package is built on top of **plotly**, which allows us to change the
+order of the columns via mouse drag.  We could, for instance, use the
+mouse to move the salary column more to the center or left, by clicking
+and dragging the label 'salary' to the desired spot. 
 
 Here, we can see, for example, that higher satisfaction level is 
 associated with having more projects and more monthly hours, until 
@@ -46,7 +72,6 @@ effects of the categorical variable Job Type.
 
 ```R
 # Load data
-library(freqparcoord.cd)
 data(hrdata)
 
 input1 <- list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
@@ -96,7 +121,7 @@ discparcoord(hrdata, grpcategory="sales")
 
 # Overview
 
-The **freqparcoord.cd** package was created to serve as a parallel
+The **cdparcoord** package was created to serve as a parallel
 coordinates graphing package with special focus on the black screen
 problem, dealing with categorical variables, and the NA problem. 
 
@@ -255,7 +280,10 @@ Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
    to save your plots. You can also choose to toggle labels on and off. 
    For more information, type `?interactivedraw` into the console.
 
-# Warnings
+# Tips
+
+Like any exploratory graphical tool, **cdparcoord** is best used by
+trying various parameter values.
 
 1. By default, `partialNA()` returns the five most frequent
    correlations. If there is low/no correlation between variables, then
