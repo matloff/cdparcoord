@@ -6,7 +6,7 @@
 }
 
 \description{
-    A small example showing how the freqparcoord.cd package discretizes data.
+    A small example showing how the cdparcoord package discretizes data.
 }
 
 \usage{

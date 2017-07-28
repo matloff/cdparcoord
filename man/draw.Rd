@@ -35,7 +35,7 @@
 }
 
 \examples{
-    library(freqparcoord.cd)
+    library(cdparcoord)
     data(smallexample)
     # Grab the 5 most significant tuples. 
     partial <- partialNA(smallexample)

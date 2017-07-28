@@ -1,5 +1,5 @@
-\name{freqparcoord.cd}
-\alias{freqparcoord.cd}
+\name{cdparcoord}
+\alias{cdparcoord}
 \alias{discparcoord}
 
 \title{

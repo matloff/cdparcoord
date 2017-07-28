@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# freqparcoord.cd
+# cdparcoord
 
 # Table of Contents
 1. [Quickstart](#quickstart)
@@ -28,7 +28,7 @@ courtesy of Kaggle.
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+file <- system.file("data", "hrdata.csv", package="cdparcoord")
 hrdata <- read.table(file, header=TRUE, sep=",", na.strings="")
 
 # Create an interactive plot with the 100 most frequent tuples
@@ -60,7 +60,7 @@ effects of the categorical variable Job Type.
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+file <- system.file("data", "hrdata.csv", package="cdparcoord")
 hrdata <- read.table(file, header=TRUE, sep=",", na.strings="")
 
 input1 <- list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
@@ -109,7 +109,7 @@ discparcoord(hrdata, grpcategory="sales", interactive=TRUE)
 
 # Overview
 
-The **freqparcoord.cd** package was created to serve as a parallel
+The **cdparcoord** package was created to serve as a parallel
 coordinates graphing package with special focus on the black screen
 problem, dealing with categorical variables, and the NA problem. 
 
@@ -128,7 +128,7 @@ Before:
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+file <- system.file("data", "hrdata.csv", package="cdparcoord")
 hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 discparcoord(hrdata, interactive=TRUE, k=10000, name="Nondiscrete HR Data")
 ```
@@ -139,7 +139,7 @@ After:
 
 ```R
 # Load data
-file <- system.file("data", "hrdata.csv", package="freqparcoord.cd")
+file <- system.file("data", "hrdata.csv", package="cdparcoord")
 hrdata = read.table(file, header=TRUE, sep=",", na.strings="")
 discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
@@ -161,7 +161,7 @@ case, satisfaction level drastically drops.
 R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
-[`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
+[`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
 issue by allowing these rows to contribute to overall counts, but to
 lesser extents.
 
@@ -174,7 +174,7 @@ with `discretize()`.
 ###### Before: 
 
 ```R
-library(freqparcoord.cd)
+library(cdparcoord)
 # load freqparcoord to get the mlb data set
 library(freqparcoord)
 data(mlb)
@@ -192,7 +192,7 @@ Using categorical variables with the mlb data set with `discretize()`
 and interactive plotting, with the most significant 1000 tuples.
 
 ```R
-library(freqparcoord.cd)
+library(cdparcoord)
 # load freqparcoord to get the mlb data set
 library(freqparcoord)
 data(mlb)
@@ -300,7 +300,7 @@ An example of discretized mlb data drawn with `draw`.
 1. A small example of parallel coordinates plotting
 
 ```R
-library(freqparcoord.cd)
+library(cdparcoord)
 smallexample()
 ```
 

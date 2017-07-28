@@ -150,7 +150,7 @@ After:
 
 ```R
 # Load data
-library(freqparcoord.cd)
+library(cdparcoord)
 data(hrdata)
 discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
 ```
@@ -172,7 +172,7 @@ case, satisfaction level drastically drops.
 R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
-[`freqparcoord.cd`](https://github.com/matloff/freqparcoord.cd) addresses this
+[`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
 issue by allowing these rows to contribute to overall counts, but to
 lesser extents.
 
@@ -185,7 +185,7 @@ with `discretize()`.
 ###### Before: 
 
 ```R
-library(freqparcoord.cd)
+library(cdparcoord)
 # load freqparcoord to get the mlb data set
 library(freqparcoord)
 data(mlb)
@@ -203,7 +203,7 @@ Using categorical variables with the mlb data set with `discretize()`
 and interactive plotting, with the most significant 1000 tuples.
 
 ```R
-library(freqparcoord.cd)
+library(cdparcoord)
 # load freqparcoord to get the mlb data set
 library(freqparcoord)
 data(mlb)

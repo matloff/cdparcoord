@@ -1,7 +1,7 @@
 
 To get a quick introduction to the package, run
 
-> library(freqparcoord.cd)
-> ?freqparcoord.cd
+> library(cdparcoord)
+> ?cdparcoord
 
 There are a few examples. 
