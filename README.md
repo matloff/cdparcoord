@@ -62,11 +62,22 @@ discparcoord(discretizedmlb,k=100)
 Here we are requesting that the 100 most frequent tuples be displayed, 
 with the frequencies color-coded.
 
+<img src="vignettes/MLBcdp.png" alt="n1" width="800"/>
+
 Start at the far-left column, for instance, we see a line corresponding
 to Height = highmid, Weight = heavy, Age = young and PosCategory =
-Catcher.
+Catcher.  This jibes with the popular image of "hefty" catchers, who
+need to block home plate.
 
-<img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
+In investigating the relation of body build to position,
+we may wish to have the Height and Weight columns situated
+adjacent to the PosCategory column, and this can be done.
+The package is built on top of **plotly**, which allows us to change the
+order of the columns via mouse drag.  We could, for instance, use the
+mouse to drag the Age column to the far left: 
+
+<img src="vignettes/MLBcdp1.png" alt="n1" width="800"/>
+
 
 (In this example all the variables are continuous, but we have not
 discretized the data.)
