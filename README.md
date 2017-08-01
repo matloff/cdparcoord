@@ -22,10 +22,7 @@ discretized.)
 
 # Quickstart
 
-Here we give a quick view of the mechanics of the package operations.
-Details, and especially issues of interpretation, will be presented in
-the later sections.
-
+Here we give a quick view of the package operations.
 It is assumed that the user has already executed
 
 ```R
@@ -34,15 +31,40 @@ library(cdparcoord)
 
 ##### Example
 
-This involves [simulated HR
-data](https://www.kaggle.com/ludobenistant/hr-analytics), courtesy of
-Kaggle.
+(UNDER REVISION.)
+
+This involves the major league baseball player dataset **mlb**, included
+in the package, courtesy of the UCLA Stat Dept.
 
 ```R
 # load data
-data(hrdata)
-discparcoord(hrdata, k=100, name="Nondiscrete HR Data")
+data(mlb)
+mlb <- mlb[,4:7]  # focus on ht, wt, age and position
+# discretize the continuous variables
+inp1 <- list("name" = "Height", 
+                      "partitions"=4, 
+                      "labels"=c("low", "lowmid", "highmid", "high")) 
+inp2 <- list("name" = "Weight", 
+                      "partitions"=3, 
+                      "labels"=c("light", "med", "heavy")) 
+inp3 <- list("name" = "Age", 
+                      "partitions"=2, 
+                      "labels"=c("young", "old")) 
+# create one list to pass everything to discretize() 
+discreteinput <- list(inp1, inp2, inp3) 
+# do the discretization
+discretizedmlb <- discretize(mlb, discreteinput) 
+
+# run the plot
+discparcoord(discretizedmlb,k=100) 
 ```
+
+Here we are requesting that the 100 most frequent tuples be displayed, 
+with the frequencies color-coded.
+
+Start at the far-left column, for instance, we see a line corresponding
+to Height = highmid, Weight = heavy, Age = young and PosCategory =
+Catcher.
 
 <img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
 
