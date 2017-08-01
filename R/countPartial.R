@@ -119,6 +119,8 @@ reOrder <- function(dataset,colName,levelNames) {
 #      least-frequent patterns
 #   NAexp: weighting factor
 #   countNAs: if TRUE, count NA values in a partial weighting
+#   saveCounts: if TRUE, save the output to a file 'tupleCounts'
+#   minFreq: if non-null, exclude tuples having a frequency below this value
 
 # return value:
 
@@ -151,7 +153,8 @@ reOrder <- function(dataset,colName,levelNames) {
 # the argument NAexp is used to reduce the weights of partial matches;
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
-partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+partialNA = function (dataset, 
+   k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=FALSE, minFreq=NULL) {
     if (class(dataset)[1] == 'pna')
         stop('does not yet allow preprocessed data')
 
@@ -218,8 +221,15 @@ partialNA = function (dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
         attr(counts, "categoryorder") <- attr(dataset, "categoryorder")
     }
 
+    if (!is.null(minFreq)) {
+       counts <- counts[countrs$freq >= minFreq,]
+    }
+
     class(counts) <- c('pna','data.frame')
     attr(counts,'k') <- k
+    attr(counts,'minFreq') <- minFreq
+
+    if (saveCounts) save(counts,file='tupleCounts')
 
     return(counts)
 }
@@ -298,12 +308,14 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
         # Zero frequencies so we only have to account for the partial
         # frequencies after cluster processing
         counts$freq <- 0
-        clusterExport(cls, varlist=c("minipna", "counts", "NAexp"), envir=environment())
+        clusterExport(cls, 
+           varlist=c("minipna", "counts", "NAexp"), envir=environment())
         r <- clusterEvalQ(cls, minipna(na_counts, counts, NAexp))
         counts$freq = original_freq
 
         for(clusterNum in 1:length(r)){
-            counts$freq = as.numeric(counts$freq) + as.numeric(r[[clusterNum]]$freq)
+            counts$freq = 
+               as.numeric(counts$freq) + as.numeric(r[[clusterNum]]$freq)
         }
 
         if (madeCluster){
@@ -339,7 +351,8 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
+draw <- 
+   function(partial, name="Parallel Coordinates", labelsOff, savePlot=FALSE) {
     width <- ncol(partial)-1
 
     # get only numbers
@@ -403,7 +416,7 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
     # creation of initial plot
     cats <- rep(max_y, width)
     baserow <- c(1, cats)
-    if (save) {
+    if (savePlot) {
         png(paste(name, "png", sep=".")) # Save the file instead of displaying
     }
 
@@ -629,14 +642,16 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 }
 
 # This is the main function. It ties together all of the other functions.
-# 1. data: The dataset
+# 1. data: The dataset; if character string, tuple counts will be read
+#   from 'tupleCounts' instead of re-calling partialNA(). Or if class
+#   'pna', the in-memory saved tuple counts will be used.
 # 2. k: The number of most-frequent tuples to keep
 # 3. grpcategory: Categories to keep constant
 # 4. permute: Whether or not to permute the columns.
 #   This is not used by default, as interactivedraw has this feature.
 # 5. interactive: Which type of plotting to use - interactive or not. By default,
 #   it uses interactive.
-# 6. save: Whether or not to save the plot drawn. By default, this is
+# 6. savePlot: Whether or not to save the plot drawn. By default, this is
 #   off as interactive has this feature embedded.
 # 7. name: The name for the plot
 # 8. labelsOff: Whether or not to use labels.
@@ -650,12 +665,19 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 # 14. cls: If running in parallel, the cluster.
 # 15. differentiate: Whether or not you want to randomize coloring
 #   to differentiate overlapping lines.
+# 16. saveCounts: Passed to partialNA(); if TRUE, tuple counts will be
+#   saved to 'tupleCounts'.
+# 17. minFreq: Passed to partialNA().  If non-null, exclude tuples have
+#   frequencies below this level.
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save = FALSE, name = "Parcoords",
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
                          accentuate = NULL, accval = 100, inParallel = FALSE,
                          cls = NULL,
-                         differentiate = FALSE) {
+                         differentiate = FALSE,
+                         saveCounts = FALSE,
+                         minFreq=NULL
+                         ) {
 
     if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
         stop('group case does not yet handle preprocessed data')
@@ -671,10 +693,16 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         if (class(data)[1] == 'pna') {
             partial <- data
             k <- attr(data,'k')
+            partial <- partial[partial$freq >= minFreq,]
+        } else if (class(data) == 'character')  {
+            load('tupleCounts')
+            partial <- counts
+            k <- attr(data,'k')
+            partial <- partial[partial$freq >= minFreq,]
         } else {
             # get top k
-            if (!inParallel) {
-                partial <- partialNA(data, k=k, NAexp=NAexp, countNAs)
+            if (!inParallel) { partial <- 
+               partialNA(data, k=k, NAexp=NAexp, countNAs, saveCounts, minFreq)
             }
             else {
                 partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
