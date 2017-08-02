@@ -222,7 +222,7 @@ partialNA = function (dataset,
     }
 
     if (!is.null(minFreq)) {
-       counts <- counts[countrs$freq >= minFreq,]
+       counts <- counts[counts$freq >= minFreq,]
     }
 
     class(counts) <- c('pna','data.frame')
