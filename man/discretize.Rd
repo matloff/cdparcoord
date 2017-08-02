@@ -43,15 +43,15 @@
 
     inp1 <- list("name" = "Height",
                  "partitions"=4,
-                 "labels"=c("low", "lowmid", "highmid", "high"))
+                 "labels"=c("short", "shortmid", "tallmid", "tall"))
 
     inp2 <- list("name" = "Weight",
                  "partitions"=3,
                  "labels"=c("light", "med", "heavy"))
 
     inp3 <- list("name" = "Age",
-                 "partitions"=2,
-                 "labels"=c("young", "old"))
+                 "partitions"=3,
+                 "labels"=c("young", "med", "old"))
 
     # Create one list to pass everything to discretize()
     discreteinput <- list(inp1, inp2, inp3)
