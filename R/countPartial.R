@@ -693,14 +693,20 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         if (class(data)[1] == 'pna' || class(data) == 'character') {
             if (class(data)[1] == 'pna') {
                 partial <- data
-            } else  {
+            } else {
                 load('tupleCounts')
                 partial <- counts
             }
-            if (!is.null(minFreq)) 
+            if (!is.null(minFreq)) {
                 partial <- partial[partial$freq >= minFreq,]
+            }
+
             ktmp <- attr(data,'k')
-            if (ktmp > k) stop('proposed k larger than in saved counts')
+
+            if (ktmp > k) {
+                stop('proposed k larger than in saved counts')
+            }
+
             k <- min(ktmp, nrow(partial))
             ordering <- order(partial$freq,decreasing=(k > 0))
             partial <- partial[ordering[1:abs(k)],]
@@ -709,9 +715,9 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             if (!inParallel) { partial <- 
                 partialNA(data, k=k, NAexp=NAexp, countNAs, saveCounts, minFreq)
             }
-                else {
-                    partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
-                }
+            else {
+                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
+            }
 
             # to permute or not to permute
             if(permute){
@@ -744,8 +750,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             if (!inParallel) {
                 partial <- partialNA(data, k=k, NAexp=NAexp,
                                      countNAs=countNAs)
-            }
-            else {
+            } else {
                 partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp,
                                         countNAs = countNAs)
             }
@@ -758,13 +763,11 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 # Saving is only an option on noninteractive plotting
                 if (save) {
                     draw(partial, name=paste(name, cat), save=save, labelsOff=labelsOff)
-                }
-                else {
+                } else {
                     generateScreen(12, 7)
                     draw(partial, name=paste(name, cat), labelsOff=labelsOff)
                 }
-            }
-            else {
+            } else {
                 numcat <- paste(i, cat)
                 fullname <- paste(name, numcat)
                 plots[[i]] <-
