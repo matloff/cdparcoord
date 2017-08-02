@@ -690,15 +690,21 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
 
     # check to see if grpcategory given
     else if (is.null(grpcategory)) {
-        if (class(data)[1] == 'pna') {
-            partial <- data
-            k <- attr(data,'k')
-            partial <- partial[partial$freq >= minFreq,]
-        } else if (class(data) == 'character')  {
-            load('tupleCounts')
-            partial <- counts
-            k <- attr(data,'k')
-            partial <- partial[partial$freq >= minFreq,]
+         # check whether 'data' is real data, vs. e.g. saved counts
+         if (class(data)[1] == 'pna' || class(data) == 'character') {
+            if (class(data)[1] == 'pna') {
+                partial <- data
+            } else  {
+                load('tupleCounts')
+                partial <- counts
+            }
+            if (!is.null(minFreq)) 
+                partial <- partial[partial$freq >= minFreq,]
+            ktmp <- attr(data,'k')
+            if (ktmp > k) stop('proposed k larger than in saved counts')
+            k <- min(ktmp, nrow(partial))
+            ordering <- order(partial$freq,decreasing=(k > 0))
+            partial <- partial[ordering[1:abs(k)],]
         } else {
             # get top k
             if (!inParallel) { partial <- 
