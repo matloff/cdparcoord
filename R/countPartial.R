@@ -55,7 +55,7 @@ discretize <- function (dataset, input=NULL, ndigs=2, nlevels=10) {
     }
     for(col in input) {
         ### if (!is.null(col$dontchange)) next
-        if (col$dontchange) next
+        if (!is.null(col$dontchange) && col$dontchange) next
         # read all the input into local variables
         name = col[['name']]
         partitions = col[['partitions']]
