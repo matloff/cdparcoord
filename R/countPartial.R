@@ -21,7 +21,7 @@
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
+discretize <- function (dataset, input=NULL, ndigs=2, nlevels=10) {
     if (is.null(input)) {
         input <- list()
         for (nm in names(dataset)) {
@@ -35,15 +35,18 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
             } else {
                 inp[['name']] <- nm
                 inp[['partitions']] <- nlevels
-                if (ndigs > 0) {
-                    tmp <- seq(1/nlevels,1.0,1/nlevels)
-                    lbls <- quantile(dscol,tmp)
-                    lbls <- format(lbls,digits=ndigs)
-                } else {
-                    lbls <- c(
-                              'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
-                              'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
-                }
+                # change by NM, Aug. 3, including to default ndigs value
+                ## if (ndigs > 0) {
+                ##     tmp <- seq(1/nlevels,1.0,1/nlevels)
+                ##     lbls <- quantile(dscol,tmp)
+                ##     lbls <- format(lbls,digits=ndigs)
+                ## } else {
+                ##     lbls <- c(
+                ##               'decl01', 'decl02', 'decl03', 'decl04', 'decl05',
+                ##               'decl06', 'decl07', 'decl08', 'decl09', 'decl10')
+                tmp <- seq(1/nlevels,1.0,1/nlevels)
+                lbls <- quantile(dscol,tmp)
+                lbls <- format(lbls,digits=ndigs)
                 inp[['labels']] <- lbls
                 inp[['dontchange']] <- FALSE
             }
@@ -834,4 +837,16 @@ findParentTuples <- function(row, intact) {
     # Rows in intact where non-na values match
     matchIntact <- intact[which(match),]
     do.call(rbind, matchIntact[naIndex])
+}
+
+###########################  makeFactor  ################################
+
+# utility to change numeric variables, specified in varnames, in df to
+# factors, so that discretize() won't make partition levels
+
+makeFactor <- function(df,varnames) {
+   for (nm in varnames) {
+      df[[nm]] <- as.factor(df[[nm]])
+   }
+   df
 }
