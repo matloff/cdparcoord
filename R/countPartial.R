@@ -2,6 +2,7 @@
 
 # possible optimization -> add in R code to find the # of columns first
 
+###########################  discretize  ################################
 
 # Used to select a column and discretize
 # parameters
@@ -50,7 +51,8 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
         }
     }
     for(col in input) {
-        if (!is.null(col$dontchange)) next
+        ### if (!is.null(col$dontchange)) next
+        if (col$dontchange) next
         # read all the input into local variables
         name = col[['name']]
         partitions = col[['partitions']]
@@ -98,6 +100,8 @@ discretize <- function (dataset, input=NULL, ndigs=0, nlevels=10) {
     return(dataset)
 }
 
+###########################  reOrder  ################################
+
 # wrapper for discretize(); use to order the levels of a factor in a
 # desired sequence
 reOrder <- function(dataset,colName,levelNames) {
@@ -107,6 +111,8 @@ reOrder <- function(dataset,colName,levelNames) {
     inputlist$labels<- levelNames
     discretize(dataset,list(inputlist))
 }
+
+###########################  partialNA  ################################
 
 # partialNA():
 
@@ -234,6 +240,8 @@ partialNA = function (dataset,
     return(counts)
 }
 
+###########################  clsPartialNA  ################################
+
 clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     if (class(dataset)[1] == 'pna') {
         stop('does not yet allow preprocessed data')
@@ -347,6 +355,8 @@ clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) 
 
     return(counts)
 }
+
+###########################  draw  ################################
 
 
 # output parallel coordinates plot as Rplots.pdf
@@ -485,11 +495,15 @@ draw <-
         text(x=1.5, y = seq(1, 0, l=5), labels = seq(round(max_freq),
                                                      round(min_freq), l=5))
         rasterImage(legend_image, 0, 0, 1, 1)
-    }
+}
+
+###########################  docmd  ################################
 
 # utility: after building up a command as string form, call docmd() to
 # execute it
 docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
+
+###########################  interactivedraw  ################################
 
 # Accepts a result from partialNA and draws interactively using plotly
 # Plots will open in browser and be saveable from there
@@ -640,6 +654,8 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     }
 }
 
+###########################  discparcoord  ################################
+
 # This is the main function. It ties together all of the other functions.
 # 1. data: The dataset; if character string, tuple counts will be read
 #   from 'tupleCounts' instead of re-calling partialNA(). Or if class
@@ -668,6 +684,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 #   saved to 'tupleCounts'.
 # 17. minFreq: Passed to partialNA().  If non-null, exclude tuples have
 #   frequencies below this level.
+
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save = FALSE, name = "Parcoords",
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
@@ -781,6 +798,8 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
     }
 }
 
+###########################  generateScreen  ################################
+
 # Create a new screen for grpcategory
 generateScreen <- function(width, height) {
     # MacOS
@@ -796,6 +815,8 @@ generateScreen <- function(width, height) {
         windows(width=width, height=height)
     }
 }
+
+###########################  find  ################################
 
 # Given a tuple with NA's and a list of intact tuples,
 # find all possible fitting values for the NAs
