@@ -701,7 +701,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 partial <- partial[partial$freq >= minFreq,]
             }
 
-            ktmp <- attr(data,'k')
+            ktmp <- attr(partial,'k')
 
             if (ktmp > k) {
                 stop('proposed k larger than in saved counts')

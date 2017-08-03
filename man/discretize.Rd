@@ -35,8 +35,6 @@
 }
 
 \examples{
-    # load freqparcoord to get the mlb data set
-    library(freqparcoord)
     data(mlb)
     # Get the Height, Weight, Age, and Position of Players
     m <- mlb[,4:7]
