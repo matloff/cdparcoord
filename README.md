@@ -33,68 +33,95 @@ library(cdparcoord)
 
 (UNDER REVISION.)
 
-This involves the major league baseball player dataset **mlb**, included
-in the package, courtesy of the UCLA Stat Dept.
+This example involves data from the 2000 U.S. census, on programmers and
+engineers in Silicon Valley, a dataset included with the package.
+
+Suppose our interest is exploring whether women encounter wage
+discrimination.  Of course we won't settle such a complex question here,
+but it will serve as a good example of the use of the package.
+
+We first load the data, and select some of the columns for display/ We
+also remove same very high wages (at least in the context of the year
+2000) to make the display easier.
 
 ```R
-# load data
-data(mlb)
-mlb <- mlb[,4:7]  # focus on ht, wt, age and position
-# discretize the continuous variables
-inp1 <- list("name" = "Height", 
-                      "partitions"=4, 
-                      "labels"=c("low", "lowmid", "highmid", "high")) 
-inp2 <- list("name" = "Weight", 
-                      "partitions"=3, 
-                      "labels"=c("light", "med", "heavy")) 
-inp3 <- list("name" = "Age", 
-                      "partitions"=2, 
-                      "labels"=c("young", "old")) 
-# create one list to pass everything to discretize() 
-discreteinput <- list(inp1, inp2, inp3) 
-# do the discretization
-discretizedmlb <- discretize(mlb, discreteinput) 
-
-# run the plot
-discparcoord(discretizedmlb,k=100) 
+data(prgeng)
+pe <- prgeng[,c(1,3,5,7:9)]
+pe25 <- pe[pe$wageinc < 250000,]
 ```
 
-Here we are requesting that the 100 most frequent tuples be displayed, 
-with the frequencies color-coded.
+As mentioned, a key feature of the package is discretization of
+continuous variables, so that tuple frequency counts have meaning. We
+will do this via the package's **discretize()** function, which we will
+apply to the numeric variables.
 
-<img src="vignettes/MLBcdp.png" alt="n1" width="800"/>
+However, in this particular data set, there are variables that seem
+numeric but are in essence factors, as the are codes.  For the **educ**
+variable, for instance, 14 codes a master's degree. (A code list is
+available at the [Census Bureau
+site](https://www.census.gov/prod/cen2000/doc/pums.pdfr).)
 
-Start at the far-left column, for instance, we see a line corresponding
-to Height = highmid, Weight = heavy, Age = young and PosCategory =
-Catcher.  This jibes with the popular image of "hefty" catchers, who
-need to block home plate.
+So, let's change the coded variables to factors, and then discretize:
 
-In investigating the relation of body build to position,
-we may wish to have the Height and Weight columns situated
-adjacent to the PosCategory column, and this can be done.
-The package is built on top of **plotly**, which allows us to change the
-order of the columns via mouse drag.  We could, for instance, use the
-mouse to drag the Age column to the far left: 
+```R
+pe25 <- makeFactor(pe25,c('educ','occ','sex'))
+pe25disc <- discretize(pe25)  # using default options
+```
 
-<img src="vignettes/MLBcdp1.png" alt="n1" width="800"/>
+Now display:
 
+```R
+discparcoord(pe25disc,k=150)  # default options again, other than k
+```
 
-(In this example all the variables are continuous, but we have not
-discretized the data.)
+Here we are having **cdparcoord** display the 150 most frequent tuple
+patterns. The result is
 
-Here we have displayed the **k** = 100 most frequent patterns.  The
-color legend at the right shows frequency.  Since the highest frequency
-was 6, we might consider trying a larger value of **k**.
+<img src="vignettes/PE1.png" alt="n1" width="800"/>
 
-The package is built on top of **plotly**, which allows us to change the
-order of the columns via mouse drag.  We could, for instance, use the
-mouse to move the salary column more to the center or left, by clicking
-and dragging the label 'salary' to the desired spot. 
+For example, there is a blue line corresponding to the tuple,
 
-Here, we can see, for example, that higher satisfaction level is 
-associated with having more projects and more monthly hours, until 
-number of projects or number of monthly hours is too high, in which 
-case satisfaction level drastically drops.  
+(age=29,educ=13,occ=102,sex=1,wageinc=38000,wkswrkd=52)
+
+(The line actually splits into two at the **wageinc** variable.)  The
+frequencies are color-coded accoring to the legend at the right. So
+the above tuple occurred something like 180 times in the data.
+
+What about the difference between males and females (coded 1 and 2)?
+Though there is consider range in wages for the two groups, visually 
+there seems to be some suggestion that the women's wages tend to be
+lower.
+
+However, if this is the case, it may be explained by differences between
+the two groups in other variables.  For instance, do women tend to be in
+lower-paying occupations?  To investigate that, let's move the **occ**
+column to be adjacent to **wageinc**.
+
+This is accomplished by a mouse operation that is provided by **plotly**,
+the graphical package on top of which **cdparcoord** is built.
+Specifically, we can use the mouse to drag the **occ** label to the
+right, releasing the mouse when the column reaches near the **wageinc**
+column.  The result is
+
+<img src="vignettes/PE2.png" alt="n1" width="800"/>
+
+Again, there is a range for each occupation. However, looking at the
+more-frequent lines, the blue and yellow ones, occupations 141 and 102
+seem to pay more.  (More on this point below.)  And if so, that seems to
+be bad news for the women, as there appears to a be slight tendency for
+the women to be more concentrated in occupations 101 and 100.
+
+To obtain a somehwat finer look, we can use another feature supplied by
+**plotly**, a form of *brushing*. Here we highlight the women's lines by
+using the mouse to drag the top of the **sex** column down slightly.
+This causes the men's lines to go to light gray, while the women's lines
+stay in color:
+
+<img src="vignettes/PE3.png" alt="n1" width="800"/>
+
+Now it really does appear that there is some tendency for the women to
+be working in the less lucrative occupations.
+
 
 ##### Categorical-Data Examples ([C1](#example-c1), [C2](#example-c2), [C3](#example-c3))
 
