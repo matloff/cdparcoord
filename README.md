@@ -9,11 +9,31 @@
 
 The *parallel coordinates* approach is a popular method for graphing
 multivariate data.  However, for large data sets, the method suffers
-from the "black screen problem" -- the jumble of lines fills the screen
-and it is difficult if not impossible to discern any relationships in
-the data.  Our solution is to graph only the most frequent lines.
+from the ["black screen problem"](#black-screen-problem) -- the jumble of lines
+fills the screen and it is difficult if not impossible to discern any
+relationships in the data.  
 
-Our **freqparcoord** package, aimed at continuous variables, with line
+Consider the dataset **mlb**, consisting of data on Major League
+Baseball players, courtesy of the UCLA Stat Dept.
+
+```R
+data(mlb)
+# extract height, weight, age
+m <- mlb[,4:6]
+# ordinary parallel coordinates 
+library(MASS) 
+parcoord(m) 
+```
+
+<img src="vignettes/MLB1.png" alt="n1" width="500"/>
+
+Each line in the graph represents one player, connecting his height,
+weight and age.  But since there are so many lines (actually only about
+1000), the graph is useless.
+
+
+Our solution is to graph only the most frequent lines.  Our
+**freqparcoord** package, aimed at continuous variables, with line
 frequency defined in terms of estimated multivariate density.  The
 current package, **cdparcoord**, covers the case of categorical
 variables, with frequency defined as actual tuple count.  (In a mixed
@@ -122,180 +142,41 @@ stay in color:
 Now it really does appear that there is some tendency for the women to
 be working in the less lucrative occupations.
 
+# Example
 
-##### Categorical-Data Examples ([C1](#example-c1), [C2](#example-c2), [C3](#example-c3))
-
-###### Example C1
-
-Here we will discretize two of the continuous variables, and show the
-effects of the categorical variable Job Type.
-
-```R
-# Load data
-data(hrdata)
-
-input1 <- list("name" = "average_montly_hours", "partitions" = 3, "labels" = c("low", "med", "high"))
-input <- list(input1)
-# This will discretize the data by partitioning average monthly hours into 3 parts
-# called low, med, and high
-hrdata <- discretize(hrdata, input)
-
-# account for NA values and plot with parallel coordinates
-discparcoord(hrdata)                                  # plot c1
-```
-
-C1: 
-<img src="vignettes/c1.png" alt="c1" width="500"/>
-
-Here the various job categories exhibit rather similar behavior, but it
-is interesting that the Technical workers have slightly higher job
-satisfaction in spite of having somewhat lower performance ratings.
-
-###### Example C2
+We return to the baseball, and show a more advanced usage of
+**discretize()**.  The dataset is probably too small to discretize --
+some frequencies of interesting tuples will be very small -- but it is a
+good example of usage of lists in **discretize()**. 
 
 ```R
-# same as above, but with scrambled columns
-# By default, interactive plotting allows you to drag around columns
-# to scramble them, but we may use permute to scramble columns in 
-# non-interactive plotting as well.
-discparcoord(hrdata, permute=TRUE, interactive=FALSE)  # plot c2
-```
-C2: 
-<img src="vignettes/c2.png" alt="c2" width="500"/>
+inp1 <- list("name" = "Height",
+             "partitions"=3,
+             "labels"=c("short", "med", "tall"))
+inp2 <- list("name" = "Weight",
+             "partitions"=3,
+             "labels"=c("light", "med", "heavy"))
+inp3 <- list("name" = "Age",
+             "partitions"=2,
+             "labels"=c("young", "old"))
+discreteinput <- list(inp1, inp2, inp3)
+discretizedmlb <- discretize(m, discreteinput)
+discparcoord(discretizedmlb, name="MLB", k=100)
 
-###### Example C3
-```R
-# same as above, but show top k values, title,  and interactive plot
-discparcoord(hrdata, k=8, name="Plot C3")           # plot c3
-```
-
-C3: ![c3](vignettes/c3.png)
-
-```R
-# same as above, but group according to profession
-# This will create 11 different plots, 1 for each profession
-discparcoord(hrdata, grpcategory="sales") 
 ```
 
----
-
-# Overview
-
-The **cdparcoord** package was created to serve as a parallel
-coordinates graphing package with special focus on the black screen
-problem, dealing with categorical variables, and the NA problem. 
-
-It builds upon the [`freqparcoord` package](https://cran.r-project.org/web/packages/freqparcoord/index.html).
-
-### The Black Screen Problem
-The black screen problem occurs when there are too many data points to
-plot. This results in a complete black screen from which no useful
-information may be gleaned. 
-
-This is solved in [`freqparcoord`](https://cran.r-project.org/web/packages/freqparcoord/index.html)
-by displaying on the most frequent relations. We account for this here by showing the most significant 
-tuples.
-
-Before: 
-
-```R
-# Load data
-data(hrdata)
-discparcoord(hrdata, k=10000, name="Nondiscrete HR Data")
-```
-
-<img src="vignettes/nondiscrete_hr_data_interactive.png" alt="n1" width="800"/>
-
-After: 
-
-```R
-# Load data
-library(cdparcoord)
-data(hrdata)
-discparcoord(hrdata, interactive=TRUE, k=100, name="Nondiscrete HR Data")
-```
-
-<img src="vignettes/hr_data_interactive_100.png" alt="n1" width="800"/>
-
-The second plot is much simpler and significant relationships are much
-more visible.  Note that the relationship between satisfaction level and
-number of projects and the relationship between satisfaction level and
-number of monthly hours is more easily recognizable in the second plot.
-Higher satisfaction level here is shown to be associated with having
-more projects and more monthly hours, until a clear limit at which the
-employee has too many projects or has to work too many hours.  In this
-case, satisfaction level drastically drops. 
+<img src="vignettes/MLB2.png" alt="n1" width="800"/>
 
 
 ### Accounting for NA Values
+
+(EXPERIMENTAL)
 
 R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
 [`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
-issue by allowing these rows to contribute to overall counts, but to
-lesser extents.
-
-### Discretizing Data
-
-Sometimes, you want to use discrete data for your parallel coordinates
-plot. This allows you to more easily recognize trends. This can be done
-with `discretize()`.
-
-###### Before: 
-
-```R
-library(cdparcoord)
-# load freqparcoord to get the mlb data set
-library(freqparcoord)
-data(mlb)
-# Get the Height, Weight, Age, and Position of Players
-m <- mlb[,4:7]
-# Account for NA values and weigh values; interactively plot; take top 1000 tuples
-discparcoord(m, k=1000)
-```
-
-![Black Screen mlb](vignettes/black-screen-mlb.png)
-
-###### After: 
-
-Using categorical variables with the mlb data set with `discretize()`
-and interactive plotting, with the most significant 1000 tuples.
-
-```R
-library(cdparcoord)
-# load freqparcoord to get the mlb data set
-library(freqparcoord)
-data(mlb)
-# Get the Height, Weight, Age, and Position of Players
-m <- mlb[,4:7]
-
-inp1 <- list("name" = "Height",
-             "partitions"=4,
-             "labels"=c("low", "lowmid", "highmid", "high"))
-
-inp2 <- list("name" = "Weight",
-             "partitions"=3,
-             "labels"=c("light", "med", "heavy"))
-
-inp3 <- list("name" = "Age",
-             "partitions"=2,
-             "labels"=c("young", "old"))
-
-# Create one list to pass everything to discretize()
-discreteinput <- list(inp1, inp2, inp3)
-
-# At this point, all of the data has been discretized
-discretizedmlb <- discretize(m, discreteinput)
-
-# Account for NA values and weigh values; interactively plot; take top 1000 tuples
-discparcoord(discretizedmlb, name="MLB", k=1000)
-```
-
-<img src="vignettes/mlb1000interactive.png" alt="FE2" width="800"/>
-
-Discretized, it is easier to see that pitchers are typically younger, and 
-shorter people typically weigh less. 
+issue by allowing these rows to partially contribute to overall counts. 
 
 # Key Functions
 
