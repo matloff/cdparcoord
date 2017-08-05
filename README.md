@@ -142,6 +142,10 @@ stay in color:
 Now it really does appear that there is some tendency for the women to
 be working in the less lucrative occupations.
 
+Multiple columns can be brushed together. Brushing is indicated by a
+small coloring of a portion of the line.  To turn off brushing, click
+and drag on an uncolored portion.
+
 # Example
 
 We return to the baseball, and show a more advanced usage of
