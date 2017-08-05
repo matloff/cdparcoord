@@ -768,10 +768,10 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             ctgdata[[grpcategory]] <- NULL
 
             if (!inParallel) {
-                partial <- partialNA(data, k=k, NAexp=NAexp,
+                partial <- partialNA(ctgdata, k=k, NAexp=NAexp,
                                      countNAs=countNAs)
             } else {
-                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp,
+                partial <- clsPartialNA(cls, ctgdata, k=k, NAexp=NAexp,
                                         countNAs = countNAs)
             }
 
