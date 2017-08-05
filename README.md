@@ -4,7 +4,7 @@
 1. [Quickstart](#quickstart)
 2. [Overview](#overview)
 3. [Key Functions](#key-functions)
-4. [Warnings](#warnings)
+4. [Tips](#tips)
 5. [Authors](#authors)
 
 The *parallel coordinates* approach is a popular method for graphing
@@ -245,6 +245,13 @@ trying various parameter values.
    placed on the same axis as numerical data with high values (ex:
    100+), it can be difficult to differentiate between categories when
    used with `draw()`. This does not occur with `interactivedraw()`.
+
+5. If the lines are all green, this means the frequencies are all the
+   same, likely 1. In such case, use discretize with a small value of
+   **nlevels**.
+
+6. Sometimes two lines will coincide in one or more segments.  Brushing
+   may help separate them.
 
 # Authors
 
