@@ -600,12 +600,21 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
                          )
             }
             else {
+                # Add spaces before and after every category label
+                # There appears to be a plotly bug with some numbers as labels.
+                # This gets around that.
+                # Related issue: https://github.com/ropensci/plotly/issues/1096
+                for (labelCounter in 1:length(categ[[i]])) {
+                    categ[[i]][[labelCounter]] = paste(paste(' ', categ[[i]][[labelCounter]]), ' ')
+                }
+
                 interactiveList[[i]] <-
                     list(range = c(1, length(categ[[i]])),
                          constraintrange = c(1, length(categ[[i]])),
                          label = colnames(pna)[i],
                          values = unlist(pna[,i]),
-                         tickvals = 1:(length(categ[[i]])),
+                         tickmode = 'array',
+                         tickvals = c(1, length(categ[[i]])),
                          ticktext = categ[[i]]
                          )
             }
