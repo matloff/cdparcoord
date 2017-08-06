@@ -146,30 +146,6 @@ and drag on an uncolored portion.
 
 # Example
 
-We return to the baseball, and show a more advanced usage of
-**discretize()**.  The dataset is probably too small to discretize --
-some frequencies of interesting tuples will be very small -- but it is a
-good example of usage of lists in **discretize()**. 
-
-```R
-inp1 <- list("name" = "Height",
-             "partitions"=3,
-             "labels"=c("short", "med", "tall"))
-inp2 <- list("name" = "Weight",
-             "partitions"=3,
-             "labels"=c("light", "med", "heavy"))
-inp3 <- list("name" = "Age",
-             "partitions"=2,
-             "labels"=c("young", "old"))
-discreteinput <- list(inp1, inp2, inp3)
-discretizedmlb <- discretize(m, discreteinput)
-discparcoord(discretizedmlb, name="MLB", k=100)
-```
-
-<img src="vignettes/MLB2.png" alt="n1" width="800"/>
-
-# Example
-
 Here we try the [Stanford WordBank
 data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
 vocabulary acquisition in children.  We have a data frame **wb**.
@@ -197,8 +173,46 @@ discparcoord(z,k=50)
 
 By the way, there were further levels in the **mom\_ed** variable,
 'Primary' and 'Some Secondary', but they didn't show up here, as we
-plotted only the top 50 lines. There was a similar issue with missing
-levels on **birth\_order**.
+plotted only the top 50 lines. (Or we set **nlevels** at a higher value
+that could be tolerated by this data.) There was a similar issue with
+missing levels on **birth\_order**.
+
+Speaking of the latter, the earlier-born children seem to be at an
+advantage, at least in the three orders shown here.
+
+Now suppose we wish to study girls with mothers having at least a
+college education. Again we can use brushing, this time with two
+variables together, and two values together in one of the variables:
+
+<img src="vignettes/WB3.png" alt="n1" width="800"/>
+
+The magenta highlights show that **sex** and **mom\_ed** were brushed,
+and in the latter case, specifically the levels 'College', 'Some Graduate' and
+'Graduate'.  Lines with all other combinations now appear in light gray.
+
+# Example
+
+We return to the baseball, and show a more advanced usage of
+**discretize()**.  The dataset is probably too small to discretize --
+some frequencies of interesting tuples will be very small -- but it is a
+good example of usage of lists in **discretize()**. 
+
+```R
+inp1 <- list("name" = "Height",
+             "partitions"=3,
+             "labels"=c("short", "med", "tall"))
+inp2 <- list("name" = "Weight",
+             "partitions"=3,
+             "labels"=c("light", "med", "heavy"))
+inp3 <- list("name" = "Age",
+             "partitions"=2,
+             "labels"=c("young", "old"))
+discreteinput <- list(inp1, inp2, inp3)
+discretizedmlb <- discretize(m, discreteinput)
+discparcoord(discretizedmlb, name="MLB", k=100)
+```
+
+<img src="vignettes/MLB2.png" alt="n1" width="800"/>
 
 ### Accounting for NA Values
 
@@ -208,7 +222,8 @@ R and R packages typically leave out any rows with NA
 values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
 [`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
-issue by allowing these rows to partially contribute to overall counts. 
+issue by allowing these rows to partially contribute to overall counts.
+See the **NAexp** variable in **partialNA()**.
 
 # Key Functions
 
