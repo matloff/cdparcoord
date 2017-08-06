@@ -614,7 +614,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
                          label = colnames(pna)[i],
                          values = unlist(pna[,i]),
                          tickmode = 'array',
-                         tickvals = c(1, length(categ[[i]])),
+                         tickvals = 1:length(categ[[i]]),
                          ticktext = categ[[i]]
                          )
             }
