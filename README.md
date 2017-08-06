@@ -214,6 +214,16 @@ discparcoord(discretizedmlb, name="MLB", k=100)
 
 <img src="vignettes/MLB2.png" alt="n1" width="800"/>
 
+Had we wanted to handle **Height** separately, we could have called
+**discretize()** twice:
+
+```R
+inpt <- list(inp2,inp3) 
+m1 <- discretize(m,inpt) 
+m2 <- discretize(m1) 
+discparcoord(m2,k=150) 
+```
+
 ### Accounting for NA Values
 
 (EXPERIMENTAL)
@@ -270,31 +280,19 @@ Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
 
 # Tips
 
-Like any exploratory graphical tool, **cdparcoord** is best used by
-trying various parameter values.
+* Like any exploratory graphical tool, **cdparcoord** is best used by
+  trying various parameter values, e.g. different values of **k**,
+  **nlevels** and so on.
 
-1. By default, `partialNA()` returns the five most frequent
-   correlations. If there is low/no correlation between variables, then
-   this may be misleading.
+* Sometimes labels greatly hinder the visibility and clarity of the
+  plot. This can be circumvented by opting to remove labels in plot.
 
-2. Due to the limited size of screens compared to the number of
-   variables in many data sets, we recommend subsetting input data to
-   only include relevant variables prior to using the package.
+* If the lines are all green, this means the frequencies are all the
+  same, likely 1. In such case, use **discretize()** with a small value
+  of **nlevels**.
 
-3. Sometimes labels greatly hinder the visibility and clarity of the
-   plot. This can be circumvented by opting to remove labels in plot.
-
-4. Categorical data is currently scaled by 1, starting from 1. When
-   placed on the same axis as numerical data with high values (ex:
-   100+), it can be difficult to differentiate between categories when
-   used with `draw()`. This does not occur with `interactivedraw()`.
-
-5. If the lines are all green, this means the frequencies are all the
-   same, likely 1. In such case, use discretize with a small value of
-   **nlevels**.
-
-6. Sometimes two lines will coincide in one or more segments.  Brushing
-   may help separate them.
+* Sometimes two lines will coincide in one or more segments.  Brushing
+  may help separate them.
 
 # Authors
 
