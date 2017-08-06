@@ -51,8 +51,6 @@ library(cdparcoord)
 
 ##### Example
 
-(UNDER REVISION.)
-
 This example involves data from the 2000 U.S. census, on programmers and
 engineers in Silicon Valley, a dataset included with the package.
 
@@ -166,11 +164,41 @@ inp3 <- list("name" = "Age",
 discreteinput <- list(inp1, inp2, inp3)
 discretizedmlb <- discretize(m, discreteinput)
 discparcoord(discretizedmlb, name="MLB", k=100)
-
 ```
 
 <img src="vignettes/MLB2.png" alt="n1" width="800"/>
 
+# Example
+
+Here we try the [Stanford WordBank
+data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
+vocabulary acquisition in children.  We have a data frame **wb**.
+
+```R
+wb <- wb[,c(2,5,7,8,10)] 
+wb <- discretize(wb,nlevels=3) 
+discparcoord(wb,k=50) 
+```
+This produces
+
+<img src="vignettes/WB1.png" alt="n1" width="800"/>
+
+Nice -- but, presuming that **mom\_ed** has an ordinal relatin with
+vocabulary, the ordering of the labels here is not what we would like.
+We can use **reOrder** to remedy that:
+
+```R
+wb <- reOrder(wb,'mom_ed',
+   c('Secondary','Some College','College','Some Graduate','Graduate'))
+discparcoord(z,k=50)
+```
+
+<img src="vignettes/WB2.png" alt="n1" width="800"/>
+
+By the way, there were further levels in the **mom\_ed** variable,
+'Primary' and 'Some Secondary', but they didn't show up here, as we
+plotted only the top 50 lines. There was a similar issue with missing
+levels on **birth\_order**.
 
 ### Accounting for NA Values
 
