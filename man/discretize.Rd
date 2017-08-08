@@ -1,12 +1,12 @@
-\name{discretize}
-\alias{discretize}
+\name{discretize} 
+\alias{discretize}    
 
 \title{
-    Convert continuous variables to discrete data.
+    Discretize continuous data.
 }
 
 \description{
-    A small example showing how the cdparcoord package discretizes data.
+    Converts continuous columns to discrete.
 }
 
 \usage{
@@ -15,19 +15,35 @@
 
 \arguments{
     \item{dataset}{
-        The dataset to discretize.
+        The dataset to discretize, data frame/table.
     }
     \item{input}{
-        Specifies what columns to partition, the number of partitions, and labels for each partition.
-        The outermost list holds each column's specifications. The inner lists hold
-        the name of the column, the number of partitions, and a list of labels for each partition.
+        Optional specification for partitioning, giving the number of 
+        partitions and labels for each partition.  List of lists, one
+        list per column to be converted.  The outermost list states
+        the columns to be converted, and each inner liss holdt the name 
+        of the column, the number of partitions, and a list of labels 
+        for each partition.  
     }
     \item{ndigs}{
-        Labels for default partitioning if input is not supplied as a list.
+        Number of digits to retain in forming labels/values for the
+        discretized data, if \code{input} is not supplied. E.g. if
+        \code{ndigs} is 2 and the original datum is 38.12, it becomes
+        38.
     }
     \item{nlevels}{
-        The number of partitions to have. By default, this is 10.
+        The number of partitions to form, if \code{input} is NULL.
     }
+}
+
+\details{
+
+If \code{input} is not specified, each numeric column in the data will
+be discretized, with one exception:  If a column is numeric but has
+fewer distinct values than \code{nlevels}, it is presumed to be an
+informal R factor and is not converted.  However, it is best to use
+\code{makeFactor()} on such variables.
+
 }
 
 \author{
@@ -35,8 +51,14 @@
 }
 
 \examples{
+
+    data(prgeng)
+    pe <- prgeng[,c(1,3,5,7:9)]  # extract vars of interest
+    pe25 <- pe[pe$wageinc < 250000,]  # delete extreme values
+    pe25disc <- discretize(pe25)  # age, wageinc and wkswrkd discretized
+
     data(mlb)
-    # Get the Height, Weight, Age, and Position of Players
+    # extract the height, weight, age, and position of players
     m <- mlb[,4:7]
 
     inp1 <- list("name" = "Height",
@@ -51,12 +73,10 @@
                  "partitions"=3,
                  "labels"=c("young", "med", "old"))
 
-    # Create one list to pass everything to discretize()
+    # create one list to pass everything to discretize()
     discreteinput <- list(inp1, inp2, inp3)
 
-    # At this point, all of the data has been discretized
+    # at this point, all of the data has been discretized
     discretizedmlb <- discretize(m, discreteinput)
 
-    # Account for NA values and weigh values; interactively plot
-    discparcoord(discretizedmlb, interactive=TRUE)
 }
