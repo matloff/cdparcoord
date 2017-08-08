@@ -1,5 +1,4 @@
 
-
 # This is the workhorse file for the package.
 
 ###########################  discretize  ################################
@@ -83,18 +82,18 @@ discretize <- function (dataset, input=NULL, ndigs=2, nlevels=10) {
                 next
             }
     
-            colMax = max(dataset[name], na.rm = TRUE)
-            colMin = min(dataset[name], na.rm = TRUE)
-            range = colMax - colMin
-            increments = range/partitions
-    
-            tempLower = colMin
-            tempUpper = 0
-    
-            thisColData <- dataset[name][,1]
-            lvls <- round((thisColData - colMin) / increments)
-            lvls <- pmax(lvls,1)
-            lvls <- pmin(lvls,partitions)
+               colMax = max(dataset[name], na.rm = TRUE)
+               colMin = min(dataset[name], na.rm = TRUE)
+               range = colMax - colMin
+               increments = range/partitions
+       
+               tempLower = colMin
+               tempUpper = 0
+       
+               thisColData <- dataset[name][,1]
+               lvls <- round((thisColData - colMin) / increments)
+               lvls <- pmax(lvls,1)
+               lvls <- pmin(lvls,partitions)
     
             dataset[[name]] <- labels[lvls]
         }
