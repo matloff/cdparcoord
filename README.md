@@ -33,11 +33,13 @@ weight and age.  But since there are so many lines (actually only about
 
 
 Our solution is to graph only the most frequent lines.  Our
-**freqparcoord** package, aimed at continuous variables, with line
-frequency defined in terms of estimated multivariate density.  The
-current package, **cdparcoord**, covers the case of categorical
-variables, with frequency defined as actual tuple count.  (In a mixed
-continuous-categorical setting, the continuous variables are
+[**freqparcoord**
+package](https://cran.r-project.org/web/packages/freqparcoord/index.html),
+aimed at continuous variables, with line frequency defined in terms of
+estimated multivariate density.  The current package,
+[**cdparcoord**](https://github.com/matloff/cdparcoord), covers the case
+of categorical variables, with frequency defined as actual tuple count.
+(In a mixed continuous-categorical setting, the continuous variables are
 discretized.)
 
 # Quickstart
@@ -144,6 +146,14 @@ Multiple columns can be brushed together. Brushing is indicated by a
 small coloring of a portion of the line.  To turn off brushing, click
 and drag on an uncolored portion.
 
+By the way, we used the default values of **discretize()** here.  What
+occurs there?  The function attempt to discretize only the variables
+that need it, certainly not those that are R factors. Even if a numeric
+variable is found, the function not work on it if it has fewer distinct
+values than **nlevels**, on the grounds that it likely should be a
+factor.  Finer control of  **discretize()** will be demonstrated in the
+examples below.
+
 # Example
 
 Here we try the [Stanford WordBank
@@ -155,11 +165,19 @@ wb <- wb[,c(2,5,7,8,10)]
 wb <- discretize(wb,nlevels=3) 
 discparcoord(wb,k=50) 
 ```
+
+The default value of **nlevels** is 10, meaning that each continuous
+variable will be discretized into 10 levels. Here we asked for only 3
+levels for each variable, as there would seem to not be enough data for
+finer granularity. (As noted in the Tips section, **cdparcoord**, like
+any graphical exploratory tool, is best used by trying a number of
+different parameter combinations, e.g. varying **nlevels** here.)
+
 This produces
 
 <img src="vignettes/WB1.png" alt="n1" width="800"/>
 
-Nice -- but, presuming that **mom\_ed** has an ordinal relatin with
+Nice -- but, presuming that **mom\_ed** has an ordinal relation with
 vocabulary, the ordering of the labels here is not what we would like.
 We can use **reOrder** to remedy that:
 
