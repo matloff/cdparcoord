@@ -135,7 +135,7 @@ hand, this might help explain the high-end salary gap found above.
 Another possible piece of evidence in this direction is that the graph
 seems to say the men tend to have higher levels of education.
 
-To obtain a somehwat finer look, we can use another feature supplied by
+To obtain a somewhat finer look, we can use another feature supplied by
 **plotly**, a form of *brushing*. Here we highlight the women's lines by
 using the mouse to drag the top of the **sex** column down slightly.
 This causes the men's lines to go to light gray, while the women's lines
