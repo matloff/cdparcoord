@@ -53,15 +53,15 @@ library(cdparcoord)
 
 ##### Example
 
-This example involves data from the 2000 U.S. census, on programmers and
+This example involves data from the 2000 U.S. census on programmers and
 engineers in Silicon Valley, a dataset included with the package.
 
 Suppose our interest is exploring whether women encounter wage
 discrimination.  Of course we won't settle such a complex question here,
 but it will serve as a good example of the use of the package.
 
-We first load the data, and select some of the columns for display/ We
-also remove same very high wages (at least in the context of the year
+We first load the data, and select some of the columns for display. We
+also remove some very high wages (at least in the context of the year
 2000) to make the display easier.
 
 ```R
@@ -70,23 +70,27 @@ pe <- prgeng[,c(1,3,5,7:9)]
 pe25 <- pe[pe$wageinc < 250000,]
 ```
 
+The resulting data has just under 20,000 rows.
+
 As mentioned, a key feature of the package is discretization of
 continuous variables, so that tuple frequency counts have meaning. We
 will do this via the package's **discretize()** function, which we will
 apply to the numeric variables.
 
 However, in this particular data set, there are variables that seem
-numeric but are in essence factors, as the are codes.  For the **educ**
-variable, for instance, 14 codes a master's degree. (A code list is
-available at the [Census Bureau
+numeric but are in essence factors, as they are codes.  For the **educ**
+variable, for instance, the number 14 codes a master's degree. (A code
+list is available at the [Census Bureau
 site](https://www.census.gov/prod/cen2000/doc/pums.pdfr).)
 
 So, let's change the coded variables to factors, and then discretize:
 
 ```R
 pe25 <- makeFactor(pe25,c('educ','occ','sex'))
-pe25disc <- discretize(pe25)  # using default options
+pe25disc <- discretize(pe25,nlevels=5)  
 ```
+
+Each of the numeric variables here is discretized into 5 levels.
 
 Now display:
 
@@ -101,19 +105,17 @@ patterns. The result is
 
 For example, there is a blue line corresponding to the tuple,
 
-(age=29,educ=13,occ=102,sex=1,wageinc=38000,wkswrkd=52)
+(age=35,educ=14,occ=102,sex=1,wageinc=100000,wkswrkd=52)
 
-(The line actually splits into two at the **wageinc** variable.)  The
-frequencies are color-coded accoring to the legend at the right. So
-the above tuple occurred something like 180 times in the data.
+The frequencies are color-coded accoring to the legend at the right. So
+the above tuple occurred something like 60 times in the data.
 
 What about the difference between males and females (coded 1 and 2)?
-Though there is consider range in wages for the two groups, visually 
-there seems to be some suggestion that the women's wages tend to be
-lower.
+One interesting point is that there seems to be greater range in the
+men's salaries.  At the high end, though, men seem to have the edge.
 
-However, if this is the case, it may be explained by differences between
-the two groups in other variables.  For instance, do women tend to be in
+Now, can that edge may be explained by differences between
+the two groups in other variables?  For instance, do women tend to be in
 lower-paying occupations?  To investigate that, let's move the **occ**
 column to be adjacent to **wageinc**.
 
@@ -126,10 +128,12 @@ column.  The result is
 <img src="vignettes/PE2.png" alt="n1" width="800"/>
 
 Again, there is a range for each occupation. However, looking at the
-more-frequent lines, the blue and yellow ones, occupations 141 and 102
-seem to pay more.  (More on this point below.)  And if so, that seems to
-be bad news for the women, as there appears to a be slight tendency for
-the women to be more concentrated in occupations 101 and 100.
+more-frequent lines, occupation 102 seems to rather lucrative (and
+possibly 140 and 141).  And if so, that seems to be bad news for the
+women, as occupation 102 seems more populated by men.  On the other
+hand, this might help explain the high-end salary gap found above.
+Another possible piece of evidence in this direction is that the graph
+seems to say the men tend to have higher levels of education.
 
 To obtain a somehwat finer look, we can use another feature supplied by
 **plotly**, a form of *brushing*. Here we highlight the women's lines by
@@ -139,39 +143,31 @@ stay in color:
 
 <img src="vignettes/PE3.png" alt="n1" width="800"/>
 
-Now it really does appear that there is some tendency for the women to
-be working in the less lucrative occupations.
+The fact that we requested brushing for **sex** = 2 is confirmed in the
+graph by the appearance of a short magenta-colored line segment just
+below the 2 tick mark.
 
-Multiple columns can be brushed together. Brushing is indicated by a
-small coloring of a portion of the line.  To turn off brushing, click
-and drag on an uncolored portion.
-
-By the way, we used the default values of **discretize()** here.  What
-occurs there?  The function attempt to discretize only the variables
-that need it, certainly not those that are R factors. Even if a numeric
-variable is found, the function not work on it if it has fewer distinct
-values than **nlevels**, on the grounds that it likely should be a
-factor.  Finer control of  **discretize()** will be demonstrated in the
-examples below.
+Multiple columns can be brushed together.  To turn off brushing, click
+and drag on a non-magenta portion of the axis.
 
 # Example
 
 Here we try the [Stanford WordBank
 data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
-vocabulary acquisition in children.  We have a data frame **wb**.
+vocabulary acquisition in children.  The file used was **English.csv**,
+from which we have a data frame **wb**, consisting of about 5500 rows.
+(There are many NA values, though, and only about 2800 complete cases.)
 
 ```R
 wb <- wb[,c(2,5,7,8,10)] 
-wb <- discretize(wb,nlevels=3) 
-discparcoord(wb,k=50) 
+wb <- discretize(wb,nlevels=5) 
+discparcoord(wb,k=100) 
 ```
 
-The default value of **nlevels** is 10, meaning that each continuous
-variable will be discretized into 10 levels. Here we asked for only 3
-levels for each variable, as there would seem to not be enough data for
-finer granularity. (As noted in the Tips section, **cdparcoord**, like
-any graphical exploratory tool, is best used by trying a number of
-different parameter combinations, e.g. varying **nlevels** here.)
+We again asked for 5 levels for each variable.  As noted in the Tips
+section below, though, **cdparcoord**, like any graphical exploratory
+tool, is best used by trying a number of different parameter
+combinations, e.g.  varying **nlevels** here.
 
 This produces
 
@@ -184,23 +180,24 @@ We can use **reOrder** to remedy that:
 ```R
 wb <- reOrder(wb,'mom_ed',
    c('Secondary','Some College','College','Some Graduate','Graduate'))
-discparcoord(z,k=50)
+discparcoord(wb,k=100)
 ```
 
 <img src="vignettes/WB2.png" alt="n1" width="800"/>
 
 By the way, there were further levels in the **mom\_ed** variable,
 'Primary' and 'Some Secondary', but they didn't show up here, as we
-plotted only the top 50 lines. (Or we set **nlevels** at a higher value
+plotted only the top 100 lines. (Or we set **nlevels** at a higher value
 that could be tolerated by this data.) There was a similar issue with
 missing levels on **birth\_order**.
 
 Speaking of the latter, the earlier-born children seem to be at an
-advantage, at least in the three orders shown here.
+advantage, at least in the two orders that show up here.
 
 Now suppose we wish to study girls with mothers having at least a
 college education. Again we can use brushing, this time with two
-variables together, and two values together in one of the variables:
+variables **sex** and **mom\_ed** together, and several values together
+in the latter variables: 
 
 <img src="vignettes/WB3.png" alt="n1" width="800"/>
 
