@@ -1,19 +1,24 @@
 # cdparcoord:  Categorical and Discrete Parallel Coordinates
 
 # Table of Contents
-1. [Quickstart](#quickstart)
-2. [Overview](#overview)
-3. [Key Functions](#key-functions)
-4. [Tips](#tips)
-5. [Authors](#authors)
 
-The *parallel coordinates* approach is a popular method for graphing
-multivariate data.  However, for large data sets, the method suffers
-from the ["black screen problem"](#black-screen-problem) -- the jumble of lines
-fills the screen and it is difficult if not impossible to discern any
-relationships in the data.  
+* [Motivation](#Motivation)
+* [Quickstart](#quickstart)
+* [Examples](#examples)
+* [Key Functions](#key-functions)
+* [Tips](#tips)
+* [Authors](#authors)
 
-Consider the dataset **mlb**, consisting of data on Major League
+# Motivation
+
+The [*parallel coordinates*
+approach](https://en.wikipedia.org/wiki/Parallel_coordinates) is a
+popular method for graphing multivariate data.  However, for large data
+sets, the method suffers from a "black screen problem" -- the jumble of
+lines fills the screen and it is difficult if not impossible to discern
+any relationships in the data.  
+
+Consider the package dataset **mlb**, consisting of data on Major League
 Baseball players, courtesy of the UCLA Stat Dept.
 
 ```R
@@ -27,16 +32,19 @@ parcoord(m)
 
 <img src="vignettes/MLB1.png" alt="n1" width="500"/>
 
-Each line in the graph represents one player, connecting his height,
-weight and age.  But since there are so many lines (actually only about
-1000), the graph is useless.
+Each polygonal line in the graph represents one player, connecting his
+height, weight and age.  If a player had his (height,weight,age) tuple
+as, say (73,192,25), his line would have height 73 on the Height axis,
+height 192 on the Weight axis and height 25 on the Age axis.  But since
+there are so many lines (actually only about 1000), the graph is
+useless.
 
 
 Our solution is to graph only the most frequent lines.  Our
 [**freqparcoord**
-package](https://cran.r-project.org/web/packages/freqparcoord/index.html),
-aimed at continuous variables, with line frequency defined in terms of
-estimated multivariate density.  The current package,
+package](https://cran.r-project.org/web/packages/freqparcoord/index.html)
+does this for continuous variables, with line frequency defined in terms
+of estimated multivariate density.  The current package,
 [**cdparcoord**](https://github.com/matloff/cdparcoord), covers the case
 of categorical variables, with frequency defined as actual tuple count.
 (In a mixed continuous-categorical setting, the continuous variables are
@@ -51,18 +59,21 @@ It is assumed that the user has already executed
 library(cdparcoord)
 ```
 
-##### Example
+## Example:  Gender pay difference
 
 This example involves data from the 2000 U.S. census on programmers and
 engineers in Silicon Valley, a dataset included with the package.
 
 Suppose our interest is exploring whether women encounter wage
 discrimination.  Of course we won't settle such a complex question here,
-but it will serve as a good example of the use of the package.
+but it will serve as a good example of the use of the package as an
+exploratory tool.
 
-We first load the data, and select some of the columns for display. We
-also remove some very high wages (at least in the context of the year
-2000) to make the display easier.
+We first load the data, and select some of the columns for display.  (In
+this tutorial, the terms *column* and *variable* will be used
+interchangeably, and will have the same meaning as *feature*.) We also
+remove some very high wages (at least in the context of the year 2000)
+to make the display easier.
 
 ```R
 data(prgeng)
@@ -73,9 +84,9 @@ pe25 <- pe[pe$wageinc < 250000,]
 The resulting data has just under 20,000 rows.
 
 As mentioned, a key feature of the package is discretization of
-continuous variables, so that tuple frequency counts have meaning. We
-will do this via the package's **discretize()** function, which we will
-apply to the numeric variables.
+continuous variables, so that the tuple frequency counts will have
+meaning. We will do this via the package's **discretize()** function,
+which we will apply to the numeric variables.
 
 However, in this particular data set, there are variables that seem
 numeric but are in essence factors, as they are codes.  For the **educ**
@@ -95,7 +106,7 @@ Each of the numeric variables here is discretized into 5 levels.
 Now display:
 
 ```R
-discparcoord(pe25disc,k=150)  # default options again, other than k
+discparcoord(pe25disc,k=150)  
 ```
 
 Here we are having **cdparcoord** display the 150 most frequent tuple
@@ -107,7 +118,7 @@ For example, there is a blue line corresponding to the tuple,
 
 (age=35,educ=14,occ=102,sex=1,wageinc=100000,wkswrkd=52)
 
-The frequencies are color-coded accoring to the legend at the right. So
+The frequencies are color-coded according to the legend at the right. So
 the above tuple occurred something like 60 times in the data.
 
 What about the difference between males and females (coded 1 and 2)?
@@ -127,11 +138,11 @@ column.  The result is
 
 <img src="vignettes/PE2.png" alt="n1" width="800"/>
 
-Again, there is a range for each occupation. However, looking at the
+As noted, there is a range for each occupation. However, looking at the
 more-frequent lines, occupation 102 seems to rather lucrative (and
 possibly 140 and 141).  And if so, that seems to be bad news for the
 women, as occupation 102 seems more populated by men.  On the other
-hand, this might help explain the high-end salary gap found above.
+hand, this might help explain the high-end salary gender gap found above.
 Another possible piece of evidence in this direction is that the graph
 seems to say the men tend to have higher levels of education.
 
@@ -148,9 +159,15 @@ graph by the appearance of a short magenta-colored line segment just
 below the 2 tick mark.
 
 Multiple columns can be brushed together.  To turn off brushing, click
-and drag on a non-magenta portion of the axis.
+on a non-magenta portion of the axis.
 
-# Example
+
+# Further Examples
+
+Other features of the package will be introduced in the following
+examples.
+
+## Example: Infant vocabulary acquisition
 
 Here we try the [Stanford WordBank
 data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
@@ -205,7 +222,7 @@ The magenta highlights show that **sex** and **mom\_ed** were brushed,
 and in the latter case, specifically the levels 'College', 'Some Graduate' and
 'Graduate'.  Lines with all other combinations now appear in light gray.
 
-# Example
+## Example: Baseball player data again
 
 We return to the baseball, and show a more advanced usage of
 **discretize()**.  The dataset is probably too small to discretize --
@@ -239,16 +256,7 @@ m2 <- discretize(m1)
 discparcoord(m2,k=150) 
 ```
 
-### Accounting for NA Values
-
-(EXPERIMENTAL)
-
-R and R packages typically leave out any rows with NA
-values. Unfortunately for data sets with high NA counts, this may have
-drastic effects, such as low counts and possible bias. 
-[`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
-issue by allowing these rows to partially contribute to overall counts.
-See the **NAexp** variable in **partialNA()**.
+## Example: Baseball player data again
 
 # Key Functions
 
@@ -308,6 +316,17 @@ Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
 
 * Sometimes two lines will coincide in one or more segments.  Brushing
   may help separate them.
+
+# Accounting for NA Values
+
+(EXPERIMENTAL, MAY BE VERY SLOW)
+
+R and R packages typically leave out any rows with NA
+values. Unfortunately for data sets with high NA counts, this may have
+drastic effects, such as low counts and possible bias. 
+[`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
+issue by allowing these rows to partially contribute to overall counts.
+See the **NAexp** variable in **partialNA()**.
 
 # Authors
 
