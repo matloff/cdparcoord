@@ -4,19 +4,23 @@
 ###########################  discretize  ################################
 
 # discretizes certain columns of the input dataset, either those
-# specified by the caller, or if no specification, (almost) all numeric
-# columns
+# specified by the caller, or if no specification, all (or almost all)
+# numeric columns
 
 # arguments:
 
 #   dataset: data frame that holds the data
-#   input: list of lists, where each list is used to represent a column; 
-#       the inner list should contain the following vars:
+#   input: if non-null, list of lists, where each list is used to 
+#      represent a column; the inner list should contain the following vars:
 #         1. partitions (int) - number of partitions to make
 #         2. labels (vector of strs) - OPTIONAL -what to label the
 #            partitions. if none, default is just to have ints as labels
 #         3. lower bounds (vector) - OPTIONAL - lower cutoffs for each label
 #         4. upper bounds (vector) - Optional - upper cutoffs for each label
+#   nlevels: default number of levels for a discretized variable
+#   presumedFactor: if TRUE, any variable having fewer than nlevels
+#      levels will be presumed to be an informal factor, and thus will
+#      not be discretized
 
 # value:
 #
@@ -29,7 +33,8 @@
 #    list('name' = 'cat2', 'partitions' = 2, 'labels' = c('yes', 'no'))
 # input = list(cat1, cat2)
 
-discretize <- function (dataset, input=NULL, ndigs=2, nlevels=10) {
+discretize <- 
+   function (dataset,input=NULL,ndigs=2,nlevels=10,presumedFactor=FALSE) {
     # general plan: replace numerical data column by character strings,
     # which will be used in the counts and serve as the labels for 
     # the tick marks
@@ -38,7 +43,8 @@ discretize <- function (dataset, input=NULL, ndigs=2, nlevels=10) {
         for (nm in names(dataset)) {
             dscol <- dataset[[nm]]
             inp <- list()
-            if (!is.numeric(dscol) || length(table(dscol)) <= nlevels) {
+            if (!is.numeric(dscol) || 
+               (length(table(dscol)) < nlevels && presumedFactor)) {
                 inp[['dontchange']] <- TRUE
                 unqdscol <- unique(dscol)
                 inp[['partitions']] <- length(unqdscol)
