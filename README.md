@@ -167,13 +167,15 @@ on a non-magenta portion of the axis.
 Other features of the package will be introduced in the following
 examples.
 
-## Example: Infant vocabulary acquisition
+## Example: Vocabulary acquisition
 
 Here we try the [Stanford WordBank
 data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
-vocabulary acquisition in children.  The file used was **English.csv**,
-from which we have a data frame **wb**, consisting of about 5500 rows.
-(There are many NA values, though, and only about 2800 complete cases.)
+vocabulary acquisition in young children.  The file used was
+**English.csv**, from which we have a data frame **wb**, consisting of
+about 5500 rows.  (There are many NA values, though, and only about 2800
+complete cases.)  Variables are age, birth order, sex, mother's
+education and vocabulary size.
 
 ```R
 wb <- wb[,c(2,5,7,8,10)] 
@@ -181,9 +183,9 @@ wb <- discretize(wb,nlevels=5)
 discparcoord(wb,k=100) 
 ```
 
-We again asked for 5 levels for each variable.  As noted in the Tips
-section below, though, **cdparcoord**, like any graphical exploratory
-tool, is best used by trying a number of different parameter
+We again asked for 5 levels for each variable.  As noted in the [Tips
+section](#tips) below, though, **cdparcoord**, like any graphical
+exploratory tool, is best used by trying a number of different parameter
 combinations, e.g.  varying **nlevels** here.
 
 This produces
@@ -205,7 +207,7 @@ discparcoord(wb,k=100)
 By the way, there were further levels in the **mom\_ed** variable,
 'Primary' and 'Some Secondary', but they didn't show up here, as we
 plotted only the top 100 lines. (Or we set **nlevels** at a higher value
-that could be tolerated by this data.) There was a similar issue with
+than might be effective for this data.) There was a similar issue with
 missing levels on **birth\_order**.
 
 Speaking of the latter, the earlier-born children seem to be at an
@@ -228,6 +230,10 @@ We return to the baseball, and show a more advanced usage of
 **discretize()**.  The dataset is probably too small to discretize --
 some frequencies of interesting tuples will be very small -- but it is a
 good example of usage of lists in **discretize()**. 
+
+The key argument is **input**, which will be an R list of lists.  In the
+outer list, there will be one inner list for each variable to be
+specified for discretization.
 
 ```R
 inp1 <- list("name" = "Height",
@@ -256,7 +262,26 @@ m2 <- discretize(m1)
 discparcoord(m2,k=150) 
 ```
 
-## Example: Baseball player data again
+## Example: Outlier hunting
+
+As with **freqparcoord** for the continuous-variable case,
+**cdparcoord** may be used for identifying outliers.  This is
+accomplished by setting a negative value for the argument **k** in
+**discparcoord()**.  Here we took **k** = -5, i.e. asked to plot the 5
+LEASE frequent tuples:
+
+```R
+discparcoord(pima,k=-5)
+```
+
+<img src="vignettes/Pima.png" alt="n1" width="900"/>
+
+There is an interesting case of a woman who has high values on almost
+all the risk factors, and does indeed have diabetes.  That one may be a
+correct data point (though possibly a candidate for exclusion in formal
+statistical analysis), but the case in which Thick, Insul and BMI are
+all 0s is clearly an error.  Further investigation would show that there
+are several cases like this.
 
 # Key Functions
 
@@ -305,14 +330,18 @@ Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
 
 * Like any exploratory graphical tool, **cdparcoord** is best used by
   trying various parameter values, e.g. different values of **k**,
-  **nlevels** and so on.
+  **nlevels** and so on, one then just one combination of settings..
+
+* Pay close attention to the frequency color-coding.  For instance, 
+  if the lines are all green, this means the frequencies are all about the
+  same, likely 1. In such case, you may wish to use **discretize()** with 
+  a small value of **nlevels**.
+
+* On the other hand, when searching for outliers (negative **k**), it 
+  may be best to not discretize.
 
 * Sometimes labels greatly hinder the visibility and clarity of the
   plot. This can be circumvented by opting to remove labels in plot.
-
-* If the lines are all green, this means the frequencies are all the
-  same, likely 1. In such case, use **discretize()** with a small value
-  of **nlevels**.
 
 * Sometimes two lines will coincide in one or more segments.  Brushing
   may help separate them.
