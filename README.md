@@ -369,7 +369,8 @@ Encompassed in discparcoord, we provide 3 key functions -- `tupleFreqs()`
 
   - With a large number of variables, even a value of 2 for **nlevels**
     will result in frequencies of 1, so it may be better not to
-    discretize in the first place.
+    discretize in the first place.  Actually, **freqparcoord** may be
+    more useful here.
 
 * Sometimes labels greatly hinder the visibility and clarity of the
   plot. This can be circumvented by opting to remove labels in plot.
