@@ -1,5 +1,5 @@
-\name{tupleFreqs}
-\alias{tupleFreqs}
+\name{partialNA}
+\alias{partialNA}
 
 \title{
     Compute tuple frequency counts, and optionallyAccount for NA values.
@@ -13,7 +13,7 @@
 }
 
 \usage{
-    tupleFreqs(dataset, k=5, NAexp=1, countNAs=FALSE)
+    partialNA(dataset, k=5, NAexp=1, countNAs=FALSE)
 }
 
 \arguments{
@@ -59,9 +59,9 @@
 \examples{
   md <- 
      rbind(c(1,2,8),c(1,3,4),c(1,2,8),c(5,NA,NA),c(5,6,2),c(5,NA,NA),c(NA,6,2))
-  tupleFreqs(md)
-  tupleFreqs(md,countNAs=TRUE)
+  partialNA(md)
+  partialNA(md,countNAs=TRUE)
   data(smallexample)
-  partial <- tupleFreqs(smallexample)  
+  partial <- partialNA(smallexample)  
   partial
 }

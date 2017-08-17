@@ -300,16 +300,16 @@ The last three are optional.
 
 #### `discparcoord()` details
 
-Encompassed in discparcoord, we provide 3 key functions -- `partialNA()`
+Encompassed in discparcoord, we provide 3 key functions -- `tupleFreqs()`
 `grpcategory()`, and `interactivedraw()`.
 
-1. The call `partialNA(dataset,n)` inputs a dataset and returns a new
+1. The call `tupleFreqs(dataset,n)` inputs a dataset and returns a new
    dataset consisting of the **n** most frequent patterns with an added
    column - the frequency of each column.  This dataset contains no NA
    values, as all of the columns previously with NA values have now been
    eliminated. 
 
-   By default, `partialNA` returns the 5 most significant tuples.
+   By default, `tupleFreqs` returns the 5 most significant tuples.
 
 2. The `grpcategory` option allows you to create multiple plots, one for
    each category. If a field has 4 possible values, then
@@ -355,7 +355,7 @@ values. Unfortunately for data sets with high NA counts, this may have
 drastic effects, such as low counts and possible bias. 
 [`cdparcoord`](https://github.com/matloff/cdparcoord) addresses this
 issue by allowing these rows to partially contribute to overall counts.
-See the **NAexp** variable in **partialNA()**.
+See the **NAexp** variable in **tupleFreqs()**.
 
 # Authors
 

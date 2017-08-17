@@ -6,7 +6,7 @@ Draw parallel coordinates on an interactive plotly plot.
 }
 
 \description{
-Takes the output of tupleFreqs, which has the rightmost column denoting
+Takes the output of partialNA, which has the rightmost column denoting
 frequency of each tuple, and draws an interactive parallel coordinates plot.
 These plots are useful in that you can drag columns to investigate further
 relationships and also select a segment on a vertical axis to selectively
@@ -24,7 +24,7 @@ Each axis is independent, and has its max/min based off of its own data.
 
 \arguments{
     \item{pna}{
-        The dataset after processing from tupleFreqs().
+        The dataset after processing from partialNA().
     }
     \item{name}{
         The name for the plot.
@@ -49,11 +49,11 @@ Each axis is independent, and has its max/min based off of its own data.
 \examples{
     # Drawing an interactive parallel coordinates plot without categorical variables
     data(smallexample)
-    partial <- tupleFreqs(smallexample)
+    partial <- partialNA(smallexample)
     interactivedraw(partial)
 
     # Drawing an interactive parallel coordinates plot with categorical variable 
     data(categoricalexample)
-    partial <- tupleFreqs(categoricalexample)
+    partial <- partialNA(categoricalexample)
     interactivedraw(partial)
 }

@@ -7,7 +7,7 @@
 }
 
 \description{
-    This works the same as partialNA but in parallel.
+    This works the same as tupleFreqs but in parallel.
     Calculate the frequency of each tuple, and return the most- or
     least-frequent tuples.  Optionally, tuples with NA values will count
     for less, but weigh toward everything that has existing numbers in
