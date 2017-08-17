@@ -267,11 +267,14 @@ discparcoord(m2,k=150)
 As with **freqparcoord** for the continuous-variable case,
 **cdparcoord** may be used for identifying outliers.  This is
 accomplished by setting a negative value for the argument **k** in
-**discparcoord()**.  Here we took **k** = -5, i.e. asked to plot the 5
-LEASE frequent tuples:
+**discparcoord()**.  Here we took **k** = -10, i.e. asked to plot the 10
+LEAST frequent tuples:
 
 ```R
-discparcoord(pima,k=-5)
+data(PimaIndiansDiabetes) 
+pima <- PimaIndiansDiabetes 
+discparcoord(pima,k=-10) 
+showCounts() 
 ```
 
 <img src="vignettes/Pima.png" alt="n1" width="900"/>
@@ -280,8 +283,28 @@ There is an interesting case of a woman who has high values on almost
 all the risk factors, and does indeed have diabetes.  That one may be a
 correct data point (though possibly a candidate for exclusion in formal
 statistical analysis), but the case in which Thick, Insul and BMI are
-all 0s is clearly an error.  Further investigation would show that there
-are several cases like this.
+all 0s is clearly an error.  
+
+Let's investigate this further, by examining the actual tuples:
+
+```
+> showCounts()
+   pregnant glucose pressure triceps insulin mass pedigree age diabetes freq
+1         6     148       72      35       0 33.6    0.627  50      pos    1
+2         1      85       66      29       0 26.6    0.351  31      neg    1
+3         8     183       64       0       0 23.3    0.672  32      pos    1
+4         1      89       66      23      94 28.1    0.167  21      neg    1
+5         0     137       40      35     168 43.1    2.288  33      pos    1
+6         5     116       74       0       0 25.6    0.201  30      neg    1
+7         3      78       50      32      88 31.0    0.248  26      pos    1
+8        10     115        0       0       0 35.3    0.134  29      neg    1
+9         2     197       70      45     543 30.5    0.158  53      pos    1
+10        8     125       96       0       0  0.0    0.232  54      pos    1
+```
+
+So, in addition to the triple-0 case, there are several with double 
+0s and one with a single 0.  There are probably more in the rest of the data.  
+We see that there is serious need for data cleaning here.
 
 # Key Functions
 
