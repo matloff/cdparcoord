@@ -48,7 +48,7 @@
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 tupleFreqs = function (dataset, 
-                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=FALSE, minFreq=NULL) {
+                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=TRUE, minFreq=NULL) {
     if (class(dataset)[1] == 'pna')
         stop('does not yet allow preprocessed data')
 
@@ -588,7 +588,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          accentuate = NULL, accval = 100, inParallel = FALSE,
                          cls = NULL,
                          differentiate = FALSE,
-                         saveCounts = FALSE,
+                         saveCounts = TRUE,
                          minFreq=NULL
                          ) {
 
