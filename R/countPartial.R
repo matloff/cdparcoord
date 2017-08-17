@@ -713,6 +713,19 @@ generateScreen <- function(width, height) {
     }
 }
 
+###########################  showCounts  ################################
+
+# shows the tuple counts for the most recent operationn, eg.
+# discparcoord(), called with saveCounts = TRUE
+
+showCounts <- function(nshow=NULL) {
+   load('tupleCounts')
+   if (is.null(nshow)) {
+      print(counts)
+   } else head(counts,n=nshow)
+
+}
+
 ###########################  find  ################################
 
 # Given a tuple with NA's and a list of intact tuples,
