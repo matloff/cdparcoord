@@ -360,8 +360,16 @@ Encompassed in discparcoord, we provide 3 key functions -- `tupleFreqs()`
   same, likely 1. In such case, you may wish to use **discretize()** with 
   a small value of **nlevels**.
 
-* On the other hand, when searching for outliers (negative **k**), it 
-  may be best to not discretize.
+* On the other hand, there are situations in which one may not wish to
+  discretize, such as:
+
+  - When searching for outliers (negative **k**), the cases of interest
+    will typically have frequency 1 and in any event the frequency may
+    not be of interest here.
+
+  - With a large number of variables, even a value of 2 for **nlevels**
+    will result in frequencies of 1, so it may be better not to
+    discretize in the first place.
 
 * Sometimes labels greatly hinder the visibility and clarity of the
   plot. This can be circumvented by opting to remove labels in plot.
