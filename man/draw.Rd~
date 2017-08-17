@@ -6,7 +6,7 @@
 }
 
 \description{
-    Takes the output of tupleFreqs, which has the rightmost column denoting
+    Takes the output of partialNA, which has the rightmost column denoting
     frequency of each tuple, and draws a parallel coordinates plot. The recommended
     method of drawing is through interactivedraw. 
 }
@@ -17,7 +17,7 @@
 
 \arguments{
     \item{partial}{
-        The dataset after processing from tupleFreqs().
+        The dataset after processing from partialNA().
     }
     \item{name}{
         The name for the plot.
@@ -38,7 +38,7 @@
     library(cdparcoord)
     data(smallexample)
     # Grab the 5 most significant tuples. 
-    partial <- tupleFreqs(smallexample)
+    partial <- partialNA(smallexample)
     \dontrun{
         draw(partial, name="Small Demo Example")
     }

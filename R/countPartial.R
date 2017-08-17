@@ -1,8 +1,8 @@
 
 
-###########################  partialNA  ################################
+###########################  tupleFreqs  ################################
 
-# partialNA():
+# tupleFreqs():
 
 # finds the frequencies, counting NAs according to formiula
 
@@ -32,7 +32,7 @@
 #  5:  5 NA NA
 #  6:  5 NA NA
 #  7: NA  6  2
-#  > partialNA(md,2,countNAs=TRUE)
+#  > tupleFreqs(md,2,countNAs=TRUE)
 #    V1 V2 V3     freq
 #  3  5  6  2 2.333333
 #  1  1  2  8 2.000000
@@ -47,7 +47,7 @@
 # the argument NAexp is used to reduce the weights of partial matches;
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
-partialNA = function (dataset, 
+tupleFreqs = function (dataset, 
                       k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=FALSE, minFreq=NULL) {
     if (class(dataset)[1] == 'pna')
         stop('does not yet allow preprocessed data')
@@ -393,7 +393,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 
 ###########################  interactivedraw  ################################
 
-# Accepts a result from partialNA and draws interactively using plotly
+# Accepts a result from tupleFreqs and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- function(pna, name="Interactive Parcoords",
@@ -555,7 +555,7 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 
 # This is the main function. It ties together all of the other functions.
 # 1. data: The dataset; if character string, tuple counts will be read
-#   from 'tupleCounts' instead of re-calling partialNA(). Or if class
+#   from 'tupleCounts' instead of re-calling tupleFreqs(). Or if class
 #   'pna', the in-memory saved tuple counts will be used.
 # 2. k: The number of most-frequent tuples to keep
 # 3. grpcategory: Categories to keep constant
@@ -577,9 +577,9 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
 # 14. cls: If running in parallel, the cluster.
 # 15. differentiate: Whether or not you want to randomize coloring
 #   to differentiate overlapping lines.
-# 16. saveCounts: Passed to partialNA(); if TRUE, tuple counts will be
+# 16. saveCounts: Passed to tupleFreqs(); if TRUE, tuple counts will be
 #   saved to 'tupleCounts'.
-# 17. minFreq: Passed to partialNA().  If non-null, exclude tuples have
+# 17. minFreq: Passed to tupleFreqs().  If non-null, exclude tuples have
 #   frequencies below this level.
 
 discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
@@ -627,7 +627,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         } else {
             # get top k
             if (!inParallel) { partial <- 
-                partialNA(data, k=k, NAexp=NAexp, countNAs, saveCounts, minFreq)
+                tupleFreqs(data, k=k, NAexp=NAexp, countNAs, saveCounts, minFreq)
             }
             else {
                 partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
@@ -662,7 +662,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             ctgdata[[grpcategory]] <- NULL
 
             if (!inParallel) {
-                partial <- partialNA(ctgdata, k=k, NAexp=NAexp,
+                partial <- tupleFreqs(ctgdata, k=k, NAexp=NAexp,
                                      countNAs=countNAs)
             } else {
                 partial <- clsPartialNA(cls, ctgdata, k=k, NAexp=NAexp,
