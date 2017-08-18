@@ -306,6 +306,47 @@ So, in addition to the triple-0 case, there are several with double
 0s and one with a single 0.  There are probably more in the rest of the data.  
 We see that there is serious need for data cleaning here.
 
+## Example: Time series
+
+Consider the [ozone
+data](https://archive.ics.uci.edu/ml/datasets/Ozone+Level+Detection) in
+the UCI Machine Learning Data Repository.  We will use the file
+**onehr.data**, which gives hourly readings of ozone and other values
+over the coure of a day.  There is one row per day, during the time
+period 1998-2004.
+
+The missing values are coded as question marks in the dataset, so we'll
+remove any case with such a value.  Also, to make the display easier to
+view, we'll look only a readings every four hours.  We will also include
+the midday temperature:
+
+```R
+oz <-
+   read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/ozone/onehr.data',header=FALSE)
+noq <- function(rw) !any(rw == '?') 
+goodrows <- apply(oz,1,noq) 
+ozc <- oz[goodrows,] 
+for(i in 1:74) ozc[,i] <- as.numeric(as.character(ozc[,i]))
+ozc4 <- ozc[,c(seq(2,25,4),39)]
+ozc4d <- discretize(ozc4,nlevels=3)
+discparcoord(ozc4d,k=25)
+
+```
+
+The result is
+
+<img src="vignettes/Ozone.png" alt="n1" width="900"/>
+
+Apparently on hot days, a high ozone level at the start of a day will
+persist as the day goes on.  However, on cooler days, there may be some
+oscillation.  As is often the case, we would need a domain expert to
+interpret this, but the point is that we have discovered something for
+him/her to investigate.
+
+## Example: Feature selection
+
+ESP. ON PAIRS OF FEATURES, ETC.; VAN DATA FROM mlbench
+
 # Key Functions
 
 #### `discparcoord()`
