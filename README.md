@@ -164,8 +164,8 @@ on a non-magenta portion of the axis.
 
 # Further Examples
 
-Other features of the package will be introduced in the following
-examples.
+The following examples will illustrate other features of the package, as
+well as different applications.
 
 ## Example: Vocabulary acquisition
 
@@ -343,9 +343,34 @@ oscillation.  As is often the case, we would need a domain expert to
 interpret this, but the point is that we have discovered something for
 him/her to investigate.
 
-## Example: Feature selection
+## Example: Classification problems
 
-ESP. ON PAIRS OF FEATURES, ETC.; VAN DATA FROM mlbench
+The package can be used in an exploratory manner for feature selection
+in classification problems.  This can be useful, for instance, for
+identifying sets of good predictors.
+
+Let's look at the Letter Recognition dataset from the UCI Machine
+Learning Repository.  Images were generated for the 26 capital letters
+in English, various fonts, some randomly-generated distortion.  Various
+physical and statistical numerics were recorded for each image.
+
+One might expect the letters O and Q to be more difficult to tell apart.
+Let's view that using **cdparcoord**.  By the way, no need to discretize
+here, as all values are integers.
+
+```R
+ltr <-
+read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',header=FALSE) 
+oq <- ltr[ltr[,1]=='O' | ltr[,1]=='Q',] 
+discparcoord(oq,k=100) 
+```
+
+<img src="vignettes/OQ.png" alt="n1" width="900"/>
+
+A little daunting!  Yet even for these two similar letters, it appears
+for instance that variables V2 through V6 may have some predictive power
+to distinguish between the two letters.  Brushing the Q node makes this
+a little clearer (not shown here).
 
 # Key Functions
 
