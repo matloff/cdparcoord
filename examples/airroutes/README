@@ -1,2 +1,8 @@
+full5.csv contains paths of a single plane, up to length 5. 
+If a path is fewer than 5 destinations, then it is filled with NA's to make 
+up the rest. 
 
+We can run this through with cdparcoord to see the most
+frequent routes. 
 
+To see these on a map, use draw5.R.  
