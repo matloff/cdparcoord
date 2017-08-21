@@ -372,6 +372,42 @@ for instance that variables V2 through V6 may have some predictive power
 to distinguish between the two letters.  Brushing the Q node makes this
 a little clearer (not shown here).
 
+## Example: Comparison to full parallel coordinates
+
+Finally, let's look at the the Diamonds example bundled with the
+**ggplot2** package (in turn bundled by **plotly**, which is loaded by
+**cdparcoord**).  We'll borrow from [this Luke Tierney course example](https://registrar.stanford.edu/resources-and-help/stanford-academic-calendar#Aut).
+This particular example uses the **lattice** graphics library.
+
+First, the data prep.  The example "thins out" the data by taking a
+subsample:
+
+```R
+library(lattice)
+ds <- diamonds[sample(nrow(diamonds), 5000),]
+parallelplot(~ds, group = cut, data = ds, horizontal.axis = FALSE,
+             auto.key = TRUE)
+```
+
+<img src="vignettes/DiaLat.png" alt="n1" width="400"/>
+
+It's a pretty picture, all right, but hard to follow, say for the
+Premium diamonds.
+
+Let's try **cdparcoord**, using the full data set of course, though as
+usual only the most-frequent tuples:
+
+```R
+dd <- discretize(diamonds,nlevels=4) 
+discparcoord(dd,k=2500) 
+```
+
+<img src="vignettes/DiaCDPar.png" alt="n1" width="900"/>
+
+It is definitely easier to discern the patterns here than above.  Look
+for instance at the blue lines for the Premium quality.
+
+
 # Key Functions
 
 #### `discparcoord()`
@@ -389,7 +425,7 @@ The last three are optional.
 
 #### `discparcoord()` details
 
-Encompassed in discparcoord, we provide 3 key functions -- `tupleFreqs()`
+Encompassed in **discparcoord**, we provide 3 key functions -- `tupleFreqs()`
 `grpcategory()`, and `interactivedraw()`.
 
 1. The call `tupleFreqs(dataset,n)` inputs a dataset and returns a new
