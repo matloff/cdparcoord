@@ -51,9 +51,4 @@ Each axis is independent, and has its max/min based off of its own data.
     data(smallexample)
     partial <- tupleFreqs(smallexample)
     interactivedraw(partial)
-
-    # Drawing an interactive parallel coordinates plot with categorical variable 
-    data(categoricalexample)
-    partial <- tupleFreqs(categoricalexample)
-    interactivedraw(partial)
 }
