@@ -715,7 +715,7 @@ generateScreen <- function(width, height) {
 
 ###########################  showCounts  ################################
 
-# shows the tuple counts for the most recent operationn, eg.
+# shows the tuple counts for the most recent operation, eg.
 # discparcoord(), called with saveCounts = TRUE
 
 showCounts <- function(nshow=NULL) {

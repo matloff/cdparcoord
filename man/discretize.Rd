@@ -10,7 +10,7 @@
 }
 
 \usage{
-    discretize(dataset, input, ndigs=0, nlevels=10, presumedFactor=FALSE)
+    discretize(dataset, input = NULL, ndigs=2, nlevels=10, presumedFactor=FALSE)
 }
 
 \arguments{
@@ -34,6 +34,10 @@
     \item{nlevels}{
         The number of partitions to form for each variable, if \code{
         input} is NULL.  
+    }
+    \item{presumedFactor}{
+        If TRUE, any variable having fewer than nlevels levels will be presumed to be an
+        informal factor, and thus will not be discretized.
     }
 }
 

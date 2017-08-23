@@ -26,7 +26,7 @@
     discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
                  interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
                  NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
-                 cls=NULL, differentiate=FALSE)
+                 cls=NULL, differentiate=FALSE, saveCounts=TRUE, minFreq=NULL)
 }
 
 \arguments{
@@ -83,6 +83,13 @@
     \item{differentiate}{
        Whether or not you want to randomize coloring to differentiate overlapping
        lines. By default, this is FALSE.
+    }
+    \item{saveCounts}{
+        Whether or not you want to save the results so you don't have to process
+        large files again.
+    }
+    \item{minFreq}{
+        The smallest frequency to care about.
     }
 }
 

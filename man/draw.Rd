@@ -12,7 +12,7 @@
 }
 
 \usage{
-    draw(partial, name, labelsOff, save=FALSE)
+    draw(partial, name, labelsOff, savePlot=FALSE)
 }
 
 \arguments{
@@ -25,7 +25,7 @@
     \item{labelsOff}{
         Whether or not you'd like to have labels. By default, labels are disabled.
     }
-    \item{save}{
+    \item{savePlot}{
         Whether or not you'd like to save to a file instead of immediately displaying.
     }
 }
