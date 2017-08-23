@@ -1,10 +1,7 @@
 library(plotly)
 library(dplyr)
 
-#ds <- read.csv("pna5-100.csv", header=FALSE, row.names=NULL, fill=TRUE, na="", col.names=c("Airport1", "lat1", "long1", "Airport2", "lat2", "long2", "Airport3", "lat3", "long3", "Airport4", "lat4", "long4", "Airport5", "lat5", "long5", "freq"))
-#ds <- read.csv("pna5-500.csv", header=FALSE, row.names=NULL, fill=TRUE, na="", col.names=c("Airport1", "lat1", "long1", "Airport2", "lat2", "long2", "Airport3", "lat3", "long3", "Airport4", "lat4", "long4", "Airport5", "lat5", "long5", "freq"))
-ds <- read.csv("pna5-1000.csv", header=FALSE, row.names=NULL, fill=TRUE, na="", col.names=c("Airport1", "lat1", "long1", "Airport2", "lat2", "long2", "Airport3", "lat3", "long3", "Airport4", "lat4", "long4", "Airport5", "lat5", "long5", "freq"))
-#air <- read.csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_february_us_airport_traffic.csv')
+ds <- read.csv("http://heather.cs.ucdavis.edu/full5.csv", header=FALSE, row.names=NULL, fill=TRUE, na="", col.names=c("Airport1", "lat1", "long1", "Airport2", "lat2", "long2", "Airport3", "lat3", "long3", "Airport4", "lat4", "long4", "Airport5", "lat5", "long5", "freq"))
 air <- read.csv("us_airports.csv")
 
 remove <- c()
@@ -57,8 +54,6 @@ geo <- list(
             countrycolor = toRGB("gray80")
             )
 
-#cols <- c("red", "blue", "black", "green", "orange", "cyan")
-
 maxFreq <- max(ds$freq)
 minFreq <- min(ds$freq)
 range <- maxFreq - minFreq
@@ -67,8 +62,6 @@ middle <- range * 2 / 3
 bottom3 <- range/3
 
 colfunc <- colorRampPalette(c("red", "yellow", "springgreen", "royalblue"))
-#colfunc <- colorRampPalette(c("royalblue", "springgreen", "yellow", "red"))
-#colfunc <- colorRampPalette(c("green", "yellow", "red"))
 palette <- colfunc(range)
 
 p <- plot_geo(locationmode = 'USA-states', colors="YlOrRd") %>%
@@ -82,7 +75,6 @@ p <- plot_geo(locationmode = 'USA-states', colors="YlOrRd") %>%
   )
 
 for (i in 1:nrow(ds)) {
-#for (i in nrow(ds):1) {
   if (as.character(ds$Airport1[i]) == as.character(ds$Airport3[i])) {
     next
   }
