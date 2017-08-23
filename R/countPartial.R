@@ -640,7 +640,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         }
 
         if (!interactive) {
-            draw(partial, name=name, save=save, labelsOff=labelsOff)
+            draw(partial, name=name, save=savePlot, labelsOff=labelsOff)
         }
         else {
             interactivedraw(partial, name = name,
