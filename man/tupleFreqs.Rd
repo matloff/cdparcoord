@@ -1,27 +1,22 @@
-\name{clsPartialNA}
-\alias{clsPartialNA}
+\name{tupleFreqs}
+\alias{tupleFreqs}
 
 \title{
-    Compute tuple frequency counts, and optionally account for NA values
-    in parallel.
+    Compute tuple frequency counts, and optionallyAccount for NA values.
 }
 
 \description{
-    This works the same as partialNA but in parallel.
     Calculate the frequency of each tuple, and return the most- or
-    least-frequent tuples.  Optionally, tuples with NA values will count
-    for less, but weigh toward everything that has existing numbers in
-    common with it.
+    least-frequent tuples.  Optionally, tuples with NA values will count 
+    for less, but weigh toward everything that has existing numbers in 
+    common with it.  
 }
 
 \usage{
-    clsPartialNA(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
+    tupleFreqs(dataset, k=5, NAexp=1, countNAs=FALSE, saveCounts=TRUE, minFreq=NULL)
 }
 
 \arguments{
-    \item{cls}{
-        The cluster to use to process. If not supplied, it generates its own cluster.
-    }
     \item{dataset}{
         The dataset to process, a data frame or data.table.
     }
@@ -32,10 +27,16 @@
         for hunting for outliers.
     }
     \item{NAexp}{
-        Scale NA signifiance. This is experimental and may be extremely slow.
+        Scale NA signifiance. This is experimental and may run extremely slowly. 
     }
     \item{countNAs}{
         Whether or not you want to count NA values.
+    }
+    \item{saveCounts}{
+        Save the result of tupleFreqs so you don't have to reload it again.
+    }
+    \item{minFreq}{
+        A minimum frequency to use. Don't care about frequencies less than this.
     }
 }
 
@@ -46,11 +47,12 @@
 \details{
     This is the workhorse function in the package, calculating frequency
     counts to be used in the graphs.
-
+    
     The data will be converted into a data.table if it is not already in
     that form.  For this and other reasons, it is advantageous to have the
-    data in that form to begin with, say by using \code{fread} to read the data.
-
+    data in that form to begin with, say by using \code{fread} to read the
+    data.
+    
     Optionally, tuples that partially match a full tuple pattern except for NA
     values will add a partial count to the frequency count for the full
     pattern.  If for instance the data consist of 8-tuples and a row in the
@@ -61,7 +63,11 @@
 }
 
 \examples{
-    data(Titanic_Passengers)
-    # Find frequencies in parallel
-    discparcoord(Titanic_Passengers, inParallel=TRUE)
+  md <- 
+     rbind(c(1,2,8),c(1,3,4),c(1,2,8),c(5,NA,NA),c(5,6,2),c(5,NA,NA),c(NA,6,2))
+  tupleFreqs(md)
+  tupleFreqs(md,countNAs=TRUE)
+  data(smallexample)
+  partial <- tupleFreqs(smallexample)  
+  partial
 }

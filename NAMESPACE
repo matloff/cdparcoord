@@ -1,5 +1,4 @@
 import(freqparcoord)
-import(ggplot2)
 import(data.table)
 
 importFrom("grDevices", "X11", "as.raster", "colorRampPalette", "png",
