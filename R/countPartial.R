@@ -15,6 +15,8 @@
 #   countNAs: if TRUE, count NA values in a partial weighting
 #   saveCounts: if TRUE, save the output to a file 'tupleCounts'
 #   minFreq: if non-null, exclude tuples having a frequency below this value
+#   accentuate: if non-null, weight specified tuples more heavily
+#   accval: weighting factor in that case
 
 # return value:
 
@@ -48,7 +50,8 @@
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 tupleFreqs = function (dataset, 
-                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=TRUE, minFreq=NULL) {
+                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=TRUE, 
+                      minFreq=NULL,accentuate=NULL,accval=100) {
     if (class(dataset)[1] == 'pna')
         stop('does not yet allow preprocessed data')
 
@@ -94,6 +97,13 @@ tupleFreqs = function (dataset,
             counts[wherePartMatch,freqcol] <-
                 counts[wherePartMatch,freqcol] + freqincrem
         }
+    }
+        browser()
+
+    if (!is.null(accentuate)) {
+        cmd <- paste("tmp <- which(",accentuate,")",sep='')
+        docmd(cmd)
+        counts[tmp,]$freq <- accval * counts[tmp,]$freq
     }
 
     # get k most/least-frequent rows
@@ -396,8 +406,8 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # Accepts a result from tupleFreqs and draws interactively using plotly
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
-interactivedraw <- function(pna, name="Interactive Parcoords",
-                            accentuate=NULL, accval=100, differentiate=FALSE) {
+interactivedraw <- 
+   function(pna, name="Interactive Parcoords",differentiate=FALSE) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -407,12 +417,6 @@ interactivedraw <- function(pna, name="Interactive Parcoords",
     # this number in the original dataset, then plot it. Finally,
     # we use our mapping from labels to numbers to actually demonstrate
     # which categorical variable represents what.
-
-    if (!is.null(accentuate)) {
-        cmd <- paste("tmp <- which(",accentuate,")",sep='')
-        docmd(cmd)
-        pna[tmp,]$freq <- accval * pna[tmp,]$freq
-    }
 
     # create list of lists of lines to be inputted for Plotly
     interactiveList <- list()
@@ -586,14 +590,15 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save = FALSE, name = "Parcoords",
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
                          accentuate = NULL, accval = 100, inParallel = FALSE,
-                         cls = NULL,
-                         differentiate = FALSE,
-                         saveCounts = TRUE,
-                         minFreq=NULL
+                         cls = NULL, differentiate = FALSE,
+                         saveCounts = TRUE, minFreq=NULL
                          ) {
 
     if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
         stop('group case does not yet handle preprocessed data')
+    }
+    if (!is.null(grpcategory) && accentuate) {
+        stop('group case does not yet handle use of "accentuate" option')
     }
 
     # check to see if column name is valid
@@ -602,12 +607,12 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
     }
 
     # check to see if grpcategory given
-    else if (is.null(grpcategory)) {
-        # check whether 'data' is real data, vs. e.g. saved counts
+    else if (is.null(grpcategory)) {  # no grouping
+        # check whether already have tuple counts
         if (class(data)[1] == 'pna' || class(data) == 'character') {
-            if (class(data)[1] == 'pna') {
+            if (class(data)[1] == 'pna') {  # from in-memory saved counts
                 partial <- data
-            } else {
+            } else {  # from on-disk saved counts
                 load('tupleCounts')
                 partial <- counts
             }
@@ -624,10 +629,11 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             k <- min(ktmp, nrow(partial))
             ordering <- order(partial$freq,decreasing=(k > 0))
             partial <- partial[ordering[1:abs(k)],]
-        } else {
+        } else {  # need to compute tuple counts
             # get top k
             if (!inParallel) { partial <- 
-                tupleFreqs(data, k=k, NAexp=NAexp, countNAs, saveCounts, minFreq)
+                tupleFreqs(data,k=k,NAexp=NAexp,countNAs,saveCounts,minFreq,
+                   accentuate=accentuate,accval=accval)
             }
             else {
                 partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
@@ -643,9 +649,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             draw(partial, name=name, save=savePlot, labelsOff=labelsOff)
         }
         else {
-            interactivedraw(partial, name = name,
-                            accentuate = accentuate, accval = accval,
-                            differentiate = differentiate)
+            interactivedraw(partial,name=name,differentiate=differentiate)
         }
     }
     # grpcategory is given and is valid
