@@ -24,4 +24,5 @@
 
     # same as above, but group according to profession
     discparcoord(hrdata, grpcategory="sales")
+}
 
