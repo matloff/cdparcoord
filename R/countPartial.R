@@ -98,7 +98,6 @@ tupleFreqs = function (dataset,
                 counts[wherePartMatch,freqcol] + freqincrem
         }
     }
-        browser()
 
     if (!is.null(accentuate)) {
         cmd <- paste("tmp <- which(",accentuate,")",sep='')
