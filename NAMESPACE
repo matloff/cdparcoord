@@ -19,5 +19,5 @@ importFrom("parallel", clusterExport)
 importFrom("parallel", clusterEvalQ)
 importFrom("partools", distribsplit)
 importFrom("stats", "quantile")
-export(tupleFreqs,draw,discretize,discparcoord,interactivedraw,
+export(tupleFreqs,discretize,discparcoord,
 clsPartialNA,makeFactor,reOrder,showCounts)
