@@ -1,5 +1,5 @@
-\name{interactivedraw}
-\alias{interactivedraw}
+\name{discparcoord}
+\alias{discparcoord}
 
 \title{
 Draw parallel coordinates on an interactive plotly plot.
