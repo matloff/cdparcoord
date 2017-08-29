@@ -6,7 +6,7 @@
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
 draw <- 
-    function(partial, name="Parallel Coordinates", labelsOff, savePlot=FALSE) {
+    function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
         width <- ncol(partial)-1
 
         # get only numbers
@@ -70,7 +70,7 @@ draw <-
         # creation of initial plot
         cats <- rep(max_y, width)
         baserow <- c(1, cats)
-        if (savePlot) {
+        if (save) {
             png(paste(name, "png", sep=".")) # Save the file instead of displaying
         }
 
@@ -307,7 +307,7 @@ interactivedraw <-
 #   This is not used by default, as interactivedraw has this feature.
 # 5. interactive: Which type of plotting to use - interactive or not. By default,
 #   it uses interactive.
-# 6. savePlot: Whether or not to save the plot drawn. By default, this is
+# 6. save: Whether or not to save the plot drawn. By default, this is
 #   off as interactive has this feature embedded.
 # 7. name: The name for the plot
 # 8. labelsOff: Whether or not to use labels.
@@ -387,7 +387,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         }
 
         if (!interactive) {
-            draw(partial, name=name, save=savePlot, labelsOff=labelsOff)
+            draw(partial, name=name, save=save, labelsOff=labelsOff)
         }
         else {
             interactivedraw(partial,name=name,differentiate=differentiate)

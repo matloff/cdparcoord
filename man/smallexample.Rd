@@ -1,5 +1,6 @@
 \name{smallexample}
 \alias{smallexample}
+\alias{categoricalexample}
 
 \title{
     A small dataset for showing how tupleFreqs works in cdparcoord
