@@ -6,23 +6,18 @@
 }
 
 \examples{
-    data(hrdata)
-    input1 = list("name" = "average_montly_hours",
-                  "partitions" = 3, "labels" = c("low", "med", "high"))
-    input = list(input1)
-    # this will discretize the data by partitioning average monthly 
-    # hours into 3 parts called low, med, and high
-    hrdata = discretize(hrdata, input)
-    # account for NA values and plot with parallel coordinates
-    discparcoord(hrdata)
-
-    # same as above, but with scrambled columns
-    discparcoord(hrdata, permute=TRUE)
-
-    # same as above, but show top k values
-    discparcoord(hrdata, k=8)
-
-    # same as above, but group according to profession
-    discparcoord(hrdata, grpcategory="sales")
+   # programmer/engineer info from 2000 Census
+   data(prgeng)
+   # select some columns of interest
+   pe <- prgeng[,c(1,3,5,7:9)]
+   # remove some extreme values
+   pe25 <- pe[pe$wageinc < 250000,]
+   # some numeric variables are really factors
+   pe25 <- makeFactor(pe25,c('educ','occ','sex'))
+   # convert the continuous variables to discrete
+   pe25disc <- discretize(pe25,nlevels=5)
+   # display
+   discparcoord(pe25disc,k=150)
+   # then possibly brush, etc. 
 }
 

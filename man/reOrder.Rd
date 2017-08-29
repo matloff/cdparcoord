@@ -2,7 +2,7 @@
 \alias{reOrder}    
 
 \title{
-    Wrapper for discretize.
+    Re-order levels of a factor, according to some desired ordinal form.
 }
 
 \description{
@@ -18,10 +18,10 @@
         Dataset to reorder.
     }
     \item{colName}{
-        Column names to use.
+        Column name.
     }
     \item{levelNames}{
-        The names of the levels to use.
+        Names of the reordered levels
     }
 }
 
