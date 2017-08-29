@@ -63,7 +63,8 @@ tupleFreqs = function (dataset,
     original_categoryorder = attr(dataset, "categoryorder")
 
     # data.table package very good for tabulating counts
-    if (!is.data.table(dataset)) dataset <- data.table(dataset)
+    if (!data.table::is.data.table(dataset)) 
+       dataset <- data.table::as.data.table(dataset)
     attr(dataset, "categorycol") <- original_categorycol
     attr(dataset, "categoryorder") <- original_categoryorder
 
