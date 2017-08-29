@@ -20,4 +20,4 @@ importFrom("parallel", clusterEvalQ)
 importFrom("partools", distribsplit)
 importFrom("stats", "quantile")
 export(tupleFreqs,discretize,discparcoord,
-clsPartialNA,makeFactor,reOrder,showCounts)
+clsTuppleFreqs,makeFactor,reOrder,showCounts)

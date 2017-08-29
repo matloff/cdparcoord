@@ -1,5 +1,5 @@
-\name{clsPartialNA}
-\alias{clsPartialNA}
+\name{clsTupleFreqs}
+\alias{clsTupleFreqs}
 \alias{discparcoord}
 
 
@@ -11,7 +11,7 @@
 \usage{
     tupleFreqs(dataset,k=5,NAexp=1.0,countNAs=FALSE,saveCounts=TRUE, 
        minFreq=NULL) 
-    clsPartialNA(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
+    clsTupleFreqs(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
     discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
         interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
         NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
@@ -22,7 +22,7 @@
     The function \code{tupleFreqs} is the workhorse function in the 
     package, calculating frequency counts to be used in the graphs. It
     determines the set of unique tuples, and computes a count for each.
-    The function \code{clsPartialNA} does the same, but in parallel.  
+    The function \code{clsTupleFreqs} does the same, but in parallel.  
     The \code{k} most- or least-frequent tuples will be reported, 
     with the latter specified via negative \code{k}.  Optionally, 
     tuples with NA values will count less, but weigh toward 
@@ -126,7 +126,7 @@
 }
 
 \value{
-    The functions \code{tupleFreqs} and \code{clsPartialNA} return an
+    The functions \code{tupleFreqs} and \code{clsTupleFreqs} return an
     object of class \code{c('pna','data.frame')}, with each row
     consisting of a tuple and its count.  In addition the object will
     have attributes \code{k} and \code{minFreq}.

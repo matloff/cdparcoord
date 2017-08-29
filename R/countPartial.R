@@ -137,9 +137,9 @@ tupleFreqs = function (dataset,
     return(counts)
 }
 
-###########################  clsPartialNA  ################################
+###########################  clsTupleFreqs  ################################
 
-clsPartialNA <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
+clsTupleFreqs <- function (cls=NULL, dataset, k = 5, NAexp = 1.0,countNAs=FALSE) {
     if (class(dataset)[1] == 'pna') {
         stop('does not yet allow preprocessed data')
     }
@@ -635,7 +635,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                    accentuate=accentuate,accval=accval)
             }
             else {
-                partial <- clsPartialNA(cls, data, k=k, NAexp=NAexp, countNAs)
+                partial <- clsTupleFreqs(cls, data, k=k, NAexp=NAexp, countNAs)
             }
 
             # to permute or not to permute
@@ -668,7 +668,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 partial <- tupleFreqs(ctgdata, k=k, NAexp=NAexp,
                                      countNAs=countNAs)
             } else {
-                partial <- clsPartialNA(cls, ctgdata, k=k, NAexp=NAexp,
+                partial <- clsTupleFreqs(cls, ctgdata, k=k, NAexp=NAexp,
                                         countNAs = countNAs)
             }
 
