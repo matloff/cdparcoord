@@ -1,7 +1,7 @@
 
 ---
 title: 'cdparcoord: Categorical and Discrete Parallel Coordinates'
-author: "Norm Matloff, Harrison Nguyen and Vincent Yang"
+author: "Norm Matloff, Vincent Yang and Harrison Nguyen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -505,4 +505,4 @@ See the **NAexp** variable in **tupleFreqs()**.
 
 # Authors
 
-Norm Matloff, Harrison Nguyen, Vincent Yang
+Norm Matloff, Vincent Yang, Harrison Nguyen

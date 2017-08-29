@@ -518,4 +518,4 @@ See the **NAexp** variable in **tupleFreqs()**.
 
 # Authors
 
-Norm Matloff, Harrison Nguyen, Vincent Yang
+Norm Matloff, Vincent Yang, Harrison Nguyen
