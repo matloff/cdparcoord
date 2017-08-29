@@ -12,6 +12,7 @@ docmd <- function(toexec) eval(parse(text=toexec),envir = parent.frame())
 # discparcoord(), called with saveCounts = TRUE
 
 showCounts <- function(nshow=NULL) {
+   counts <- 0  # for CRAN
    load('tupleCounts')
    if (is.null(nshow)) {
       print(counts)
