@@ -337,7 +337,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
     if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
         stop('group case does not yet handle preprocessed data')
     }
-    if (!is.null(grpcategory) && accentuate) {
+    if (!is.null(grpcategory) && !is.null(accentuate)) {
         stop('group case does not yet handle use of "accentuate" option')
     }
 
