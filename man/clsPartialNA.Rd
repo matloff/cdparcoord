@@ -1,4 +1,5 @@
 \name{clsTupleFreqs}
+\alias{TupleFreqs}
 \alias{clsTupleFreqs}
 \alias{discparcoord}
 
