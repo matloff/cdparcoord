@@ -5,6 +5,8 @@ importFrom("grDevices", "X11", "as.raster", "colorRampPalette", "png",
            "quartz")
 importFrom("graphics", "axis", "lines", "par", "plot",
              "rasterImage", "text", "title")
+importFrom("grDevices", "dev.new", "dev.off", "grey", "pdf")
+importFrom("utils", "head")
 importFrom(data.table,as.data.table)
 importFrom(data.table,is.data.table)
 importFrom(data.table,".N")
