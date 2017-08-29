@@ -5,13 +5,13 @@
 
 
 \title{
-    Compute/display tuple frequency counts, and optionally account for NA values
-    in parallel.
+    Compute/display tuple frequency counts, and optionally account for 
+    NA values
 }
 
 \usage{
     tupleFreqs(dataset,k=5,NAexp=1.0,countNAs=FALSE,saveCounts=TRUE, 
-       minFreq=NULL) 
+       minFreq=NULL,accentuate=NULL,accval=100) 
     clsTupleFreqs(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
     discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
         interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
@@ -20,14 +20,10 @@
 }
 
 \description{
-    The function \code{tupleFreqs} is the workhorse function in the 
-    package, calculating frequency counts to be used in the graphs. It
-    determines the set of unique tuples, and computes a count for each.
-    The function \code{clsTupleFreqs} does the same, but in parallel.  
-    The \code{k} most- or least-frequent tuples will be reported, 
-    with the latter specified via negative \code{k}.  Optionally, 
-    tuples with NA values will count less, but weigh toward 
-    everything that has existing numbers in common with it.  
+    The functions \code{tupleFreqs} and \code{discparcoord} are
+    the workhorse functions in the 
+    package, calculating frequency counts to be used in the graphs and
+    displaying them. 
 }
 
 \arguments{
@@ -35,7 +31,10 @@
         The data, in data frame or matrix form.
     }
     \item{k}{
-        The number of lines to display in the parallel coordinates plot.
+        The number of tuples to return. These will be the \code{k} most
+        frequent tuples, unless \code{k} is negative, in which case the
+        least-frequent tuples will be returned.  The latter is useful
+        for hunting for outliers.
     }
     \item{grpcategory}{
         Grouping column/variable.
@@ -68,7 +67,7 @@
         Character expression specifying the property to accentuate.
     }
     \item{accval}{
-        The value to accentuate. By default, this is 100.
+        Value to accentuate. 
     }
     \item{inParallel}{
         If TRUE, calculate tuple frequencies in parallel. 
@@ -78,25 +77,13 @@
        lines. 
     }
     \item{saveCounts}{
-        If TRUE, save the tuple counts to the file \code{tupleCounts}.
+        If TRUE, save the tuple counts to the file \file{tupleCounts}.
     }
     \item{minFreq}{
         The smallest frequency to be displayed.
     }
     \item{dataset}{
         The dataset to process, a data frame or data.table.
-    }
-    \item{k}{
-        The number of tuples to return. These will be the \code{k} most
-        frequent tuples, unless \code{k} is negative, in which case the
-        least-frequent tuples will be returned.  The latter is useful
-        for hunting for outliers.
-    }
-    \item{NAexp}{
-        Scale NA signifiance. This is experimental and may be extremely slow.
-    }
-    \item{countNAs}{
-        Whether or not you want to count NA values.
     }
     \item{cls}{
         Cluster to be used if \code{inParallel} is TRUE.  If
@@ -112,10 +99,23 @@
 }
 
 \details{
+    Tuple tabulation is performed by \code{tupleFreqs}, or in large
+    cases, in parallel by \code{clsTupleFreqs}.  The display is done by
+    \code{discparcoord}.
+
+    The \code{k} most- or least-frequent tuples will be reported, 
+    with the latter specified via negative \code{k}.  Optionally, 
+    tuples with NA values will count less, but weigh toward 
+    everything that has existing numbers in common with it.  
+
+    If continuous variables are present, then in most cases, either
+    convert to discrete using \code{\link{discretize}} or use
+    \pkg{freqparcoord}.
 
     The data will be converted into a data.table if it is not already in
     that form.  For this and other reasons, it is advantageous to have the
-    data in that form to begin with, say by using \code{fread} to read the data.
+    data in that form to begin with, say by using \code{data.table::fread} 
+    to read the data.
 
     Optionally, tuples that partially match a full tuple pattern except for NA
     values will add a partial count to the frequency count for the full
