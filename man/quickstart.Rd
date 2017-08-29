@@ -5,6 +5,10 @@
     cdparcoord: Quick start
 }
 
+\description{
+    Quick introduction to the package.
+}
+
 \examples{
    # programmer/engineer info from 2000 Census
    data(prgeng)
