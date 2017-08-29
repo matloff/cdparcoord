@@ -179,7 +179,7 @@ on a non-magenta portion of the axis.
 The following examples will illustrate other features of the package, as
 well as different applications.
 
-## Example: Vocabulary acquisition
+## Example: Node reordering, advanced brushing
 
 Here we try the [Stanford WordBank
 data](http://wordbank.stanford.edu/analyses?name=instrument_data) on
@@ -236,7 +236,7 @@ The magenta highlights show that **sex** and **mom\_ed** were brushed,
 and in the latter case, specifically the levels 'College', 'Some Graduate' and
 'Graduate'.  Lines with all other combinations now appear in light gray.
 
-## Example: Baseball player data again
+## Example: Advanced use of discretize()
 
 We return to the baseball, and show a more advanced usage of
 **discretize()**.  The dataset is probably too small to discretize --
@@ -383,6 +383,31 @@ A little daunting!  Yet even for these two similar letters, it appears
 for instance that variables V2 through V6 may have some predictive power
 to distinguish between the two letters.  Brushing the Q node makes this
 a little clearer (not shown here).
+
+## Example: Rare subsgroups
+
+Since (for positive **k**) we only display the most-frequent tuples, we
+may missing small but important subgroups.  This may especially be a
+problem in classification applications, with one or more small classes.
+
+For that reason, **cdparcoord** provides a mechanism with which the user
+can specify that a given subgroup be given extra weighting in the
+frequency counting.
+
+Let's use the Census data to illustrate this.  If in the previous graph
+above for this dataset one brushes both **educ** = 16 and **sex** = 2,
+i.e. female PhDs, one finds that all lines are gray! There were actually
+102 people of that type in the data, but that wasn't popular enough to
+make the cut. 
+
+Instead, one can run
+
+```R
+discparcoord(pe25disc,k=150,
+   accentuate='with(pe25disc,educ==16 & sex==2)') 
+```
+
+which specifies to give extra weight (default value 100) to this group.
 
 ## Example: Comparison to full parallel coordinates
 
