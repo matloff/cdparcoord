@@ -353,7 +353,8 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             if (class(data)[1] == 'pna') {  # from in-memory saved counts
                 partial <- data
             } else {  # from on-disk saved counts
-                load('tupleCounts')
+                counts <- 0  # for CRAN
+                load('tupleCounts')  # loads 'counts'
                 partial <- counts
             }
             if (!is.null(minFreq)) {
