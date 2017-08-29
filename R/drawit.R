@@ -423,7 +423,6 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 if (save) {
                     draw(partial, name=paste(name, cat), save=save, labelsOff=labelsOff)
                 } else {
-                    generateScreen(12, 7)
                     draw(partial, name=paste(name, cat), labelsOff=labelsOff)
                 }
             } else {
@@ -443,17 +442,6 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
 
 # Create a new screen for grpcategory
 generateScreen <- function(width, height) {
-    # MacOS
-    if (grepl("darwin", R.version$os)){
-        quartz(width=width, height=height)
-    }
-    # Linux
-    else if (grepl("linux", R.version$os) || grepl("gnu", R.version$os)) {
-        X11(width=width, height=height)
-    }
-    # Windows
-    else {
-        windows(width=width, height=height)
-    }
+  dev.new(width=width, height=height)
 }
 
