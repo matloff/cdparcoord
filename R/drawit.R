@@ -431,7 +431,6 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                 plots[[i]] <-
                     interactivedraw(partial,
                                     name=fullname,
-                                    accentuate=accentuate,
                                     differentiate=differentiate)
             }
         }
