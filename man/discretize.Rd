@@ -15,12 +15,12 @@
 
 \arguments{
     \item{dataset}{
-        The dataset to discretize, data frame/table.
+        Dataset to discretize, data frame/table.
     }
     \item{input}{
         Optional specification for partitioning, giving the number of 
         partitions and labels for each partition.  List of lists, one
-        list per column to be converted.  The outermost list states
+        list per column to be converted.  The outermost list indicates
         the columns to be converted, and each inner list holds the name 
         of the column, the number of partitions, and a list of labels 
         for each partition.  
@@ -32,11 +32,12 @@
         38.
     }
     \item{nlevels}{
-        The number of partitions to form for each variable, if \code{
-        input} is NULL.  
+        Number of partitions to form for each variable, if 
+        \code{input} is NULL.  
     }
     \item{presumedFactor}{
-        If TRUE, any variable having fewer than nlevels levels will be presumed to be an
+        If TRUE, any variable having fewer than \code{nlevels}
+        levels will be presumed to be an
         informal factor, and thus will not be discretized.
     }
 }
@@ -46,8 +47,8 @@
 If \code{input} is not specified, each numeric column in the data will
 be discretized, with one exception:  If a column is numeric but has
 fewer distinct values than \code{nlevels}, and if \code{presumedFactor}
-is TRUE, it is presumed to be an informal R factor and is not converted.
-However, it is best to use \code{makeFactor()} on such variables.
+is TRUE, it is presumed to be an informal R factor and will not be converted.
+However, it is best to use \code{\link{makeFactor}} on such variables.
 
 }
 

@@ -2,11 +2,12 @@
 \alias{showCounts}    
 
 \title{
-    Show the tuple counts for the most recent operation.
+    Show tuple counts for the most recent saved counting operation.
 }
 
 \description{
-    Use with saveCounts=TRUE to recover the tuple counts.
+    Used with \code{saveCounts=TRUE} in \code{tupleFreqs} etc.
+    to recover the tuple counts.
 }
 
 \usage{
@@ -15,7 +16,7 @@
 
 \arguments{
     \item{nshow}{
-        The dataset to show.
+        Dataset to show.
     }
 }
 

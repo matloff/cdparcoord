@@ -2,12 +2,12 @@
 \alias{makeFactor}    
 
 \title{
-    Change numeric variables, specified in varnames, in df to factors.
+    Change numeric variables factors.
 }
 
 \description{
-    Change numeric variables that are specified in varnames in a dataframe
-    to factors so that discretize won't take partition levels.
+    Change numeric variables that are specified in \code{varnames}
+    to factors so that \code{discretize} won't partition. 
 }
 
 \usage{
@@ -16,10 +16,10 @@
 
 \arguments{
     \item{df}{
-        The data frame to alter to have factors.
+        Input data frame.
     }
     \item{varnames}{
-        Variable names for factors.
+        Names of variables to be converted to factors.
     }
 }
 
