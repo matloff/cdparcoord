@@ -1,5 +1,7 @@
 \name{discparcoord}
 \alias{discparcoord}
+\alias{tupleFreqs}
+\alias{clsTupleFreqs}
 
 \title{
 Draw parallel coordinates on an interactive plotly plot.
