@@ -5,9 +5,9 @@ Author: Norm Matloff <normmatloff@gmail.com> and
 Maintainer: Norm Matloff <normmatloff@gmail.com>
 Date: 2017-08-29
 Title: Top Frequency-Based Parallel Coordinates
-Description: Parallel coordinate plotting with resolutions for large data sets 
-    and missing values.
-Depends: R (>= 3.2.0),  data.table, plotly, freqparcoord, magrittr, partools
+Description: Parallel coordinate plotting with resolutions for large data sets
+ and missing values.
+Depends: R (>= 3.2.0), data.table, plotly, freqparcoord, magrittr, partools
 Imports:
 Suggests: rmarkdown, knitr
 VignetteBuilder: knitr
