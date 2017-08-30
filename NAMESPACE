@@ -1,8 +1,7 @@
 import(freqparcoord)
 import(data.table)
 
-importFrom("grDevices", "X11", "as.raster", "colorRampPalette", "png",
-           "quartz")
+importFrom("grDevices", "as.raster", "colorRampPalette", "png")
 importFrom("graphics", "axis", "lines", "par", "plot",
              "rasterImage", "text", "title")
 importFrom("grDevices", "dev.new", "dev.off", "grey", "pdf")
