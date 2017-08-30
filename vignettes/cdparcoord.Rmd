@@ -54,7 +54,7 @@ useless.
 
 Our solution is to graph only the most frequent lines.  Our
 [**freqparcoord**
-package](https://cran.r-project.org/web/packages/freqparcoord/index.html)
+package](https://cran.r-project.org/package=freqparcoord)
 does this for continuous variables, with line frequency defined in terms
 of estimated multivariate density.  The current package,
 [**cdparcoord**](https://github.com/matloff/cdparcoord), covers the case
@@ -104,7 +104,7 @@ However, in this particular data set, there are variables that seem
 numeric but are in essence factors, as they are codes.  For the **educ**
 variable, for instance, the number 14 codes a master's degree. (A code
 list is available at the [Census Bureau
-site](https://www.census.gov/prod/cen2000/doc/pums.pdfr).)
+site](https://www.census.gov/prod/cen2000/doc/pums.pdf).)
 
 So, let's change the coded variables to factors, and then discretize:
 
