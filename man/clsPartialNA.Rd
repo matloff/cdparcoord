@@ -138,9 +138,13 @@
 }
 
 \examples{
-    data(Titanic_Passengers)
-    # Find frequencies in parallel
-    discparcoord(Titanic_Passengers, inParallel=TRUE)
+
+   \dontrun{
+       data(Titanic_Passengers)
+       # Find frequencies in parallel
+       discparcoord(Titanic_Passengers, inParallel=TRUE)
+    }
+
     data(hrdata)
     input1 = list("name" = "average_montly_hours",
                   "partitions" = 3, "labels" = c("low", "med", "high"))
@@ -148,16 +152,21 @@
     # this will discretize the data by partitioning average monthly 
     # hours into 3 parts called low, med, and high
     hrdata = discretize(hrdata, input)
-    # account for NA values and plot with parallel coordinates
-    discparcoord(hrdata)
-
-    # same as above, but with scrambled columns
-    discparcoord(hrdata, permute=TRUE)
-
-    # same as above, but show top k values
-    discparcoord(hrdata, k=8)
-
-    # same as above, but group according to profession
-    discparcoord(hrdata, grpcategory="sales")
+    print('first few discretized tuples')
+    # first line should be 0.38,0.53,2,low,3,0,1,00,sales,low
+    head(hrdata)
+    print('first few most-frequent tuples')
+    # first line should be 0.40,0.46,2,...,11
+    tupleFreqs(hrdata)
+    \dontrun{
+       # account for NA values and plot with parallel coordinates
+       discparcoord(hrdata)
+       # same as above, but with scrambled columns
+       discparcoord(hrdata, permute=TRUE)
+       # same as above, but show top k values
+       discparcoord(hrdata, k=8)
+       # same as above, but group according to profession
+       discparcoord(hrdata, grpcategory="sales")
+    }
 }
 

@@ -81,8 +81,11 @@ However, it is best to use \code{\link{makeFactor}} on such variables.
 
     # create one list to pass everything to discretize()
     discreteinput <- list(inp1, inp2, inp3)
+    head(discreteinput)
 
     # at this point, all of the data has been discretized
     discretizedmlb <- discretize(m, discreteinput)
+    head(discretemlb)
+
 
 }

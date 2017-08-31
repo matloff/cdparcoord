@@ -20,8 +20,10 @@
    pe25 <- makeFactor(pe25,c('educ','occ','sex'))
    # convert the continuous variables to discrete
    pe25disc <- discretize(pe25,nlevels=5)
-   # display
-   discparcoord(pe25disc,k=150)
-   # then possibly brush, etc. 
+   \dontrun{
+      # display
+      discparcoord(pe25disc,k=150)
+      # then possibly brush, etc. 
+   }
 }
 
