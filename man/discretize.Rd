@@ -85,7 +85,7 @@ However, it is best to use \code{\link{makeFactor}} on such variables.
 
     # at this point, all of the data has been discretized
     discretizedmlb <- discretize(m, discreteinput)
-    head(discretemlb)
+    head(discretizedmlb)
 
 
 }
