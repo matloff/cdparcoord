@@ -25,6 +25,17 @@
     }
 }
 
+\examples{
+   sl <- c('primary','college','hs','middle','hs')
+   z <- data.frame(
+          schlvl = factor(x=sl,
+             levels=c('college','hs','middle','primary'))
+          )
+   z
+   z <- reOrder(z,'schlvl',c('primary','middle','hs','college'))
+   str(z)  # shows the desired label order in the 'categoryorder' attribute
+}
+
 \author{
     Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
