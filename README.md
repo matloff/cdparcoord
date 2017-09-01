@@ -53,6 +53,18 @@ discretized.)
 
 # Quickstart
 
+## Installation
+#### CRAN
+```r
+install.packages("cdparcoord")
+```
+
+#### Github (development version)
+```r
+install.packages("devtools")
+devtools::install_github("matloff/cdparcoord")
+```
+
 Here we give a quick view of the package operations.
 It is assumed that the user has already executed
 
