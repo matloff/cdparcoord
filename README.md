@@ -1,5 +1,5 @@
-![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/cdparcoord)
 # cdparcoord:  Categorical and Discrete Parallel Coordinates
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/cdparcoord)
 
 # Table of Contents
 
