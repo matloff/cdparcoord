@@ -272,8 +272,10 @@ interactivedraw <-
 
     # Convert pna to plot
     if (name == "") {
-        pna %>%
-            plot_ly(type = 'parcoords',
+        ## unnecessary dependency on pipes removed by NM
+        ## pna %>%
+        ##     plot_ly(type = 'parcoords',
+            plot_ly(pna,type = 'parcoords',
                     line = list(color = pna$freq,
                                 colorscale = 'Jet',
                                 showscale = scaleOn,
@@ -283,6 +285,8 @@ interactivedraw <-
                     dimensions = interactiveList)
     }
     else {
+        ## unnecessary dependency on pipes removed by NM
+        tmp <- 
         plot_ly(pna, type = 'parcoords',
                 line = list(color = pna$freq,
                             colorscale = 'Jet',
@@ -290,8 +294,9 @@ interactivedraw <-
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
-                dimensions = interactiveList) %>%
-        plotly::layout(title=name)
+                ## dimensions = interactiveList) %>%
+                dimensions = interactiveList) 
+        plotly::layout(tmp,title=name)
     }
 }
 
