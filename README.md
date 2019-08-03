@@ -373,7 +373,8 @@ here, as all values are integers.
 
 ```R
 ltr <-
-read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',header=FALSE) 
+read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',
+   header=FALSE) 
 oq <- ltr[ltr[,1]=='O' | ltr[,1]=='Q',] 
 discparcoord(oq,k=100) 
 ```
