@@ -16,7 +16,7 @@
     discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
         interactive = TRUE, save=FALSE, name="Parcoords", labelsOff=TRUE,
         NAexp=1.0,countNAs=FALSE, accentuate=NULL, accval=100, inParallel=FALSE,
-        cls=NULL, differentiate=FALSE, saveCounts=TRUE, minFreq=NULL)
+        cls=NULL, differentiate=FALSE, saveCounts=FALSE, minFreq=NULL)
 }
 
 \description{
