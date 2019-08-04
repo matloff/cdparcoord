@@ -6,7 +6,7 @@
 }
 
 \description{
-    Used with \code{saveCounts=TRUE} in \code{tupleFreqs} etc.
+    Used with \code{saveCounts} TRUE in \code{tupleFreqs} etc.
     to recover the tuple counts.
 }
 

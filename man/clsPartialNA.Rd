@@ -10,7 +10,7 @@
 }
 
 \usage{
-    tupleFreqs(dataset,k=5,NAexp=1.0,countNAs=FALSE,saveCounts=TRUE, 
+    tupleFreqs(dataset,k=5,NAexp=1.0,countNAs=FALSE,saveCounts=FALSE, 
        minFreq=NULL,accentuate=NULL,accval=100) 
     clsTupleFreqs(cls=NULL, dataset, k=5, NAexp=1, countNAs=FALSE)
     discparcoord(data, k=5, grpcategory=NULL, permute=FALSE,
