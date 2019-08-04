@@ -5,8 +5,8 @@
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw <- 
-    function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) {
+draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) 
+{
         width <- ncol(partial)-1
 
         # get only numbers
@@ -336,8 +336,9 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
                          accentuate = NULL, accval = 100, inParallel = FALSE,
                          cls = NULL, differentiate = FALSE,
-                         saveCounts = TRUE, minFreq=NULL
-                         ) {
+                         saveCounts = FALSE, minFreq=NULL
+                         ) 
+{
 
     if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
         stop('group case does not yet handle preprocessed data')
@@ -378,7 +379,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         } else {  # need to compute tuple counts
             # get top k
             if (!inParallel) { partial <- 
-                tupleFreqs(data,k=k,NAexp=NAexp,countNAs,saveCounts,minFreq,
+                tupleFreqs(data,k=k,NAexp=NAexp,countNAs,saveCounts=saveCounts,minFreq,
                    accentuate=accentuate,accval=accval)
             }
             else {
