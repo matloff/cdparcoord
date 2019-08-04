@@ -50,7 +50,7 @@
 # in the above example, if NAexp = 2, then the 2/3 figure becomes (2/3)^2
 
 tupleFreqs = function (dataset, 
-                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=TRUE, 
+                      k = 5, NAexp = 1.0,countNAs=FALSE,saveCounts=FALSE, 
                       minFreq=NULL,accentuate=NULL,accval=100) {
     if (class(dataset)[1] == 'pna')
         stop('does not yet allow preprocessed data')
