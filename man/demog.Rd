@@ -1,21 +1,11 @@
-\name{hrdata}
-\alias{hrdata}
+\name{demog}
+\alias{demog}
 
 \title{
-    A human resources simulated dataset.
+    Demographic statistics by ZIP Code.
 }
 
 \description{
-    A small fictional dataset by Kaggle that includes satisfaction level,
-    the result of their last evaluation, number of projects, average monthly hours,
-    time spent at the company, whether they have had a work accident, whether
-    they have had a promotion in the last 5 years, their department,
-    salary and finally whether the employee has left the company. Each
-    row represents a single employee.
+    Useful for embeddings.  Source is catalog.data.gov.
 }
-\author{
-    Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
-}
-\usage{
-    data(hrdata); hrdata
-}
+
