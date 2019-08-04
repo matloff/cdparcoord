@@ -414,8 +414,8 @@ which specifies to give extra weight (default value 100) to this group.
 
 Finally, let's look at the the Diamonds example bundled with the
 **ggplot2** package (in turn bundled by **plotly**, which is loaded by
-**cdparcoord**).  We'll borrow from [this Luke Tierney course example](https://registrar.stanford.edu/resources-and-help/stanford-academic-calendar#Aut).
-This particular example uses the **lattice** graphics library.
+**cdparcoord**).  We'll borrow from a Luke Tierney course example,
+which uses the **lattice** graphics library.
 
 First, the data prep.  The example "thins out" the data by taking a
 subsample:
