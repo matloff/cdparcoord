@@ -129,7 +129,7 @@ Each of the numeric variables here is discretized into 5 levels.
 Now display:
 
 ```R
-discparcoord(pe25disc,k=150)  
+discparcoord(pe25disc,k=150,saveCounts=FALSE)  
 ```
 
 Here we are having **cdparcoord** display the 150 most frequent tuple
@@ -203,7 +203,7 @@ education and vocabulary size.
 ```R
 wb <- wb[,c(2,5,7,8,10)] 
 wb <- discretize(wb,nlevels=5) 
-discparcoord(wb,k=100) 
+discparcoord(wb,k=100,saveCounts=FALSE) 
 ```
 
 We again asked for 5 levels for each variable.  As noted in the [Tips
@@ -222,7 +222,7 @@ We can use **reOrder** to remedy that:
 ```R
 wb <- reOrder(wb,'mom_ed',
    c('Secondary','Some College','College','Some Graduate','Graduate'))
-discparcoord(wb,k=100)
+discparcoord(wb,k=100,saveCounts=FALSE)
 ```
 
 <img src="WB2.png" alt="n1" width="800"/>
@@ -270,7 +270,7 @@ inp3 <- list("name" = "Age",
              "labels"=c("young", "old"))
 discreteinput <- list(inp1, inp2, inp3)
 discretizedmlb <- discretize(m, discreteinput)
-discparcoord(discretizedmlb, name="MLB", k=100)
+discparcoord(discretizedmlb, name="MLB", k=100,saveCounts=FALSE)
 ```
 
 <img src="MLB2.png" alt="n1" width="800"/>
@@ -282,7 +282,7 @@ Had we wanted to handle **Height** separately, we could have called
 inpt <- list(inp2,inp3) 
 m1 <- discretize(m,inpt) 
 m2 <- discretize(m1) 
-discparcoord(m2,k=150) 
+discparcoord(m2,k=150,saveCounts=FALSE) 
 ```
 
 ## Example: Outlier hunting
@@ -296,7 +296,7 @@ LEAST frequent tuples:
 ```R
 data(PimaIndiansDiabetes) 
 pima <- PimaIndiansDiabetes 
-discparcoord(pima,k=-10) 
+discparcoord(pima,k=-10,saveCounts=FALSE) 
 showCounts() 
 ```
 
@@ -352,7 +352,7 @@ ozc <- oz[goodrows,]
 for(i in 1:74) ozc[,i] <- as.numeric(as.character(ozc[,i]))
 ozc4 <- ozc[,c(seq(2,25,4),39)]
 ozc4d <- discretize(ozc4,nlevels=3)
-discparcoord(ozc4d,k=25)
+discparcoord(ozc4d,k=25,saveCounts=FALSE)
 
 ```
 
@@ -386,7 +386,7 @@ ltr <-
 read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',
    header=FALSE) 
 oq <- ltr[ltr[,1]=='O' | ltr[,1]=='Q',] 
-discparcoord(oq,k=100) 
+discparcoord(oq,k=100,saveCounts=FALSE) 
 ```
 
 <img src="OQ.png" alt="n1" width="900"/>
@@ -416,7 +416,7 @@ Instead, one can run
 
 ```R
 discparcoord(pe25disc,k=150,
-   accentuate='with(pe25disc,educ==16 & sex==2)') 
+   accentuate='with(pe25disc,educ==16 & sex==2)',saveCounts=FALSE) 
 ```
 
 which specifies to give extra weight (default value 100) to this group.
@@ -448,7 +448,7 @@ usual only the most-frequent tuples:
 
 ```R
 dd <- discretize(diamonds,nlevels=4) 
-discparcoord(dd,k=2500) 
+discparcoord(dd,k=2500,saveCounts=FALSE) 
 ```
 
 <img src="DiaCDPar.png" alt="n1" width="900"/>
