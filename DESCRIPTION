@@ -1,9 +1,9 @@
 Package: cdparcoord
-Version: 1.0.0
+Version: 1.0.1
 Author: Norm Matloff <normmatloff@gmail.com> and 
     Vincent Yang <vinyang@ucdavis.edu> and Harrison Nguyen <hhnguy@ucdavis.edu>
 Maintainer: Norm Matloff <normmatloff@gmail.com>
-Date: 2017-08-29
+Date: 2019-08-04
 Title: Top Frequency-Based Parallel Coordinates
 Description: Parallel coordinate plotting with resolutions for large data sets
  and missing values.
