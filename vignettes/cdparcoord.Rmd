@@ -5,12 +5,13 @@ author: "Norm Matloff, Vincent Yang and Harrison Nguyen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Getting Started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 # cdparcoord:  Categorical and Discrete Parallel Coordinates
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/cdparcoord)
 
 # Table of Contents
 
@@ -42,7 +43,7 @@ library(MASS)
 parcoord(m) 
 ```
 
-<img src="MLB1.png" alt="n1" width="500"/>
+<img src="vignettes/MLB1.png" alt="n1" width="500"/>
 
 Each polygonal line in the graph represents one player, connecting his
 height, weight and age.  If a player had his (height,weight,age) tuple
@@ -63,6 +64,18 @@ of categorical variables, with frequency defined as actual tuple count.
 discretized.)
 
 # Quickstart
+
+## Installation
+#### CRAN
+```r
+install.packages("cdparcoord")
+```
+
+#### Github (development version)
+```r
+install.packages("devtools")
+devtools::install_github("matloff/cdparcoord")
+```
 
 Here we give a quick view of the package operations.
 It is assumed that the user has already executed
@@ -124,7 +137,7 @@ discparcoord(pe25disc,k=150)
 Here we are having **cdparcoord** display the 150 most frequent tuple
 patterns. The result is
 
-<img src="PE1.png" alt="n1" width="800"/>
+<img src="vignettes/PE1.png" alt="n1" width="800"/>
 
 For example, there is a blue line corresponding to the tuple,
 
@@ -148,7 +161,7 @@ Specifically, we can use the mouse to drag the **occ** label to the
 right, releasing the mouse when the column reaches near the **wageinc**
 column.  The result is
 
-<img src="PE2.png" alt="n1" width="800"/>
+<img src="vignettes/PE2.png" alt="n1" width="800"/>
 
 As noted, there is a range for each occupation. However, looking at the
 more-frequent lines, occupation 102 seems to rather lucrative (and
@@ -164,7 +177,7 @@ using the mouse to drag the top of the **sex** column down slightly.
 This causes the men's lines to go to light gray, while the women's lines
 stay in color:
 
-<img src="PE3.png" alt="n1" width="800"/>
+<img src="vignettes/PE3.png" alt="n1" width="800"/>
 
 The fact that we requested brushing for **sex** = 2 is confirmed in the
 graph by the appearance of a short magenta-colored line segment just
@@ -202,7 +215,7 @@ combinations, e.g.  varying **nlevels** here.
 
 This produces
 
-<img src="WB1.png" alt="n1" width="800"/>
+<img src="vignettes/WB1.png" alt="n1" width="800"/>
 
 Nice -- but, presuming that **mom\_ed** has an ordinal relation with
 vocabulary, the ordering of the labels here is not what we would like.
@@ -214,7 +227,7 @@ wb <- reOrder(wb,'mom_ed',
 discparcoord(wb,k=100)
 ```
 
-<img src="WB2.png" alt="n1" width="800"/>
+<img src="vignettes/WB2.png" alt="n1" width="800"/>
 
 By the way, there were further levels in the **mom\_ed** variable,
 'Primary' and 'Some Secondary', but they didn't show up here, as we
@@ -230,7 +243,7 @@ college education. Again we can use brushing, this time with two
 variables **sex** and **mom\_ed** together, and several values together
 in the latter variables: 
 
-<img src="WB3.png" alt="n1" width="800"/>
+<img src="vignettes/WB3.png" alt="n1" width="800"/>
 
 The magenta highlights show that **sex** and **mom\_ed** were brushed,
 and in the latter case, specifically the levels 'College', 'Some Graduate' and
@@ -262,7 +275,7 @@ discretizedmlb <- discretize(m, discreteinput)
 discparcoord(discretizedmlb, name="MLB", k=100)
 ```
 
-<img src="MLB2.png" alt="n1" width="800"/>
+<img src="vignettes/MLB2.png" alt="n1" width="800"/>
 
 Had we wanted to handle **Height** separately, we could have called
 **discretize()** twice:
@@ -289,7 +302,7 @@ discparcoord(pima,k=-10)
 showCounts() 
 ```
 
-<img src="Pima.png" alt="n1" width="900"/>
+<img src="vignettes/Pima.png" alt="n1" width="900"/>
 
 There is an interesting case of a woman who has high values on almost
 all the risk factors, and does indeed have diabetes.  That one may be a
@@ -347,7 +360,7 @@ discparcoord(ozc4d,k=25)
 
 The result is
 
-<img src="Ozone.png" alt="n1" width="900"/>
+<img src="vignettes/Ozone.png" alt="n1" width="900"/>
 
 Apparently on hot days, a high ozone level at the start of a day will
 persist as the day goes on.  However, on cooler days, there may be some
@@ -372,12 +385,13 @@ here, as all values are integers.
 
 ```R
 ltr <-
-read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',header=FALSE) 
+read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/letter-recognition/letter-recognition.data',
+   header=FALSE) 
 oq <- ltr[ltr[,1]=='O' | ltr[,1]=='Q',] 
 discparcoord(oq,k=100) 
 ```
 
-<img src="OQ.png" alt="n1" width="900"/>
+<img src="vignettes/OQ.png" alt="n1" width="900"/>
 
 A little daunting!  Yet even for these two similar letters, it appears
 for instance that variables V2 through V6 may have some predictive power
@@ -426,7 +440,7 @@ parallelplot(~ds, group = cut, data = ds, horizontal.axis = FALSE,
              auto.key = TRUE)
 ```
 
-<img src="DiaLat.png" alt="n1" width="400"/>
+<img src="vignettes/DiaLat.png" alt="n1" width="400"/>
 
 It's a pretty picture, all right, but hard to follow, say for the
 Premium diamonds.
@@ -439,7 +453,7 @@ dd <- discretize(diamonds,nlevels=4)
 discparcoord(dd,k=2500) 
 ```
 
-<img src="DiaCDPar.png" alt="n1" width="900"/>
+<img src="vignettes/DiaCDPar.png" alt="n1" width="900"/>
 
 It is definitely easier to discern the patterns here than above.  Look
 for instance at the blue lines for the Premium quality.
