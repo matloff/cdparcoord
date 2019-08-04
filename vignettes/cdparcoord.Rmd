@@ -7,11 +7,9 @@ output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting Started}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
 ---
 
 # cdparcoord:  Categorical and Discrete Parallel Coordinates
-![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/cdparcoord)
 
 # Table of Contents
 
