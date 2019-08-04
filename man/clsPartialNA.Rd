@@ -158,6 +158,7 @@
     print('first few most-frequent tuples')
     # first line should be 0.40,0.46,2,...,11
     tupleFreqs(hrdata)
+    unlink('tupleCounts')
     \dontrun{
        # account for NA values and plot with parallel coordinates
        discparcoord(hrdata)
