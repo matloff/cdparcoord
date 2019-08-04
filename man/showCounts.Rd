@@ -20,13 +20,6 @@
     }
 }
 
-\examples{
-   data(smallexample)
-   z <- tupleFreqs(smallexample)
-   z
-   showCounts()  # not too useful in this case
-}
-
 \author{
     Norm Matloff <matloff@cs.ucdavis.edu>, Vincent Yang <vinyang@ucdavis.edu>, and Harrison Nguyen <hhnguy@ucdavis.edu>
 }
