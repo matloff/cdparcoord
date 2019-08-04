@@ -140,9 +140,9 @@
 \examples{
 
    \dontrun{
-       data(Titanic_Passengers)
+       data(Titanic)
        # Find frequencies in parallel
-       discparcoord(Titanic_Passengers, inParallel=TRUE)
+       discparcoord(Titanic, inParallel=TRUE)
     }
 
     data(hrdata)
