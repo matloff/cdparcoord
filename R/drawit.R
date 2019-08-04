@@ -413,7 +413,7 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
 
             if (!inParallel) {
                 partial <- tupleFreqs(ctgdata, k=k, NAexp=NAexp,
-                                     countNAs=countNAs)
+                                     countNAs=countNAs,saveCounts=saveCounts)
             } else {
                 partial <- clsTupleFreqs(cls, ctgdata, k=k, NAexp=NAexp,
                                         countNAs = countNAs)
