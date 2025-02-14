@@ -5,7 +5,8 @@
 
 # output parallel coordinates plot as Rplots.pdf
 # name: name for plot
-draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE) 
+draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE,
+   colorPalette,sameGraphGrpVar) 
 {
         width <- ncol(partial)-1
 
@@ -84,8 +85,10 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE)
         # Add aesthetic
         title(main=name, col.main="black", font.main=4)
         par(mar=c(10, 4, 4, 2))
-        axis(1, at=seq(2, width, 2), labels=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
-        axis(1, at=seq(1, width, 2), labels=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
+        axis(1, at=seq(2, width, 2), 
+           labels=colnames(partial)[seq(2, width, 2)], cex.axis=1, las=2)
+        axis(1, at=seq(1, width, 2), 
+           labels=colnames(partial)[seq(1, width, 2)], cex.axis=1, las=2)
         axis(2, at=seq(0,max_y,1))
 
         # Get scale for lines if large dataset
@@ -147,7 +150,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE)
 # Plots will open in browser and be saveable from there
 # requires GGally and plotly
 interactivedraw <- 
-   function(pna, name="Interactive Parcoords",differentiate=FALSE) {
+   function(pna, name="Interactive Parcoords",differentiate=FALSE,
+      colorPalette,sameGraphGrpVar,jitterVal) {
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -271,6 +275,25 @@ interactivedraw <-
     }
 
     # Convert pna to plot
+    if(!is.null(sameGraphGrpVar)) {
+       colorCode <- pna[[sameGraphGrpVar]]
+    } else colorCode <- pna$freq
+
+    if (!is.null(jitterVal)) {
+       # add jitter, so lines are not coincident on each other
+       nrowsPNA <- nrow(pna)
+       nms <- names(pna)
+       for (i in 1:(ncol(pna)-1)) {
+          # if doing same-graph grouping, need to skip the original
+          # group column
+          if (nms[i] == sameGraphGrpVar) next
+
+          pnai <- pna[,i]
+          avg <- mean(pnai)
+          pna[,i] <- pnai + avg * jitterVal * rnorm(nrowsPNA)
+       }
+    }
+
     if (name == "") {
         ## unnecessary dependency on pipes removed by NM
         ## pna %>%
@@ -286,10 +309,12 @@ interactivedraw <-
     }
     else {
         ## unnecessary dependency on pipes removed by NM
-        tmp <- 
-        plot_ly(pna, type = 'parcoords',
-                line = list(color = pna$freq,
-                            colorscale = 'Jet',
+        tmp <- plot_ly(pna, type = 'parcoords',
+                  line = list(
+                            # color = pna$freq,
+                            color = colorCode,
+                            # colorscale = 'Jet',
+                            colorscale = colorPalette,
                             showscale = scaleOn,
                             reversescale = TRUE,
                             cmin = min_freq,
@@ -335,8 +360,14 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          interactive = TRUE, save = FALSE, name = "Parcoords",
                          labelsOff = TRUE, NAexp = 1.0, countNAs = FALSE,
                          accentuate = NULL, accval = 100, inParallel = FALSE,
-                         cls = NULL, differentiate = FALSE,
-                         saveCounts = FALSE, minFreq=NULL
+                         cls = NULL, 
+                         # differentiate = FALSE,
+                         differentiate = TRUE,  # NM, Feb. 2025
+                         saveCounts = FALSE, minFreq=NULL,
+                         # new args, Feb. 2025
+                         jitterVal = NULL,
+                         sameGraphGrpVar = NULL,
+                         colorPalette = 'Jet'
                          ) 
 {
 
@@ -347,11 +378,31 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         stop('group case does not yet handle use of "accentuate" option')
     }
 
+    if(!is.null(sameGraphGrpVar)) {
+       if (!is.null(grpcategory))
+          stop('at most one of grpcategory and sameGraphGrpVar can be non-null')
+       if (!interactive)
+          stop('sameGraphGrpVar can be used only if interactive is TRUE')
+       if (!(sameGraphGrpVar %in% names(data)))
+          stop('invalid sameGraphGrpVar')
+       if (differentiate) {
+          differentiate <- FALSE
+          print("'differentiate' changed to FALSE")
+       }
+    }
+
+    if (!is.null(jitterVal)) {
+       varClasses <- sapply(data,class)
+       if (!all(varClasses == 'numeric')) {
+          stop('need all numeric columns for jitter')
+          print('use regtools::factorsToDummies to convert to numerics')
+       }
+    }
+
     # check to see if column name is valid
     if(!(grpcategory %in% colnames(data)) && !(is.null(grpcategory))) {
         stop("Invalid column names")
     }
-
     # check to see if grpcategory given
     else if (is.null(grpcategory)) {  # no grouping
         # check whether already have tuple counts
@@ -393,10 +444,12 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
         }
 
         if (!interactive) {
-            draw(partial, name=name, save=save, labelsOff=labelsOff)
+            draw(partial, name=name, save=save, labelsOff=labelsOff,
+               colorPalette)
         }
         else {
-            interactivedraw(partial,name=name,differentiate=differentiate)
+            interactivedraw(partial,name=name,differentiate=differentiate,
+               colorPalette,sameGraphGrpVar,jitterVal)
         }
     }
     # grpcategory is given and is valid
@@ -427,7 +480,8 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
             if (!interactive) {
                 # Saving is only an option on noninteractive plotting
                 if (save) {
-                    draw(partial, name=paste(name, cat), save=save, labelsOff=labelsOff)
+                    draw(partial, name=paste(name, cat), save=save, 
+                       labelsOff=labelsOff)
                 } else {
                     draw(partial, name=paste(name, cat), labelsOff=labelsOff)
                 }

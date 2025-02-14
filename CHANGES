@@ -1,0 +1,16 @@
+
+February 2025:
+
+  Default value of 'differentiate' is now TRUE.
+
+  New options:
+
+     jitterVal: random noise will be added to each column (all must be
+     numeric), so that lines don't coincide on each other
+
+     sameGraphOption: use of 'grpvar' results in a separate plot
+        returned for each level of this variable; 'sameGraphOption'
+        plots them together (2 groups only), using different colors
+
+     colorPallete: now not limited to 'Jet'
+
