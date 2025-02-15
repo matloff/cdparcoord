@@ -151,7 +151,8 @@ draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE,
 # requires GGally and plotly
 interactivedraw <- 
    function(pna, name="Interactive Parcoords",differentiate=FALSE,
-      colorPalette,sameGraphGrpVar,jitterVal) {
+      colorPalette,sameGraphGrpVar,jitterVal) 
+{
     # How it works:
     # Plotly requires input by columns of values. For example,
     # we would take col1, col2, col3, each of which has 3 values.
@@ -286,8 +287,7 @@ interactivedraw <-
        for (i in 1:(ncol(pna)-1)) {
           # if doing same-graph grouping, need to skip the original
           # group column
-          if (nms[i] == sameGraphGrpVar) next
-
+          # if (nms[i] == sameGraphGrpVar) next
           pnai <- pna[,i]
           avg <- mean(pnai)
           pna[,i] <- pnai + avg * jitterVal * rnorm(nrowsPNA)
@@ -308,14 +308,21 @@ interactivedraw <-
                     dimensions = interactiveList)
     }
     else {
-        ## unnecessary dependency on pipes removed by NM
+        if (!is.null(sameGraphGrpVar)) {
+           colorscale = list(c(0,'#66FF00'),c(1,'#EE4B2B'))
+           showscale = FALSE
+        } else {
+           colorscale <- 'Plasma'
+           showscale = scaleOn
+        }
         tmp <- plot_ly(pna, type = 'parcoords',
                   line = list(
                             # color = pna$freq,
                             color = colorCode,
                             # colorscale = 'Jet',
-                            colorscale = colorPalette,
-                            showscale = scaleOn,
+                            # colorscale = colorPalette,
+                            colorscale = colorscale,
+                            showscale = showscale,
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
