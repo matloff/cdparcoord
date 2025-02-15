@@ -163,13 +163,26 @@ interactivedraw <-
     # we use our mapping from labels to numbers to actually demonstrate
     # which categorical variable represents what.
 
+    if (!is.null(jitterVal)) {
+       # add jitter, so lines are not coincident on each other
+       nrowsPNA <- nrow(pna)
+       nms <- names(pna)
+       for (i in 1:(ncol(pna)-1)) {
+          # if doing same-graph grouping, need to skip the original
+          # group column
+          # if (nms[i] == sameGraphGrpVar) next
+          pnai <- pna[,i]
+          avg <- mean(pnai)
+          pna[,i] <- pnai + avg * jitterVal * rnorm(nrowsPNA)
+       }
+    }
+
     # create list of lists of lines to be inputted for Plotly
     interactiveList <- list()
 
     # Store categorical variables - categ[[i]] holds the ith column's unique
     # variables. If categ[[i]] is null, that means it is not categorical.
     categ <- list()
-
     # Map unique categorical variables to numbers
     for(colnum in 1:(ncol(pna)-1)) {
         # Store the columns that have categorical variables
@@ -279,20 +292,6 @@ interactivedraw <-
     if(!is.null(sameGraphGrpVar)) {
        colorCode <- pna[[sameGraphGrpVar]]
     } else colorCode <- pna$freq
-
-    if (!is.null(jitterVal)) {
-       # add jitter, so lines are not coincident on each other
-       nrowsPNA <- nrow(pna)
-       nms <- names(pna)
-       for (i in 1:(ncol(pna)-1)) {
-          # if doing same-graph grouping, need to skip the original
-          # group column
-          # if (nms[i] == sameGraphGrpVar) next
-          pnai <- pna[,i]
-          avg <- mean(pnai)
-          pna[,i] <- pnai + avg * jitterVal * rnorm(nrowsPNA)
-       }
-    }
 
     if (name == "") {
         ## unnecessary dependency on pipes removed by NM
