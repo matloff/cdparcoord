@@ -325,8 +325,8 @@ interactivedraw <-
                             reversescale = TRUE,
                             cmin = min_freq,
                             cmax = max_freq),
-                ## dimensions = interactiveList) %>%
-                dimensions = interactiveList) 
+                  dimensions = interactiveList)
+        tmp <- layout(tmp,margin = list(r=50))
         plotly::layout(tmp,title=name)
     }
 }
