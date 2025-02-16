@@ -313,7 +313,7 @@ interactivedraw <-
         } else {
            colorscale <- 'Plasma'
            showscale = scaleOn
-        }
+        } 
         tmp <- plot_ly(pna, type = 'parcoords',
                   line = list(
                             # color = pna$freq,
