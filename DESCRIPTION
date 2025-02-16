@@ -1,12 +1,11 @@
 Package: cdparcoord
-Version: 1.0.1
+Version: 1.1
 Author: Norm Matloff <normmatloff@gmail.com> and 
     Vincent Yang <vinyang@ucdavis.edu> and Harrison Nguyen <hhnguy@ucdavis.edu>
 Maintainer: Norm Matloff <normmatloff@gmail.com>
-Date: 2019-08-04
+Date: 2025-02-16
 Title: Top Frequency-Based Parallel Coordinates
-Description: Parallel coordinate plotting with resolutions for large data sets
- and missing values.
+Description: Parallel coordinate plotting without the "black screen" problem 
 Depends: R (>= 3.2.0), data.table, plotly, freqparcoord, partools
 Imports:
 Suggests: rmarkdown, knitr
