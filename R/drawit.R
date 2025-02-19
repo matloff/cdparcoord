@@ -8,6 +8,7 @@
 draw <- function(partial, name="Parallel Coordinates", labelsOff, save=FALSE,
    colorPalette,sameGraphGrpVar) 
 {
+
         width <- ncol(partial)-1
 
         # get only numbers
@@ -373,9 +374,20 @@ discparcoord <- function(data, k = 5, grpcategory = NULL, permute = FALSE,
                          # new args, Feb. 2025
                          jitterVal = NULL,
                          sameGraphGrpVar = NULL,
-                         colorPalette = 'Jet'
+                         colorPalette = 'Jet',
+                         omitLast = NULL
                          ) 
 {
+
+    if (!allNumeric(data) && !is.null(jitterVal)) {
+       tmp <- factorsToDummies(data,dfOut=TRUE)
+       data <- tmp
+       if (!is.null(sameGraphGrpVar)) {
+          if (!(sameGraphGrpVar %in% names(data))) {
+             stop("your 'sameGraphGrpVar' is no longer among the column names")
+          }
+       }
+    }
 
     if (class(data)[1] == 'pna' && !is.null(grpcategory)) {
         stop('group case does not yet handle preprocessed data')
