@@ -28,7 +28,7 @@
 
 \arguments{
     \item{data}{
-        The data, in data frame or matrix form.
+        Data frame or equivalent.
     }
     \item{k}{
         The number of tuples to return. These will be the \code{k} most
@@ -37,7 +37,8 @@
         for hunting for outliers.
     }
     \item{grpcategory}{
-        Grouping column/variable.
+        Grouping column/variable. A separate graph will be generated for
+        each level.
     }
     \item{permute}{
         If TRUE, randomly permute the columns before plotting.
